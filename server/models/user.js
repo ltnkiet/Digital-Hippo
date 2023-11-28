@@ -27,6 +27,7 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true,
       default: "user",
+      enum: ["user", "employee", "admin"],
     },
     cart: [
       {
@@ -56,6 +57,7 @@ var userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -65,9 +67,11 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods = {
+
   isCorrectPassword: async function (password) {
     return await bcrypt.compare(password, this.password);
   },
+
   createPasswordChangedToken: function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
     this.passwordResetToken = crypto

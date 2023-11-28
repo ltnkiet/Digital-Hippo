@@ -4,11 +4,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const crypto = require("crypto");
 
-const {
-  generateAccessToken,
-  generateRefreshToken,
-} = require("../middlewares/jwt");
-const user = require("../models/user");
+const { generateAccessToken, generateRefreshToken } = require("../middlewares/jwt");
 
 //Đăng ký
 const register = asyncHandler(async (req, res) => {
@@ -53,7 +49,7 @@ const login = asyncHandler(async (req, res) => {
     );
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: 4 * 24 * 60 * 60 * 1000,
     });
     return res.status(200).json({
       success: true,
