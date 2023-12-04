@@ -13,7 +13,7 @@ var orderSchema = new mongoose.Schema({
     ref: "Coupons",
   },
   status: {
-    type: Int16Array,
+    type: String,
     default: "processing",
     enum: ["cancelled", "processing", "delivering", "success"],
   },

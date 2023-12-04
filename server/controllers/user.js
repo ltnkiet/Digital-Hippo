@@ -4,7 +4,10 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const crypto = require("crypto");
 
-const { generateAccessToken, generateRefreshToken } = require("../middlewares/jwt");
+const {
+  generateAccessToken,
+  generateRefreshToken,
+} = require("../middlewares/jwt");
 
 //Đăng ký
 const register = asyncHandler(async (req, res) => {
@@ -134,7 +137,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
     thì có thể bỏ qua email này</p>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Cảm ơn bạn, </p>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
-    <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1700833580/Digital%20Hippo/s8h656rpjbs9iwocwvpq.png" style="width: 20rem"      alt="thumbnail">
+    <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem"      alt="thumbnail">
   `;
 
   const data = { email, html };

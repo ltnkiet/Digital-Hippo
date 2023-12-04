@@ -40,6 +40,8 @@ const getProductList = asyncHandler(async (req, res) => {
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
 
+  queries.status = 1;
+
   let queryString = JSON.stringify(queries);
   queryString = queryString.replace(
     /\b(gte|gt|lt|lte)\b/g,
@@ -70,7 +72,7 @@ const getProductList = asyncHandler(async (req, res) => {
 
   //pagination - limit
   const page = +req.query.page || 1;
-  const limit = +req.query.limit || 5;
+  const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
 

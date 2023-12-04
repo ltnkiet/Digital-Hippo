@@ -2,8 +2,8 @@ const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const data = require("../../data/data2.json");
 const slugify = require("slugify");
-const catedata = require('../../data/cate_brand')
-const Category = require('../models/category')
+const catedata = require("../../data/cate_brand");
+const Category = require("../models/category");
 
 const fn = async (product) => {
   await Product.create({
@@ -15,6 +15,7 @@ const fn = async (product) => {
     category: product?.category[1],
     quantity: Math.round(Math.random() * 1000),
     sold: Math.round(Math.random() * 1000),
+    thumb: product?.thumb,
     images: product?.images,
     color: product?.variants?.find((el) => el.label === "Color")?.variants[0],
     status: 1,
@@ -24,9 +25,9 @@ const fn = async (product) => {
 const fn2 = async (category) => {
   await Category.create({
     name: category?.name,
-    brand: category?.brand
-  })
-}
+    brand: category?.brand,
+  });
+};
 
 const insertProduct = asyncHandler(async (req, res) => {
   const promises = [];
