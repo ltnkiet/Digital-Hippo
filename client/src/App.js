@@ -6,10 +6,12 @@ import { getCategory } from "./store/asyncAction";
 import { useDispatch } from "react-redux";
 
 function App() {
+
   const dispatch = useDispatch() 
   useEffect(() => {
     dispatch(getCategory())  // eslint-disable-next-line
   }, [])
+
   return (
     <div className="min-h-screen">
       <Routes>
