@@ -4,7 +4,11 @@ import {
   FaCloudUploadAlt,
   FaCheck,
   FaArrowLeft,
-  FaUserCircle
+  FaUserCircle,
+  FaRegStar,
+  FaStar,
+  FaEye,
+  FaRegHeart
 } from "react-icons/fa";
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
@@ -40,33 +44,46 @@ export {
   FaEnvelope,
   FaLock,
   FaUserCircle,
+  FaEye,
+  FaRegHeart, 
+  FaCloudUploadAlt,
+  FaCheck,
+  FaRegStar,
+  FaStar,
+  FaArrowLeft,
+
+  FcClearFilters,
   FcGoogle,
+
   MdShoppingCart,
   MdLogout,
   MdSearch,
+  MdOutlineKeyboardBackspace,
+  MdEmail,
+  MdDelete,
+
   BsToggles2,
   BsFillBellFill,
   BsFillHeartFill,
-  IoFastFood,
-  MdDelete,
-  FaCloudUploadAlt,
-  FaCheck,
   BsExclamationTriangleFill,
   BsFillTelephoneFill,
+
+  IoFastFood,
   IoBasket,
+
   BiChevronsRight,
-  FcClearFilters,
-  FaArrowLeft,
-  HiCurrencyRupee,
-  HiOutlineMail,
-  FiUploadCloud,
-  RiRefreshFill,
-  RiLockPasswordLine,
-  MdOutlineKeyboardBackspace,
-  MdEmail,
   BiMinus,
   BiPlus,
   BiSolidMap,
   BiUser,
   BiSolidNotepad,
+
+  HiCurrencyRupee,
+  HiOutlineMail,
+
+  FiUploadCloud,
+
+  RiRefreshFill,
+  RiLockPasswordLine,
+
 };
