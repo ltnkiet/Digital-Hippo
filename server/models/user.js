@@ -14,8 +14,8 @@ var userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    number_phone: {
-      type: String,
+    numberPhone: {
+      type: Number,
       required: true,
       unique: true,
     },
@@ -78,7 +78,7 @@ userSchema.methods = {
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
-    this.passwordResetExpires = Date.now() + 15 * 60 * 1000;
+    this.passwordResetExpires = Date.now() + 5 * 60 * 1000;
     return resetToken;
   },
 };

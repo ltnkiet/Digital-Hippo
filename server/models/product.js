@@ -7,19 +7,20 @@ var productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+      unique: true
     },
     slug: {
       type: String,
       required: true,
-      // unique: true,
+      unique: true,
       lowercase: true,
     },
     brand: {
-      type: String,
+      type:  { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
       require: true,
     },
     category: {
-      type: String,
+      type:  { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
       require: true,
     },
     price: {
