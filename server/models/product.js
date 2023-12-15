@@ -16,11 +16,11 @@ var productSchema = new mongoose.Schema(
       lowercase: true,
     },
     brand: {
-      type:  { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
-      require: true,
+     type: mongoose.Schema.Types.ObjectId, ref: "Brand",
+    require: true,
     },
     category: {
-      type:  { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+      type: mongoose.Schema.Types.ObjectId, ref: "Category",
       require: true,
     },
     price: {
