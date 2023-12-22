@@ -10,25 +10,58 @@ const {
 } = require("../middlewares/jwt");
 
 //Đăng ký
-const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password)
+const register = asyncHandler(async (req, res) => {   
+  const { name, email, password, phone } = req.body;
+  if (!name || !email || !password || !phone)
     return res.status(400).json({
       success: false,
       msg: "Missing Input",
     });
-  const user = await User.findOne({ email });
-  if (user) {
-    throw new Error("User is existed");
-  } else {
-    const newUser = await User.create(req.body);
-    return res.status(200).json({
-      success: newUser ? true : false,
-      msg: newUser
-        ? "Register is successfully. Please login"
-        : "Something went wrong",
+  const user = await User.findOne({email})
+  if(user) throw new Error("User has existed")
+  else {
+    const emailVerifyToken = crypto.randomBytes(32).toString("hex");
+    res.cookie("data", {...req.body, emailVerifyToken}, { httpOnly: true, maxAge: 3 * 60 * 1000 });
+    const html = `
+      <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
+        Cảm ơn bạn vì đã chọn đồng hành cùng chúng tôi
+      </p>
+      <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
+        Chọn vào đây để hoàn tất quá trình đăng ký, yêu cầu này chỉ tồn tại 3 phút:
+      </p>
+      <button style="padding: 14px; background-color: #1E90FF; border-radius: 5px; border-style: none; cursor: pointer">
+        <a href=${process.env.SERVER_URL}/user/register/email-verify/${emailVerifyToken}
+          style="color:white; text-decoration-line: none; font-size: 14px; font-weight: 700">
+            Xác minh tài khoản
+        </a>
+      </button>
+      <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
+      <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">`;
+    await sendMail({ email, html, subject: "[Digital Hippo] E-Mail Verify" });
+    return res.json({
+      success: true,
+      msg: "Email has been sent to your account",
     });
   }
+});
+
+const emailVerify = asyncHandler(async (req, res) => {
+  const cookie = req.cookies;
+  const { token } = req.params;
+  if(!cookie || cookie?.data?.emailVerifyToken !== token) throw new Error("Register Failed");
+  // return res.redirect(`${process.env.CLIENT_URL}/register/final/failed`)
+  const newUser = await User.create({
+    name: cookie?.data?.name,
+    email: cookie?.data?.email,
+    password: cookie?.data?.password,
+    phone: cookie?.data?.phone,
+  })
+  return res.status(200).json({
+    success: newUser ? true : false,
+    msg: newUser ? "Register is successfully" : "Something went wrong"
+  })
+  // if(newUser) return res.redirect(`${process.env.CLIENT_URL}/success`)
+  // else return res.redirect(`${process.env.CLIENT_URL}/register/final/failed`)
 });
 
 //Đăng nhập
@@ -52,7 +85,7 @@ const login = asyncHandler(async (req, res) => {
     );
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      maxAge: 4 * 24 * 60 * 60 * 1000,
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
     return res.status(200).json({
       success: true,
@@ -79,7 +112,6 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   if (!cookie && !cookie.refreshToken)
     throw new Error("No refresh token in cookie");
-
   const rs = await jwt.verify(cookie.refreshToken, process.env.JWT_SECRET);
   const response = await User.findOne({
     _id: rs._id,
@@ -119,7 +151,6 @@ const forgotPassword = asyncHandler(async (req, res) => {
   if (!user) throw new Error("User not found");
   const resetToken = user.createPasswordChangedToken();
   await user.save();
-
   const html = `
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
       Bạn nhận được email này vì bạn hoặc ai đó đã yêu cầu lấy lại mật khẩu
@@ -137,10 +168,14 @@ const forgotPassword = asyncHandler(async (req, res) => {
     thì có thể bỏ qua email này</p>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Cảm ơn bạn, </p>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
-    <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem"      alt="thumbnail">
+    <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">
   `;
 
-  const data = { email, html };
+  const data = {
+    email,
+    html,
+    subject: "[Digital Hippo] Password Reset E-Mail",
+  };
 
   const result = await sendMail(data);
   return res.status(200).json({
@@ -270,6 +305,7 @@ const updateCart = asyncHandler(async (req, res) => {
 
 module.exports = {
   register,
+  emailVerify,
   login,
   getCurrent,
   logout,

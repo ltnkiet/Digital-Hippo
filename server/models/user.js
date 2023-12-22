@@ -13,21 +13,20 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      index: true
     },
-    numberPhone: {
+    phone: {
       type: Number,
       required: true,
-      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
     role: {
-      type: String,
-      required: true,
-      default: "user",
-      enum: ["user", "employee", "admin"],
+      type: Number,
+      default: 0,
+      enum: [0, 1, 2], //["user", "employee", "admin"],
     },
     cart: [
       {
@@ -71,7 +70,6 @@ userSchema.methods = {
   isCorrectPassword: async function (password) {
     return await bcrypt.compare(password, this.password);
   },
-
   createPasswordChangedToken: function () {
     const resetToken = crypto.randomBytes(32).toString("hex");
     this.passwordResetToken = crypto
@@ -80,7 +78,7 @@ userSchema.methods = {
       .digest("hex");
     this.passwordResetExpires = Date.now() + 5 * 60 * 1000;
     return resetToken;
-  },
+  }
 };
 
 //Export the model

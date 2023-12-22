@@ -4,9 +4,6 @@ const slugify = require("slugify");
 
 const createProduct = asyncHandler(async (req, res) => {
   if (Object.keys(req.body).length === 0) throw new Error("Missing input");
-  // if (req.body && req.body.title) {
-  //   req.body.slug = slugify(req.body.title, "_");
-  // }
   const { title } = req.body;
   const existingProduct = await Product.findOne({ title });
   if (existingProduct) {
@@ -15,7 +12,6 @@ const createProduct = asyncHandler(async (req, res) => {
       error: "Product with this title already exists",
     });
   }
-  // Generate slug based on the title
   const slug = slugify(title, "-");
   req.body.slug = slug;
   const newProduct = await Product.create(req.body);
@@ -39,9 +35,7 @@ const getProductList = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
-
   queries.status = 1;
-
   let queryString = JSON.stringify(queries);
   queryString = queryString.replace(
     /\b(gte|gt|lt|lte)\b/g,
@@ -52,11 +46,13 @@ const getProductList = asyncHandler(async (req, res) => {
   //filter
   if (queries?.title)
     formatQueries.title = { $regex: queries.title, $options: "i" };
-  let queryCommand = Product.find(formatQueries);
+  let queryCommand = Product.find(formatQueries).populate("category");
 
   //sort
   if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ");
+    const sortBy = req.query.sort
+    // const sortBy = req.query.sort.split(",").join("&");
+
     queryCommand = queryCommand.sort(sortBy);
   } else {
     queryCommand = queryCommand.sort("-createdAt");
@@ -88,16 +84,16 @@ const getProductList = asyncHandler(async (req, res) => {
     .catch((err) => {
       throw new Error(err.message);
     });
-  // queryCommand.exec(async (err, response) => {
-  //   if (err) throw new Error(err.message);
-  //   const counts = await Product.find(formatQueries).countDocuments();
-  //   return res.status(200).json({
-  //     success: response ? true : false,
-  //     productList: response ? response : "Cannot get product list",
-  //     counts,
-  //   });
-  // });
 });
+// queryCommand.exec(async (err, response) => {
+//   if (err) throw new Error(err.message);
+//   const counts = await Product.find(formatQueries).countDocuments();
+//   return res.status(200).json({
+//     success: response ? true : false,
+//     productList: response ? response : "Cannot get product list",
+//     counts,
+//   });
+// });
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
@@ -180,8 +176,6 @@ const uploadImgProduct = asyncHandler(async (req, res) => {
     product: response ? response : "Cannot upload image",
   });
 });
-
-
 
 module.exports = {
   createProduct,

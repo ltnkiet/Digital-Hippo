@@ -7,19 +7,21 @@ var productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true
+      unique: true,
+      index: true,
     },
     slug: {
       type: String,
       required: true,
-      unique: true,
       lowercase: true,
     },
     brand: {
-     type: mongoose.Schema.Types.ObjectId, ref: "Brand",
-    require: true,
+      type: String,
+      // type: mongoose.Schema.Types.ObjectId, ref: "Brand",
+      require: true,
     },
     category: {
+      // type: String,
       type: mongoose.Schema.Types.ObjectId, ref: "Category",
       require: true,
     },
@@ -31,20 +33,18 @@ var productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    color: {
+      type: String,
+    },
     sold: {
       type: Number,
       default: 0,
     },
     thumb: {
       type: String,
-      require: true
     },
     images: {
       type: Array,
-    },
-    color: {
-      type: String,
-      require: true
     },
     rating: [
       {
@@ -57,20 +57,24 @@ var productSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    varriants: [
+      {
+        label: { type: String },
+        varriant: { type: String },
+      },
+    ],
     description: {
       type: Array,
-      required: true,
     },
     status: {
       type: Number,
       default: 1,
-      enum: [0, 1],
+      enum: [0, 1], // [Hide, Active]
     },
   },
   {
     timestamps: true,
   }
 );
-
 //Export the model
 module.exports = mongoose.model("Product", productSchema);

@@ -6,7 +6,7 @@ const createCoupons = asyncHandler(async (req, res) => {
   if (!name || !discount || !expiry) throw new Error("Missing Input");
   const response = await Coupons.create({
     ...req.body,
-    expiry: Date.now() + +expiry * 24 * 60 * 60 * 1000,
+    expiry: Date.now() + +expiry * 60 * 1000,
   });
   return res.json({
     success: response ? true : false,
