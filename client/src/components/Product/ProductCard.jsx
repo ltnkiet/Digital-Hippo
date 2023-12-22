@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { formatPrice, renderStar } from "../utils/helpers";
-import labelNew from "../asset/img/LabelNew.png";
-import labelTrending from "../asset/img/LabelTrending.png";
+import { formatPrice, renderStar } from "../../utils/helpers";
+import labelNew from "../../asset/img/LabelNew.png";
+import labelTrending from "../../asset/img/LabelTrending.png";
 import SelectOption from "./SelectOption";
-import { FaEye, FaRegHeart } from "../asset/icons";
+import { FaEye, FaRegHeart } from "../../asset/icons";
 
 const ProductCard = ({ data, isNew, pid }) => {
   const [showOption, setShowOption] = useState(false);
@@ -25,7 +25,7 @@ const ProductCard = ({ data, isNew, pid }) => {
             className="absolute -top-1 -left-[8px] w-24 object-cover"
           />
           <img
-            class="p-8 rounded-t-lg"
+            class="p-5 rounded-t-lg object-contain w-[250px] h-[280px] hover:p-0"
             src={
               data?.thumb ||
               `https://res.cloudinary.com/ltnkiet/image/upload/v1701678798/DigitalHippo/thumb/quwxatr8sxviufr44np5.webp`
@@ -41,10 +41,10 @@ const ProductCard = ({ data, isNew, pid }) => {
         </div>
         <div class="px-5 pb-5">
           <div>
-            <h5 class="text-lg font-semibold tracking-tight text-gray-900 dark:text-white h-[60px] line-clamp-2">
+            <h5 class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white h-[48px] line-clamp-2">
               {data?.title}
             </h5>
-            <span className="underline">{data?.category}</span>
+            <div className="underline my-2 cursor-pointer hover:text-main">{data?.category?.name}</div>
           </div>
           <div class="flex items-center mt-2.5 mb-5">
             {renderStar(data?.totalRating)}

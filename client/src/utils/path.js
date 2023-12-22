@@ -3,7 +3,8 @@ const path = {
   HOME: "",
   ALL: "*",
   LOGIN: "login",
-  PRODUCTS: 'products'
+  PRODUCTS: 'products',
+  REGISTER: 'register/final/:status'
 };
 
 export default path;

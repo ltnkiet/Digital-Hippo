@@ -1,0 +1,34 @@
+import React, { useEffect, useState } from "react";
+import { apiGetProduct } from "../../api";
+import { ProductCardV2 } from "../../components";
+
+const FeaturedProduct = () => {
+  const [products, setProducts] = useState(null);
+  const fetchProduct = async () => {
+    const response = await apiGetProduct({ limit: 9, sort: ({"totalRating": -1, "rating": -1}) });
+    // const response = await apiGetProduct({
+    //   limit: 9,
+    //   sort: "-totalRating -rating",
+    // });
+
+    if (response?.data?.success) setProducts(response?.data?.productList);
+    console.log(response?.data?.productList);
+  };
+  useEffect(() => {
+    fetchProduct();
+  }, []);
+  return (
+    <div className="my-8">
+      <h3 className="font-semibold uppercase cursor-pointer text-black text-[20px]">
+        Sản phẩm nổi bật
+      </h3>
+      <div className="grid grid-cols-3 gap-9 my-4 py-6 border-y-4 border-main">
+        {products?.map((el) => (
+          <ProductCardV2 key={el.id} data={el} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default FeaturedProduct;

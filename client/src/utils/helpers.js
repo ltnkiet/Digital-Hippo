@@ -1,4 +1,4 @@
-import { FaRegStar, FaStar } from "../asset/icons";
+import { FaRegStar, FaStar, FaStarHalfAlt } from "../asset/icons";
 
 export const createSlug = (string) => {
   return string
@@ -19,7 +19,10 @@ export const formatPrice = (value) => {
 export const renderStar = (number) => {
   if (!Number(number)) return;
   const star = [];
-  for (let i = 0; i < +number; i++) star.push(<FaStar className="text-amber-400 text-lg" />);
-  for (let i = 5; i > +number; i--) star.push(<FaRegStar className="text-amber-400 text-lg"/>);
+  const fullStars = Math.floor(number);
+  const hasHalfStar = number % 1 !== 0;
+  for (let i = 0; i < fullStars; i++) star.push(<FaStar key={i} className="text-amber-400 text-lg" />);
+  if (hasHalfStar) star.push(<FaStarHalfAlt key="half" className="text-amber-400 text-lg" />);
+  for (let i = star.length; i < 5; i++) star.push(<FaRegStar key={i} className="text-amber-400 text-lg" />);
   return star;
 };

@@ -1,10 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import path from "../utils/path";
+import path from "../../utils/path";
 
-import Logo from "../asset/img/logo.png";
-import { MdShoppingCart, FaUserCircle, BsFillHeartFill } from "../asset/icons";
+import Logo from "../../asset/img/logo.png";
+import {
+  MdShoppingCart,
+  FaUserCircle,
+  BsFillHeartFill,
+} from "../../asset/icons";
 
 const Header = () => {
   return (

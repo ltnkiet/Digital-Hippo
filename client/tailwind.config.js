@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       width: {
-        main: "1330px",
+        main: "1200px",
       },
       flex: {
         2: "2 2 0%",

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Home, Login, Public } from "./page/public";
+import { Home, Login, Public, Register } from "././page/public";
 import path from "./utils/path";
 import { getCategory } from "./store/asyncAction";
 import { useDispatch } from "react-redux";
@@ -17,8 +17,9 @@ function App() {
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />
-          <Route path={path.LOGIN} element={<Login />} />
+          <Route path={path.REGISTER} element={<Register />} />
         </Route>
+        <Route path={path.LOGIN} element={<Login />} />
       </Routes>
     </div>
   );

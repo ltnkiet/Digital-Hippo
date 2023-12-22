@@ -6,6 +6,7 @@ import {
   FaArrowLeft,
   FaUserCircle,
   FaRegStar,
+  FaStarHalfAlt ,
   FaStar,
   FaEye,
   FaRegHeart
@@ -49,6 +50,7 @@ export {
   FaCloudUploadAlt,
   FaCheck,
   FaRegStar,
+  FaStarHalfAlt,
   FaStar,
   FaArrowLeft,
 
