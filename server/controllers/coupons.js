@@ -4,6 +4,13 @@ const asyncHandler = require("express-async-handler");
 const createCoupons = asyncHandler(async (req, res) => {
   const { name, discount, expiry } = req.body;
   if (!name || !discount || !expiry) throw new Error("Missing Input");
+  const existingCoupons = await Coupons.findOne({ title });
+  if (existingCoupons) {
+    return res.status(400).json({
+      success: false,
+      error: "Coupons with this title already exists",
+    });
+  }
   const response = await Coupons.create({
     ...req.body,
     expiry: Date.now() + +expiry * 60 * 1000,

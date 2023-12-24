@@ -30,34 +30,27 @@ const getProduct = asyncHandler(async (req, res) => {
   });
 });
 
-//filter pagination sorting limit
+//filter pagination sorting limit fields
 const getProductList = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
   queries.status = 1;
   let queryString = JSON.stringify(queries);
-  queryString = queryString.replace(
-    /\b(gte|gt|lt|lte)\b/g,
-    (matchedEl) => `$${matchedEl}`
-  );
+  queryString = queryString.replace(/\b(gte|gt|lt|lte|size)\b/g, (matchedEl) => `$${matchedEl}`);
   const formatQueries = JSON.parse(queryString);
 
   //filter
   if (queries?.title)
     formatQueries.title = { $regex: queries.title, $options: "i" };
   let queryCommand = Product.find(formatQueries).populate("category");
-
   //sort
   if (req.query.sort) {
-    const sortBy = req.query.sort
-    // const sortBy = req.query.sort.split(",").join("&");
-
+    const sortBy = req.query.sort.split(",").join(" ");
     queryCommand = queryCommand.sort(sortBy);
   } else {
     queryCommand = queryCommand.sort("-createdAt");
-  }
-
+  } 
   //field
   if (req.query.fields) {
     const fields = req.query.fields.split(",").join(" ");
@@ -65,13 +58,11 @@ const getProductList = asyncHandler(async (req, res) => {
   } else {
     queryCommand = queryCommand.select("-__v");
   }
-
   //pagination - limit
   const page = +req.query.page || 1;
   const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
-
   queryCommand
     .then(async (response) => {
       const counts = await Product.find(formatQueries).countDocuments();
@@ -85,15 +76,6 @@ const getProductList = asyncHandler(async (req, res) => {
       throw new Error(err.message);
     });
 });
-// queryCommand.exec(async (err, response) => {
-//   if (err) throw new Error(err.message);
-//   const counts = await Product.find(formatQueries).countDocuments();
-//   return res.status(200).json({
-//     success: response ? true : false,
-//     productList: response ? response : "Cannot get product list",
-//     counts,
-//   });
-// });
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
@@ -147,14 +129,14 @@ const rating = asyncHandler(async (req, res) => {
   const updatedTotalRating = await Product.findById(pid);
   const ratingCount = updatedTotalRating.rating.length;
   const sumRating = updatedTotalRating.rating.reduce(
-    (sum, el) => sum + +el.star,
-    0
+    (sum, el) => sum + +el.star, 0
   );
   updatedTotalRating.totalRating =
     Math.round((sumRating * 10) / ratingCount) / 10;
   await updatedTotalRating.save();
   return res.status(200).json({
     status: true,
+    msg: "",
     updatedTotalRating,
   });
 });

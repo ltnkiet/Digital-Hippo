@@ -2,8 +2,8 @@ const userRouter = require("./user");
 const productRouter = require("./product");
 const categoryRouter = require("./category");
 const brandRouter = require("./brand");
-const couponsRouter = require('./coupons')
-const orderRouter = require("./order")
+const couponsRouter = require("./coupons");
+const orderRouter = require("./order");
 
 const { errHandler, notFound } = require("../middlewares/errHandler");
 
