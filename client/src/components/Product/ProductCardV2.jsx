@@ -1,9 +1,13 @@
 import React from "react";
 import { formatPrice, renderStar } from "../../utils/helpers";
+import path from '../../utils/path'
+import {Link} from 'react-router-dom'
 
 const ProductCardV2 = ({ data }) => {
   return (
-    <div className="w-full border flex flex-auto">
+    <Link className="w-full border flex flex-auto"
+    to={`/${path.PRODUCT_DETAIL}/${data?.slug}`}
+    >
       <img src={data?.thumb} alt="" className="w-[150px] object-contain p-4 hover:p-0" />
       <div className="flex flex-col py-4 gap-2">
         <p class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">
@@ -23,7 +27,7 @@ const ProductCardV2 = ({ data }) => {
           {formatPrice(data?.price)}
         </span>
       </div>
-    </div>
+    </Link>
   );
 };
 

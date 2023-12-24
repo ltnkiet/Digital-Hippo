@@ -13,16 +13,16 @@ export const navigation = [
   {
     id: 3,
     value: "THƯƠNG HIỆU",
-    path: `/${path.PRODUCTS}`
+    path: `/${path.BRAND}`
   },
-  {
-    id: 4,
-    value: "DANH MỤC",
-    path: `/${path.PRODUCTS}`
-  },
+  // {
+  //   id: 4,
+  //   value: "DANH MỤC",
+  //   path: `/${path.CATEGORY}`
+  // },
   {
     id: 5,
     value: "VỀ CHÚNG TÔI",
-    path: `/${path.PRODUCTS}`
+    path: `/${path.ABOUT_US}`
   },
 ]

@@ -1,48 +1,39 @@
 import React, { useState, useEffect } from "react";
 import { apiGetProduct } from "../../api/product";
-import Slider from "react-slick";
-import ProductCard from "./ProductCard";
+import { getNewProduct } from "../../store/product/asyncActions";
+import { ProductSlider } from "../../components";
+import { useDispatch, useSelector } from "react-redux";
 
 const tabs = [
   { id: 1, tabname: "bán chạy nhất" },
   { id: 2, tabname: "sản phẩm mới" },
 ];
 
-const settings = {
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 4,
-  slidesToScroll: 3,
-};
-
 const BestSeller = () => {
   const [bestSeller, setBestSeller] = useState(null);
   // eslint-disable-next-line
-  const [newProduct, setNewProduct] = useState(null);
   const [activeTabs, setActiveTabs] = useState(1);
   const [productTab, setProductTab] = useState(null);
+  const dispatch = useDispatch();
+  const { newProducts } = useSelector((state) => state.product);
 
   const fetchProduct = async () => {
-    const response = await Promise.all([
-      apiGetProduct({ sort: "-sold" }),
-      apiGetProduct({ sort: "-createdAt" }),
-    ]);
-    if (response[0]?.data.success) {
-      setBestSeller(response[0]?.data.productList);
-      setProductTab(response[0]?.data.productList);
+    const response = await apiGetProduct({ sort: "-sold" });
+    if (response?.data.success) {
+      setBestSeller(response?.data.productList);
+      setProductTab(response?.data.productList);
+      console.log(response?.data.productList);
     }
-    if (response[1]?.data.success) setNewProduct(response[1]?.data.productList);
-    setProductTab(response[0]?.data.productList);
   };
 
   useEffect(() => {
     fetchProduct();
+    dispatch(getNewProduct());
   }, []);
 
   useEffect(() => {
     if (activeTabs === 1) setProductTab(bestSeller);
-    if (activeTabs === 2) setProductTab(newProduct);
+    if (activeTabs === 2) setProductTab(newProducts);
   }, [activeTabs]);
 
   return (
@@ -60,16 +51,7 @@ const BestSeller = () => {
         ))}
       </div>
       <div className="my-4 px-4 py-6 border-y-4 border-main">
-        <Slider {...settings}>
-          {productTab?.map((el) => (
-            <ProductCard
-              key={el.id}
-              pid={el.id}
-              data={el}
-              isNew={activeTabs === 1 ? false : true}
-            />
-          ))}
-        </Slider>
+        <ProductSlider products={productTab} activeTabs={activeTabs} />
       </div>
       <div className="w-full flex gap-4 mt-8">
         <img

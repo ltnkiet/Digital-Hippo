@@ -5,11 +5,10 @@ import { ProductCardV2 } from "../../components";
 const FeaturedProduct = () => {
   const [products, setProducts] = useState(null);
   const fetchProduct = async () => {
-    const response = await apiGetProduct({ limit: 9, sort: ({"totalRating": -1, "rating": -1}) });
-    // const response = await apiGetProduct({
-    //   limit: 9,
-    //   sort: "-totalRating -rating",
-    // });
+    const response = await apiGetProduct({
+      limit: 9,
+      sort: "-totalRating,-rating",
+    });
 
     if (response?.data?.success) setProducts(response?.data?.productList);
     console.log(response?.data?.productList);

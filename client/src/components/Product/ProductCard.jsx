@@ -4,12 +4,16 @@ import labelNew from "../../asset/img/LabelNew.png";
 import labelTrending from "../../asset/img/LabelTrending.png";
 import SelectOption from "./SelectOption";
 import { FaEye, FaRegHeart } from "../../asset/icons";
+import { Link } from "react-router-dom";
+import path from '../../utils/path'
 
-const ProductCard = ({ data, isNew, pid }) => {
+const ProductCard = ({ data, isNew }) => {
   const [showOption, setShowOption] = useState(false);
   return (
     <div className="mx-4">
-      <div class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <Link class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        to={`/${path.PRODUCT_DETAIL}/${data?.slug}`}
+      >
         <div
           className="w-full relative"
           onMouseEnter={(e) => {
@@ -41,10 +45,12 @@ const ProductCard = ({ data, isNew, pid }) => {
         </div>
         <div class="px-5 pb-5">
           <div>
-            <h5 class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white h-[48px] line-clamp-2">
+            <h5 class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-1">
               {data?.title}
             </h5>
-            <div className="underline my-2 cursor-pointer hover:text-main">{data?.category?.name}</div>
+            <div className="underline my-2 cursor-pointer hover:text-main">
+              {data?.category?.name}
+            </div>
           </div>
           <div class="flex items-center mt-2.5 mb-5">
             {renderStar(data?.totalRating)}
@@ -61,7 +67,7 @@ const ProductCard = ({ data, isNew, pid }) => {
             </p> */}
           </div>
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

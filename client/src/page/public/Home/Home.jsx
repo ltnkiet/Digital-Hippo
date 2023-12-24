@@ -19,6 +19,7 @@ const Home = () => {
         </div>
       </div>
       <div className="w-full h-[500px]"></div>
+      
     </>
   );
 };
