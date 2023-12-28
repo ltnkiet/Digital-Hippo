@@ -1,16 +1,24 @@
 import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { Home, Login, Public, Register, Brand, Products, ProductDetail, AboutUs } from "././page/public";
+import {
+  Home,
+  Login,
+  Public,
+  Register,
+  Brand,
+  Products,
+  ProductDetail,
+  AboutUs,
+} from "././page/public";
 import path from "./utils/path";
 import { getCategory } from "./store/app/asyncAction";
 import { useDispatch } from "react-redux";
 
 function App() {
-
-  const dispatch = useDispatch() 
+  const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getCategory())  // eslint-disable-next-line
-  }, [])
+    dispatch(getCategory()); // eslint-disable-next-line
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -20,7 +28,7 @@ function App() {
           <Route path={path.PRODUCTS} element={<Products />} />
           <Route path={path.BRAND} element={<Brand />} />
           <Route path={path.ABOUT_US} element={<AboutUs />} />
-          <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />} />
+          <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />}/>
           <Route path={path.REGISTER} element={<Register />} />
         </Route>
         <Route path={path.LOGIN} element={<Login />} />

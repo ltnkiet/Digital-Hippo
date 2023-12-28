@@ -26,3 +26,10 @@ export const navigation = [
     path: `/${path.ABOUT_US}`
   },
 ]
+
+export const footer = [
+  {
+    id: 1,
+    value: "THÔNG TIN LIÊN HỆ"
+  }
+]

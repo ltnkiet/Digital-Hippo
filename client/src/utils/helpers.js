@@ -6,7 +6,7 @@ export const createSlug = (string) => {
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .split(" ")
-    .join("_");
+    .join("-");
 };
 
 export const formatPrice = (value) => {
