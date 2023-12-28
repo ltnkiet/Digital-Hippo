@@ -9,8 +9,12 @@ import {
   FaStarHalfAlt ,
   FaStar,
   FaEye,
-  FaRegHeart
+  FaRegHeart,
+  FaCcVisa,
+  FaCcPaypal,
+  
 } from "react-icons/fa";
+import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai'
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
   MdShoppingCart,
@@ -27,7 +31,7 @@ import {
   BsFillTelephoneFill,
   BsFillHeartFill
 } from "react-icons/bs";
-import { IoFastFood, IoBasket } from "react-icons/io5";
+import { IoFastFood, IoBasket, IoArrowBackOutline  } from "react-icons/io5";
 import {
   BiChevronsRight,
   BiMinus,
@@ -54,6 +58,8 @@ export {
   FaStar,
   FaArrowLeft,
 
+  AiOutlineEye, AiOutlineEyeInvisible,
+
   FcClearFilters,
   FcGoogle,
 
@@ -72,6 +78,7 @@ export {
 
   IoFastFood,
   IoBasket,
+  IoArrowBackOutline,
 
   BiChevronsRight,
   BiMinus,
