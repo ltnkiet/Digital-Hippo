@@ -32,7 +32,7 @@ const register = asyncHandler(async (req, res) => {
       <button style="padding: 14px; background-color: #1E90FF; border-radius: 5px; border-style: none; cursor: pointer">
         <a href=${process.env.SERVER_URL}/user/register/email-verify/${emailVerifyToken}
           style="color:white; text-decoration-line: none; font-size: 14px; font-weight: 700">
-            Xác minh tài khoản
+            Xác thực tài khoản
         </a>
       </button>
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
@@ -166,14 +166,12 @@ const forgotPassword = asyncHandler(async (req, res) => {
     </button>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Nếu bạn không yêu cầu đặt lại mật khẩu, 
     thì có thể bỏ qua email này</p>
-    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Cảm ơn bạn, </p>
-    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
+    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 14px">Cảm ơn bạn, </p>
+    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 14px">Digital Hippo Support Team!</p>
     <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">
   `;
 
-  const data = {
-    email,
-    html,
+  const data = { email, html,
     subject: "[Digital Hippo] Password Reset E-Mail",
   };
 

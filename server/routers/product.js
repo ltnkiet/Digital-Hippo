@@ -7,7 +7,7 @@ router.post("/", [verifyAccessToken, isEmployee], productController.createProduc
 router.get("/", productController.getProductList);
 router.put("/rating", verifyAccessToken, productController.rating);
 
-router.put("/uploadimage/:pid",[verifyAccessToken, isEmployee], uploader.array('images', 10),productController.uploadImgProduct);
+router.put("/upload/image/:pid",[verifyAccessToken, isEmployee], uploader.array('images', 10),productController.uploadImgProduct);
 router.put("/:pid",[verifyAccessToken, isEmployee],productController.updateProduct);
 router.delete("/:pid", [verifyAccessToken, isEmployee],productController.deleteProduct);
 router.get("/:pid", productController.getProduct);
