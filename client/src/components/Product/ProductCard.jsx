@@ -52,11 +52,12 @@ const ProductCard = ({ data, isNew }) => {
               {data?.category?.name}
             </div>
           </div>
-          <div class="flex items-center mt-2.5 mb-5">
+          <div class="flex items-center justify-between mt-2.5 mb-5">
             {renderStar(data?.totalRating)}
-            <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+            <span class="bg-blue-100 text-blue-800 text-sm font-semibold mx-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
               {data?.totalRating}
             </span>
+            <span className="text-xs">Đã bán {data?.sold}</span>
           </div>
           <div class="flex items-center justify-between">
             <span class="text-xl font-bold text-gray-900 dark:text-white">

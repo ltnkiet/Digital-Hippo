@@ -64,10 +64,10 @@ const Header = () => {
             <p className="text-white text-sm font-semibold">2</p>
           </div>
         </div>
-        <div className="flex flex-col items-center cursor-pointer">
+        <Link to={path.LOGIN} className="flex flex-col items-center cursor-pointer">
           <FaUserCircle className="w-7 h-7 text-textColor" />
           <span>Tài khoản</span>
-        </div>
+        </Link>
       </div>
     </div>
   );
