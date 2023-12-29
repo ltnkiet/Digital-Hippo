@@ -22,6 +22,7 @@ module.exports = {
       },
       backgroundColor: {
         main: "#349fe2",
+        primary: '#F5F5F5',
         'overlay-70': 'rgba(0,0,0,0.7)',
       },
       keyframes: {

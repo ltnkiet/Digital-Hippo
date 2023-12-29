@@ -1,14 +1,6 @@
 import React, { memo, useState } from "react";
 
-const InputForm = ({
-  label,
-  value,
-  setValue,
-  keyPayload,
-  invalidFields,
-  setInvalidFields,
-  type,
-}) => {
+const InputForm = ({ label, value, setValue, keyPayload, invalidFields, setInvalidFields, type,}) => {
   return (
     <div>
       <label htmlFor={keyPayload} className="text-xs">
@@ -17,7 +9,7 @@ const InputForm = ({
       <input
         type={type || "text"}
         id={keyPayload}
-        className="outline-none bg-main p-2 rounded-md w-full"
+        className="outline-none bg-[#e8f0fe] p-2 rounded-md w-full"
         value={value}
         onChange={(e) =>
           setValue((prev) => ({ ...prev, [keyPayload]: e.target.value }))
