@@ -51,21 +51,21 @@ const Header = () => {
           </button>
         </div>
       </form>
-      <div className="flex flex-row items-center justify-between gap-8">
+      <div className="flex flex-row items-center justify-between gap-8 text-main">
         <div className="relative cursor-pointer">
-          <BsFillHeartFill className="text-textColor text-2xl cursor-pointer w-7 h-7" />
+          <BsFillHeartFill className="text-2xl cursor-pointer w-7 h-7" />
           <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-4">
             <p className="text-white text-sm font-semibold">1</p>
           </div>
         </div>
         <div className="relative cursor-pointer">
-          <MdShoppingCart className="text-textColor text-2xl cursor-pointer w-8 h-8" />
+          <MdShoppingCart className=" text-2xl cursor-pointer w-8 h-8" />
           <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-3">
             <p className="text-white text-sm font-semibold">2</p>
           </div>
         </div>
         <Link to={path.LOGIN} className="flex flex-col items-center cursor-pointer">
-          <FaUserCircle className="w-7 h-7 text-textColor" />
+          <FaUserCircle className="w-7 h-7 " />
           <span>Tài khoản</span>
         </Link>
       </div>

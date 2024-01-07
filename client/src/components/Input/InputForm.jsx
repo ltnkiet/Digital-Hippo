@@ -2,8 +2,8 @@ import React, { memo, useState } from "react";
 
 const InputForm = ({ label, value, setValue, keyPayload, invalidFields, setInvalidFields, type,}) => {
   return (
-    <div>
-      <label htmlFor={keyPayload} className="text-xs">
+    <div className="w-full">
+      <label htmlFor={keyPayload} className="text-sm font-medium">
         {label}
       </label>
       <input
@@ -16,12 +16,12 @@ const InputForm = ({ label, value, setValue, keyPayload, invalidFields, setInval
         }
         onFocus={() => setInvalidFields([])}
       />
-      {invalidFields.length > 0 &&
+      {/* {invalidFields.length > 0 &&
         invalidFields.some((i) => i.name === keyPayload) && (
           <small className="text-red-500 italic">
             {invalidFields.find((i) => i.name === keyPayload)?.message}
           </small>
-        )}
+        )} */}
     </div>
   );
 };

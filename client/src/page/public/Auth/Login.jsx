@@ -1,48 +1,167 @@
-import React, {useState} from 'react'
-import { InputForm } from '../../../components'
-import backgroud from '../../../asset/img/thumbnail.jpg'
+import React, { useCallback, useState } from "react";
+import { InputForm, Button } from "../../../components";
+import validate from "../../../utils/validateFields";
 
 const Login = () => {
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [isRegister, setIsRegister] = useState(false);
+  const [invalidFields, setInvalidFields] = useState([]);
+  const [showPassword, setShowPassword] = useState(false);
   const [payload, setPayload] = useState({
-    email: "",
+    name: "",
+    email: "",  
     phone: "",
     password: "",
-    name: "",
   });
+  const handleSubmit = useCallback(() => {
+    const {name, phone, ...data} = payload;
+    if(isRegister) console.log(payload);
+    else console.log(data)
+  }, [payload]);
+
+  const handleForgotPass = async () => {
+    // const response = await apiForgotPassword(payload);
+    // if (response?.data?.err === 1)
+    //   Swal.fire("Sự cố!", response?.data?.msg, "error");
+    // else {
+    //   Swal.fire("Hoàn tất", response?.data?.msg, "success");
+    // }
+  };
   return (
-    <div className='w-screen h-screen relative'>
-      <img src={backgroud} alt="" className='absolute w-[70%] h-full right-0 object-cover'/>
-      <div className='absolute w-[30%] top-0 bottom-0 left-0 right-1/2 flex items-center justify-center bg-primary'>
-        <div className='p-8 flex flex-col items-center'>
-          <h1 className='text-2xl font-semibold text-main'>Đăng nhập</h1>
-          <InputForm
-            label={"EMAIL"}
-            value={payload.email}
-            setValue={setPayload}
-            keyPayload={"email"}
-          />
-          <InputForm
-            label={"SỐ ĐIỆN THOẠI"}
-            value={payload.email}
-            setValue={setPayload}
-            keyPayload={"email"}
-          />
-          <InputForm
-            label={"EMAIL"}
-            value={payload.email}
-            setValue={setPayload}
-            keyPayload={"email"}
-          />
-          <InputForm
-            label={"EMAIL"}
-            value={payload.email}
-            setValue={setPayload}
-            keyPayload={"email"}
-          />
-        </div>
+    <div className="w-full flex items-center justify-center p-5">
+      <div className="bg-sky-400 w-2/5 p-8 rounded-md shadow-lg">
+        {isForgotPassword ? (
+          <>
+            <h3 className="font-semibold text-2xl mb-5">Quên mật khẩu</h3>
+            <div className="w-full flex flex-col gap-5">
+              <InputForm
+                setInvalidFields={setInvalidFields}
+                invalidFields={invalidFields}
+                label={"EMAIL"}
+                value={payload.email}
+                setValue={setPayload}
+                keyPayload={"email"}
+              />
+              <Button
+                text="Gửi"
+                bgColor="bg-secondary"
+                textColor="text-white"
+                fullWidth
+                onClick={handleForgotPass}
+              />
+            </div>
+            <div className="mt-7 flex items-center justify-between text-xl">
+              <small
+                onClick={() => setIsForgotPassword(false)}
+                className="text-white hover:underline cursor-pointer">
+                Quay lại
+              </small>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="font-semibold text-3xl mb-5 flex items-center justify-center">
+              {isRegister ? "Đăng kí tài khoản" : "Đăng nhập"}
+            </div>
+            <div className="w-full flex flex-col gap-5">
+              {isRegister && (
+                <>
+                  <InputForm
+                    setInvalidFields={setInvalidFields}
+                    invalidFields={invalidFields}
+                    label={"HỌ TÊN"}
+                    value={payload.name}
+                    setValue={setPayload}
+                    keyPayload={"name"}
+                  />
+                  <InputForm
+                    setInvalidFields={setInvalidFields}
+                    invalidFields={invalidFields}
+                    label={"SỐ ĐIỆN THOẠI"}
+                    value={payload.phone}
+                    setValue={setPayload}
+                    keyPayload={"phone"}
+                  />
+                </>
+              )}
+              <InputForm
+                setInvalidFields={setInvalidFields}
+                invalidFields={invalidFields}
+                label={"EMAIL"}
+                value={payload.email}
+                setValue={setPayload}
+                keyPayload={"email"}
+              />
+
+              <InputForm
+                setInvalidFields={setInvalidFields}
+                invalidFields={invalidFields}
+                label={"MẬT KHẨU"}
+                value={payload.password}
+                setValue={setPayload}
+                keyPayload={"password"}
+                type={showPassword ? "text" : "password"}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="text-white text-sm hover:underline cursor-pointer flex justify-end">
+                {showPassword ? "Ẩn mật khẩu" : "Hiển thị mật khẩu"}
+              </button>
+              <Button
+                text={isRegister ? "Đăng kí" : "Đăng nhập"}
+                bgColor="bg-white"
+                textColor="text-black"
+                fullWidth
+                onClick={handleSubmit}
+              />
+            </div>
+            <div className="mt-7 flex items-center justify-between text-xl">
+              {isRegister ? (
+                <small>
+                  Bạn đã có tài khoản?{" "}
+                  <span
+                    onClick={() => {
+                      setIsRegister(false);
+                      setPayload({
+                        email: "",
+                        phone: "",
+                        password: "",
+                        name: "",
+                      });
+                    }}
+                    className="text-white hover:underline cursor-pointer">
+                    Đăng nhập ngay
+                  </span>
+                </small>
+              ) : (
+                <>
+                  <small
+                    onClick={() => setIsForgotPassword(true)}
+                    className="text-white hover:underline cursor-pointer">
+                    Bạn quên mật khẩu
+                  </small>
+                  <small
+                    onClick={() => {
+                      setIsRegister(true);
+                      setPayload({
+                        email: "",
+                        phone: "",
+                        password: "",
+                        name: "",
+                      });
+                    }}
+                    className="text-white hover:hover:underline cursor-pointer">
+                    Tạo tài khoản mới
+                  </small>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
