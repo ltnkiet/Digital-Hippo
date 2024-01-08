@@ -18,10 +18,10 @@ const register = asyncHandler(async (req, res) => {
       msg: "Missing Input",
     });
   const user = await User.findOne({email})
-  if(user) throw new Error("User has existed")
+  if(user) throw new Error("Email này đã tồn tại.")
   else {
-    const emailVerifyToken = crypto.randomBytes(32).toString("hex");
-    res.cookie("data", {...req.body, emailVerifyToken}, { httpOnly: true, maxAge: 3 * 60 * 1000 });
+    const token = crypto.randomBytes(32).toString("hex");
+    res.cookie("data", {...req.body, token}, { httpOnly: true, maxAge: 3 * 60 * 1000 });
     const html = `
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
         Cảm ơn bạn vì đã chọn đồng hành cùng chúng tôi
@@ -30,7 +30,7 @@ const register = asyncHandler(async (req, res) => {
         Chọn vào đây để hoàn tất quá trình đăng ký, yêu cầu này chỉ tồn tại 3 phút:
       </p>
       <button style="padding: 14px; background-color: #1E90FF; border-radius: 5px; border-style: none; cursor: pointer">
-        <a href=${process.env.SERVER_URL}/user/register/email-verify/${emailVerifyToken}
+        <a href=${process.env.SERVER_URL}/user/register/verify/${token}
           style="color:white; text-decoration-line: none; font-size: 14px; font-weight: 700">
             Xác thực tài khoản
         </a>
@@ -40,7 +40,7 @@ const register = asyncHandler(async (req, res) => {
     await sendMail({ email, html, subject: "[Digital Hippo] E-Mail Verify" });
     return res.json({
       success: true,
-      msg: "Email has been sent to your account",
+      msg: "Thư báo đã được gửi đến email của bạn.",
     });
   }
 });
@@ -48,20 +48,16 @@ const register = asyncHandler(async (req, res) => {
 const emailVerify = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   const { token } = req.params;
-  if(!cookie || cookie?.data?.emailVerifyToken !== token) throw new Error("Register Failed");
-  // return res.redirect(`${process.env.CLIENT_URL}/register/final/failed`)
+  if(!cookie || cookie?.data?.token !== token) return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`)
   const newUser = await User.create({
     name: cookie?.data?.name,
+    phone: cookie?.data?.phone,
     email: cookie?.data?.email,
     password: cookie?.data?.password,
-    phone: cookie?.data?.phone,
   })
-  return res.status(200).json({
-    success: newUser ? true : false,
-    msg: newUser ? "Register is successfully" : "Something went wrong"
-  })
-  // if(newUser) return res.redirect(`${process.env.CLIENT_URL}/success`)
-  // else return res.redirect(`${process.env.CLIENT_URL}/register/final/failed`)
+  res.clearCookie('data')
+  if(newUser) return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/thanh-cong`)
+  else return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`) 
 });
 
 //Đăng nhập
@@ -90,10 +86,11 @@ const login = asyncHandler(async (req, res) => {
     return res.status(200).json({
       success: true,
       accessToken,
+      msg: "Đăng nhập thành công",
       user,
     });
   } else {
-    throw new Error("Invalid credentials");
+    throw new Error("Email hoặc mật khẩu không khớp!");
   }
 });
 
