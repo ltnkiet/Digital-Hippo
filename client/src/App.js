@@ -29,9 +29,9 @@ function App() {
           <Route path={path.BRAND} element={<Brand />} />
           <Route path={path.ABOUT_US} element={<AboutUs />} />
           <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />}/>
-          <Route path={path.REGISTER} element={<Register />} />
           <Route path={path.LOGIN} element={<Login />} />
         </Route>
+          <Route path={path.REGISTER} element={<Register />} />
       </Routes>
     </div>
   );

@@ -1,7 +1,10 @@
 import React from "react";
 import { Sidebar, Banner, BestSeller, FeaturedProduct } from "../../../components";
-
+import { useSelector } from "react-redux";
 const Home = () => {
+  const { newProducts } = useSelector((state) => state.product)
+  const { categories } = useSelector((state) => state.app)
+
   return (
     <>
       <div className="w-main flex flex-col">

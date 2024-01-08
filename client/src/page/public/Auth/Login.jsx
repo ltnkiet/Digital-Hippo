@@ -1,8 +1,18 @@
 import React, { useCallback, useState } from "react";
 import { InputForm, Button } from "../../../components";
 import validate from "../../../utils/validateFields";
+import {apiLogin, apiRegister} from '../../../api';
+import Swal from "sweetalert2";
+import { useNavigate, useLocation } from "react-router-dom";
+import path from "../../../utils/path";
+import {register} from '../../../store/user/userSlice'
+import { useDispatch } from "react-redux";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const location = useLocation();
+  console.log(location)
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [invalidFields, setInvalidFields] = useState([]);
@@ -13,10 +23,34 @@ const Login = () => {
     phone: "",
     password: "",
   });
-  const handleSubmit = useCallback(() => {
+  const resetPayload = () => {
+    setPayload({
+      name: "",
+      email: "",  
+      phone: "",
+      password: "",
+    })
+  }
+  const handleSubmit = useCallback( async () => {
     const {name, phone, ...data} = payload;
-    if(isRegister) console.log(payload);
-    else console.log(data)
+    if(isRegister) {
+      const response = await apiRegister(payload) 
+      if(response.data.success) {
+        Swal.fire("Hoàn tất", response?.data?.msg, "success")
+        // .then(() => {
+        //   setIsRegister(false)
+        //   resetPayload()
+        // })
+      } else Swal.fire("Sự cố!", response?.data?.msg, "error");
+    } else {
+      const res = await apiLogin(data)
+      if(res.data.success) {
+        Swal.fire("Hoàn tất", res?.data?.msg, "success").then(() => {
+          dispatch(register({isLoggedIn: true, token: res.data.accessToken, userData: res.data.user}))
+          navigate(`/${path.HOME}`)
+        })
+      } else Swal.fire("Sự cố!", res?.data?.msg, "error");
+    }
   }, [payload]);
 
   const handleForgotPass = async () => {
@@ -44,8 +78,8 @@ const Login = () => {
               />
               <Button
                 text="Gửi"
-                bgColor="bg-secondary"
-                textColor="text-white"
+                bgColor="bg-white"
+                textColor="text-black"
                 fullWidth
                 onClick={handleForgotPass}
               />

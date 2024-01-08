@@ -22,7 +22,6 @@ const BestSeller = () => {
     if (response?.data.success) {
       setBestSeller(response?.data.productList);
       setProductTab(response?.data.productList);
-      console.log(response?.data.productList);
     }
   };
 

@@ -10,7 +10,6 @@ const FeaturedProduct = () => {
       sort: "-totalRating,-rating",
     });
     if (response?.data?.success) setProducts(response?.data?.productList);
-    console.log(response?.data?.productList);
   };
   useEffect(() => {
     fetchProduct();
