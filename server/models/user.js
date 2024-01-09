@@ -17,12 +17,15 @@ var userSchema = new mongoose.Schema(
     },
     phone: {
       type: Number,
-      unique: true,
       required: true,
     },
     password: {
       type: String,
       required: true,
+    },
+    avatar: {
+      type: String,
+      default: "https://res.cloudinary.com/ltnkiet/image/upload/v1704719811/DigitalHippo/thumb/hgspymoubcqrn7stki4n.png"
     },
     role: {
       type: Number,

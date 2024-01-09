@@ -101,7 +101,7 @@ const getCurrent = asyncHandler(async (req, res) => {
   );
   return res.status(200).json({
     success: user ? true : false,
-    result: user ? user : "User Not Found",
+    users: user ? user : "User Not Found",
   });
 });
 
@@ -142,10 +142,10 @@ const logout = asyncHandler(async (req, res) => {
 });
 
 const forgotPassword = asyncHandler(async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.body;
   if (!email) throw new Error("Missing Email");
   const user = await User.findOne({ email });
-  if (!user) throw new Error("User not found");
+  if (!user) throw new Error("Email chưa được đăng ký");
   const resetToken = user.createPasswordChangedToken();
   await user.save();
   const html = `
@@ -156,15 +156,15 @@ const forgotPassword = asyncHandler(async (req, res) => {
       Chọn vào đây để lấy lại mật khẩu, yêu cầu này sẽ mất hiệu lực sau 15 phút:
     </p>
     <button style="padding: 14px; background-color: #1E90FF; border-radius: 5px; border-style: none; cursor: pointer">
-      <a href=${process.env.SERVER_URL}/user/password/reset/${resetToken}
+      <a href=${process.env.CLIENT_URL}/mat-khau/thay-doi/${resetToken}
         style="color:white; text-decoration-line: none; font-size: 14px; font-weight: 700">
-          Reset Password
+          Cập nhật mật khẩu
       </a>
     </button>
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Nếu bạn không yêu cầu đặt lại mật khẩu, 
     thì có thể bỏ qua email này</p>
-    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 14px">Cảm ơn bạn, </p>
-    <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 900; font-size: 14px">Digital Hippo Support Team!</p>
+    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 14px">Cảm ơn bạn, </p>
+    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 14px">Digital Hippo Support Team!</p>
     <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">
   `;
 
@@ -176,6 +176,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     result,
+    msg:"Thư báo đã được gửi tới email của bạn"
   });
 });
 
@@ -190,7 +191,7 @@ const resetPassword = asyncHandler(async (req, res) => {
     passwordResetToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  if (!user) throw new Error("Invalid Reset Token");
+  if (!user) throw new Error("Đã hết thời gian thay đổi mật khẩu. Vui lòng thử lại!");
   user.password = password;
   user.passwordResetToken = undefined;
   user.passwordChangedAt = Date.now();
@@ -198,7 +199,7 @@ const resetPassword = asyncHandler(async (req, res) => {
   await user.save();
   res.status(200).json({
     success: user ? true : false,
-    msg: user ? "Update Password" : "Something went wrong",
+    msg: user ? "Cập nhật thành công" : "X",
   });
 });
 

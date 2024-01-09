@@ -7,7 +7,7 @@ router.get("/register/verify/:token", userController.emailVerify);
 router.post("/login", userController.login);
 router.post("/refreshtoken", userController.refreshAccessToken);
 router.get("/logout", userController.logout);
-router.get("/password/forgot", userController.forgotPassword);
+router.post("/password/forgot", userController.forgotPassword);
 router.put("/password/reset", userController.resetPassword);
 router.get("/current", verifyAccessToken, userController.getCurrent);
 router.get("/", [verifyAccessToken, isAdmin], userController.getUser);

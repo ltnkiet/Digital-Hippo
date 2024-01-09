@@ -1,37 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
+import * as actions from "./asyncActions";
 
 export const userSlice = createSlice({
   name: "user",
   initialState: {
     isLoggedIn: false,
-    current: null,  
-    token: null
+    current: null,
+    token: null,
+    isLoading: false,
   },
   reducers: {
-    register: (state, action) => {
-      console.log(action)
-      state.isLoggedIn = action.payload.isLoggedIn
-      state.current = action.payload.userData
-      state.token = action.payload.token
-    }
+    login: (state, action) => {
+      state.isLoggedIn = action.payload.isLoggedIn;
+      state.token = action.payload.token;
+    },
   },
   // Code logic xử lý async action
-  // extraReducers: (builder) => {
-  //   builder.addCase(actions.getNewuser.pending, (state) => {
-  //     state.isLoading = true;
-  //   });
-  //   builder.addCase(actions.getNewuser.fulfilled, (state, action) => {
-  //     state.isLoading = false;
-  //     state.newusers = action.payload;
-  //   });
-  //   // Khi thực hiện action thất bại (Promise rejected)
-  //   builder.addCase(actions.getNewuser.rejected, (state, action) => {
-  //     state.isLoading = false;
-  //     state.errorMessage = action.payload.message;
-  //   });
-  // },
+  extraReducers: (builder) => {
+    builder.addCase(actions.getCurrent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(actions.getCurrent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.current = action.payload;
+    });
+    // Khi thực hiện action thất bại (Promise rejected)
+    builder.addCase(actions.getCurrent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.current = null;
+    });
+  },
 });
 
-export const { register } = userSlice.actions; 
+export const { login } = userSlice.actions;
 
 export default userSlice.reducer;

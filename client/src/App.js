@@ -5,6 +5,7 @@ import {
   Login,
   Public,
   Register,
+  ResetPassword,
   Brand,
   Products,
   ProductDetail,
@@ -30,6 +31,7 @@ function App() {
           <Route path={path.ABOUT_US} element={<AboutUs />} />
           <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />}/>
           <Route path={path.LOGIN} element={<Login />} />
+          <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
           <Route path={path.REGISTER} element={<Register />} />
       </Routes>

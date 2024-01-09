@@ -10,8 +10,8 @@ import {
   FaStar,
   FaEye,
   FaRegHeart,
-  FaCcVisa,
-  FaCcPaypal,
+  // FaCcVisa,
+  // FaCcPaypal,
   
 } from "react-icons/fa";
 import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai'
@@ -44,6 +44,7 @@ import { HiOutlineMail } from "react-icons/hi";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
 import { RiRefreshFill, RiLockPasswordLine } from "react-icons/ri";
+import { IoIosArrowForward } from "react-icons/io";
 
 export {
   FaEnvelope,
@@ -95,4 +96,5 @@ export {
   RiRefreshFill,
   RiLockPasswordLine,
 
+  IoIosArrowForward
 };

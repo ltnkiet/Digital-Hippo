@@ -1,72 +1,88 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { InputForm, Button } from "../../../components";
-import validate from "../../../utils/validateFields";
-import {apiLogin, apiRegister} from '../../../api';
+import validate from "../../../utils/helpers";
+import { apiLogin, apiRegister, apiForgotPassword } from "../../../api";
 import Swal from "sweetalert2";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import path from "../../../utils/path";
-import {register} from '../../../store/user/userSlice'
-import { useDispatch } from "react-redux";
+import { login } from "../../../store/user/userSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 const Login = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch()
-  const location = useLocation();
-  console.log(location)
+  const dispatch = useDispatch();
+  const {isLoggedIn} = useSelector(state => state.user)
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [invalidFields, setInvalidFields] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [payload, setPayload] = useState({
     name: "",
-    email: "",  
+    email: "",
     phone: "",
     password: "",
   });
   const resetPayload = () => {
     setPayload({
       name: "",
-      email: "",  
+      email: "",
       phone: "",
       password: "",
-    })
-  }
-  const handleSubmit = useCallback( async () => {
-    const {name, phone, ...data} = payload;
-    if(isRegister) {
-      const response = await apiRegister(payload) 
-      if(response.data.success) {
-        Swal.fire("Hoàn tất", response?.data?.msg, "success")
-        // .then(() => {
-        //   setIsRegister(false)
-        //   resetPayload()
-        // })
-      } else Swal.fire("Sự cố!", response?.data?.msg, "error");
-    } else {
-      const res = await apiLogin(data)
-      if(res.data.success) {
-        Swal.fire("Hoàn tất", res?.data?.msg, "success").then(() => {
-          dispatch(register({isLoggedIn: true, token: res.data.accessToken, userData: res.data.user}))
-          navigate(`/${path.HOME}`)
-        })
-      } else Swal.fire("Sự cố!", res?.data?.msg, "error");
+    });
+  };
+  useEffect(() => {
+    isLoggedIn && navigate(`/${path.HOME}`);
+  }, [isLoggedIn]);
+
+  const handleSubmit = useCallback(async () => {
+    const { name, phone, ...data } = payload;
+    let finalPayload = isRegister
+      ? payload
+      : { email: payload.email, password: payload.password };
+    let invalids = validate(finalPayload, setInvalidFields);
+    if (invalids === 0) {
+      if (isRegister) {
+        const response = await apiRegister(payload);
+        if (response.success) {
+          Swal.fire("Hoàn tất", response.msg, "success").then(() => {
+            setIsRegister(false);
+            resetPayload();
+          });
+        } else Swal.fire("Sự cố!", response.msg, "error");
+      } else {
+        const res = await apiLogin(data);
+        if (res.success) {
+          Swal.fire("Hoàn tất", res.msg, "success").then(() => {
+            dispatch(
+              login({
+                isLoggedIn: true,
+                token: res.accessToken,
+                userData: res.user,
+              })
+            );
+            navigate(`/${path.HOME}`);
+          });
+        } else Swal.fire("Sự cố!", res.msg, "error");
+      }
     }
   }, [payload]);
 
   const handleForgotPass = async () => {
-    // const response = await apiForgotPassword(payload);
-    // if (response?.data?.err === 1)
-    //   Swal.fire("Sự cố!", response?.data?.msg, "error");
-    // else {
-    //   Swal.fire("Hoàn tất", response?.data?.msg, "success");
-    // }
+    const response = await apiForgotPassword(payload);
+    if (response.success)
+      Swal.fire("Hoàn tất", response.msg, "success");
+    else {
+      Swal.fire("Sự cố!", response.msg, "error");
+    }
   };
   return (
     <div className="w-full flex items-center justify-center p-5">
       <div className="bg-sky-400 w-2/5 p-8 rounded-md shadow-lg">
         {isForgotPassword ? (
           <>
-            <h3 className="font-semibold text-2xl mb-5">Quên mật khẩu</h3>
+            <h3 className="font-semibold text-2xl mb-5 text-white">
+              Quên mật khẩu
+            </h3>
             <div className="w-full flex flex-col gap-5">
               <InputForm
                 setInvalidFields={setInvalidFields}
@@ -94,7 +110,7 @@ const Login = () => {
           </>
         ) : (
           <>
-            <div className="font-semibold text-3xl mb-5 flex items-center justify-center">
+            <div className="font-semibold text-3xl mb-5 flex items-center justify-center text-white">
               {isRegister ? "Đăng kí tài khoản" : "Đăng nhập"}
             </div>
             <div className="w-full flex flex-col gap-5">
@@ -173,7 +189,7 @@ const Login = () => {
                   <small
                     onClick={() => setIsForgotPassword(true)}
                     className="text-white hover:underline cursor-pointer">
-                    Bạn quên mật khẩu
+                    Bạn quên mật khẩu?
                   </small>
                   <small
                     onClick={() => {

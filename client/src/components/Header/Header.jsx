@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import { getCurrent } from "../../store/user/asyncActions";
+import { useDispatch, useSelector } from "react-redux";
 import path from "../../utils/path";
-
 import Logo from "../../asset/img/logo.png";
 import {
   MdShoppingCart,
@@ -11,12 +11,19 @@ import {
 } from "../../asset/icons";
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const { isLoggedIn, current } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (isLoggedIn) dispatch(getCurrent());
+  }, [dispatch, isLoggedIn]);
+
   return (
-    <div className="w-main flex justify-between items-center ">
+    <div className="w-main flex justify-between items-center">
       <Link to={`/${path.HOME}`}>
         <img src={Logo} alt="" className="h-32" />
       </Link>
-      <form className="w-[60%]">
+      {/* <form className="w-[60%]">
         <label
           for="default-search"
           className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
@@ -50,24 +57,31 @@ const Header = () => {
             Tìm
           </button>
         </div>
-      </form>
+      </form> */}
       <div className="flex flex-row items-center justify-between gap-8 text-main">
-        <div className="relative cursor-pointer">
-          <BsFillHeartFill className="text-2xl cursor-pointer w-7 h-7" />
-          <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-4">
-            <p className="text-white text-sm font-semibold">1</p>
-          </div>
-        </div>
-        <div className="relative cursor-pointer">
-          <MdShoppingCart className=" text-2xl cursor-pointer w-8 h-8" />
-          <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-3">
-            <p className="text-white text-sm font-semibold">2</p>
-          </div>
-        </div>
-        <Link to={path.LOGIN} className="flex flex-col items-center cursor-pointer">
-          <FaUserCircle className="w-7 h-7 " />
-          <span>Tài khoản</span>
+        <Link
+          to={path.LOGIN}
+          className="flex items-center cursor-pointer">
+            {isLoggedIn 
+              ? <div className="flex flex-row items-center gap-2">
+                <img src={current?.avatar} alt="" className="w-10 rounded-full"/>
+                <span className="font-medium">Chào {current?.name}</span>
+              </div>
+              : <FaUserCircle className="w-8 h-8"/>
+            }
         </Link>
+        <div className="relative cursor-pointer">
+          <BsFillHeartFill className="text-2xl cursor-pointer w-8" />
+          {/* <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-4">
+            <p className="text-white text-sm font-semibold">1</p>
+          </div> */}
+        </div>
+        <div className="relative cursor-pointer">
+          <MdShoppingCart className="text-2xl cursor-pointer w-8 h-8" />
+          {/* <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-2 -right-3">
+            <p className="text-white text-sm font-semibold">2</p>
+          </div> */}
+        </div>
       </div>
     </div>
   );
