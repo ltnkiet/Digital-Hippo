@@ -4,6 +4,7 @@ export { default as Public } from "./Home/Public";
 // Auth
 export { default as Login } from "./Auth/Login";
 export { default as Register } from "./Auth/Register";
+export { default as ResetPassword } from "./Auth/ResetPassword";
 // Product
 export { default as Products } from "./Product/Products";
 export { default as ProductDetail } from "./Product/ProductDetail";

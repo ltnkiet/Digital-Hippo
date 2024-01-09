@@ -21,9 +21,9 @@ const createProduct = asyncHandler(async (req, res) => {
   });
 });
 
-const getProduct = asyncHandler(async (req, res) => {
+const getProductDetail = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const product = await Product.findById(pid);
+  const product = await Product.findById(pid).populate("category");
   return res.status(200).json({
     success: product ? true : false,
     productDetail: product ? product : "Cannot get product",
@@ -37,7 +37,10 @@ const getProductList = asyncHandler(async (req, res) => {
   exludeFields.forEach((el) => delete queries[el]);
   queries.status = 1;
   let queryString = JSON.stringify(queries);
-  queryString = queryString.replace(/\b(gte|gt|lt|lte|size)\b/g, (matchedEl) => `$${matchedEl}`);
+  queryString = queryString.replace(
+    /\b(gte|gt|lt|lte|size)\b/g,
+    (matchedEl) => `$${matchedEl}`
+  );
   const formatQueries = JSON.parse(queryString);
 
   //filter
@@ -50,7 +53,7 @@ const getProductList = asyncHandler(async (req, res) => {
     queryCommand = queryCommand.sort(sortBy);
   } else {
     queryCommand = queryCommand.sort("-createdAt");
-  } 
+  }
   //field
   if (req.query.fields) {
     const fields = req.query.fields.split(",").join(" ");
@@ -129,7 +132,8 @@ const rating = asyncHandler(async (req, res) => {
   const updatedTotalRating = await Product.findById(pid);
   const ratingCount = updatedTotalRating.rating.length;
   const sumRating = updatedTotalRating.rating.reduce(
-    (sum, el) => sum + +el.star, 0
+    (sum, el) => sum + +el.star,
+    0
   );
   updatedTotalRating.totalRating =
     Math.round((sumRating * 10) / ratingCount) / 10;
@@ -161,7 +165,7 @@ const uploadImgProduct = asyncHandler(async (req, res) => {
 
 module.exports = {
   createProduct,
-  getProduct,
+  getProductDetail,
   getProductList,
   updateProduct,
   deleteProduct,

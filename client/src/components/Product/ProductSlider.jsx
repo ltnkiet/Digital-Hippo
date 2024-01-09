@@ -11,7 +11,7 @@ const ProductSlider = ({products, activeTabs}) => {
     slidesToScroll: 3,
   };
   return (
-    <>
+    <div> 
       {products && (
         <Slider {...settings}>
           {products?.map((el) => (
@@ -24,7 +24,7 @@ const ProductSlider = ({products, activeTabs}) => {
           ))}
         </Slider>
       )}
-    </>
+    </div>
   );
 };
 

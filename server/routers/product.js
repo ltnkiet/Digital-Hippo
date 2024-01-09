@@ -10,6 +10,6 @@ router.put("/rating", verifyAccessToken, productController.rating);
 router.put("/upload/image/:pid",[verifyAccessToken, isEmployee], uploader.array('images', 10),productController.uploadImgProduct);
 router.put("/:pid",[verifyAccessToken, isEmployee],productController.updateProduct);
 router.delete("/:pid", [verifyAccessToken, isEmployee],productController.deleteProduct);
-router.get("/:pid", productController.getProduct);
+router.get("/:pid", productController.getProductDetail);
 
 module.exports = router;

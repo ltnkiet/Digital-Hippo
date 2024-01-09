@@ -9,7 +9,7 @@ const FeaturedProduct = () => {
       limit: 9,
       sort: "-totalRating,-rating",
     });
-    if (response?.data?.success) setProducts(response?.data?.productList);
+    if (response.success) setProducts(response.productList);
   };
   useEffect(() => {
     fetchProduct();

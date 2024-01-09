@@ -12,8 +12,8 @@ const ProductCard = ({ data, isNew }) => {
   return (
     <div className="mx-4">
       <Link class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-        to={`/${path.PRODUCT_DETAIL}/${data?.slug}`}
-      >
+        to={`/${data?.category?.name}/${data?._id}/${data?.title}`}
+      > 
         <div
           className="w-full relative"
           onMouseEnter={(e) => {

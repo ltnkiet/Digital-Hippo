@@ -19,15 +19,15 @@ const BestSeller = () => {
 
   const fetchProduct = async () => {
     const response = await apiGetProduct({ sort: "-sold" });
-    if (response?.data.success) {
-      setBestSeller(response?.data.productList);
-      setProductTab(response?.data.productList);
+    if (response.success) {
+      setBestSeller(response.productList);
+      setProductTab(response.productList);
     }
   };
 
   useEffect(() => {
     fetchProduct();
-    dispatch(getNewProduct());
+    dispatch(getNewProduct());// eslint-disable-next-line
   }, []);
 
   useEffect(() => {

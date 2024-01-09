@@ -6,7 +6,7 @@ import {Link} from 'react-router-dom'
 const ProductCardV2 = ({ data }) => {
   return (
     <Link className="w-full border flex flex-auto"
-    to={`/${path.PRODUCT_DETAIL}/${data?.slug}`}
+    to={`/${data?.category?.name}/${data?._id}/${data?.title}`}
     >
       <img src={data?.thumb} alt="" className="w-[150px] object-contain p-4 hover:p-0" />
       <div className="flex flex-col py-4 gap-2">

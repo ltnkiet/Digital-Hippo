@@ -1,23 +1,36 @@
-import axios from 'axios'
+import axios from "axios";
 
 const instance = axios.create({
   baseURL: process.env.REACT_APP_API_URL,
 });
-
 // Add a REQUEST interceptor
-axios.interceptors.request.use(function (config) {
-  // Do something before request is sent
-  return config;
-}, function (error) {
-  // Do something with request error
-  return Promise.reject(error);
-});
-
+instance.interceptors.request.use(
+  function (config) {
+    let token =
+      window.localStorage.getItem("persist:shop/user") &&
+      JSON.parse(window.localStorage.getItem("persist:shop/user"))?.token?.slice(1, -1);
+    config.headers = { authorization: token ? `Bearer ${token}` : null };
+    return config;
+    // const localStorageData = window.localStorage.getItem("persist:shop/user");
+    // if (localStorageData && typeof localStorageData === "string") {
+    //   localStorageData = JSON.parse(localStorageData);
+    //   const accessToken = JSON.parse(localStorageData?.token);
+    //   config.headers = { authorization: `Bearer ${accessToken}` };
+    // } else return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
 // Add a RESPONSE interceptor
-axios.interceptors.response.use(function (response) {
-  return response;
-}, function (error) { 
-  return error.data;
-});
+instance.interceptors.response.use(
+  function (response) {
+    return response.data;
+  },
+  function (error) {
+    return Promise.reject(error.response);
+    // return error.response;
+  }
+);
 
-export default instance
+export default instance;
