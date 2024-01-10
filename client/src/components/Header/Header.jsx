@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { getCurrent } from "../../store/user/asyncActions";
 import { useDispatch, useSelector } from "react-redux";
 import path from "../../utils/path";
-import Logo from "../../asset/img/logo.png";
+import { Logo } from "../../asset/img";
 import {
   MdShoppingCart,
   FaUserCircle,
@@ -59,16 +59,15 @@ const Header = () => {
         </div>
       </form> */}
       <div className="flex flex-row items-center justify-between gap-8 text-main">
-        <Link
-          to={path.LOGIN}
-          className="flex items-center cursor-pointer">
-            {isLoggedIn 
-              ? <div className="flex flex-row items-center gap-2">
-                <img src={current?.avatar} alt="" className="w-10 rounded-full"/>
-                <span className="font-medium">Chào {current?.name}</span>
-              </div>
-              : <FaUserCircle className="w-8 h-8"/>
-            }
+        <Link to={path.LOGIN} className="flex items-center cursor-pointer">
+          {isLoggedIn ? (
+            <div className="flex flex-row items-center gap-2">
+              <img src={current?.avatar} alt="" className="w-10 rounded-full" />
+              <span className="font-medium">Chào {current?.name}</span>
+            </div>
+          ) : (
+            <FaUserCircle className="w-8 h-8" />
+          )}
         </Link>
         <div className="relative cursor-pointer">
           <BsFillHeartFill className="text-2xl cursor-pointer w-8" />

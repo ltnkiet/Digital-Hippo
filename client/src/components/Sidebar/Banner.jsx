@@ -1,10 +1,10 @@
 import React from 'react'
-import imgBanner from '../../asset/img/thumbnail.jpg'
+import { Thumbnail } from '../../asset/img'
 
 const Banner = () => {
   return (
     <div className='w-full h-full'>
-      <img src={imgBanner} alt="Banner" className='w-full h-full object-cover' />
+      <img src={Thumbnail} alt="Banner" className='w-full h-full object-cover' />
     </div>
   )
 }
