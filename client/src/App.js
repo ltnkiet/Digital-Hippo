@@ -10,6 +10,7 @@ import {
   Products,
   ProductDetail,
   AboutUs,
+  ProductByCategory
 } from "././page/public";
 import path from "./utils/path";
 import { getCategory } from "./store/app/asyncAction";
@@ -30,6 +31,8 @@ function App() {
           <Route path={path.BRAND} element={<Brand />} />
           <Route path={path.ABOUT_US} element={<AboutUs />} />
           <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />}/>
+          <Route path={path.PRODUCTS} element={<Products />} />
+          <Route path={path.PRODUCTS_CATEGORY} element={<ProductByCategory />} />
           <Route path={path.LOGIN} element={<Login />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>

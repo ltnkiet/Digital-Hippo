@@ -2,18 +2,18 @@ import React, { useState } from "react";
 import { formatPrice, renderStar } from "../../utils/helpers";
 import labelNew from "../../asset/img/LabelNew.png";
 import labelTrending from "../../asset/img/LabelTrending.png";
-import SelectOption from "./SelectOption";
+import SelectOption from "../Common/SelectOption";
 import { FaEye, FaRegHeart } from "../../asset/icons";
 import { Link } from "react-router-dom";
-import path from '../../utils/path'
+import path from "../../utils/path";
 
-const ProductCard = ({ data, isNew }) => {
+const ProductCard = ({ data, isNew, normal }) => {
   const [showOption, setShowOption] = useState(false);
   return (
     <div className="mx-4">
-      <Link class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
-        to={`/${data?.category?.name}/${data?._id}/${data?.title}`}
-      > 
+      <Link
+        class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        to={`/${data?.category?.name}/${data?._id}/${data?.title}`}>
         <div
           className="w-full relative"
           onMouseEnter={(e) => {
@@ -24,10 +24,12 @@ const ProductCard = ({ data, isNew }) => {
             e.stopPropagation();
             setShowOption(false);
           }}>
-          <img
-            src={isNew ? labelNew : labelTrending}
-            className="absolute -top-1 -left-[8px] w-24 object-cover"
-          />
+          {!normal && (       
+            <img
+              src={isNew ? labelNew : labelTrending}
+              className="absolute -top-1 -left-[8px] w-24 object-cover"
+            />
+          )}
           <img
             class="p-5 rounded-t-lg object-contain w-[250px] h-[280px] hover:p-0"
             src={

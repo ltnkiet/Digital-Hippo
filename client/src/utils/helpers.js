@@ -2,7 +2,7 @@ import { FaRegStar, FaStar, FaStarHalfAlt } from "../asset/icons";
 
 export const createSlug = (string) => {
   return string
-    .toLowerCase()
+    .toUpperCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .split(" ")

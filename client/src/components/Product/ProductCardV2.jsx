@@ -19,9 +19,8 @@ const ProductCardV2 = ({ data }) => {
             {data?.totalRating}
           </span>
         </div>
-        <div className="flex flex-row gap-1">
-        <span className="italic">{`{${data?.rating.length}}`}</span>
-        <span>lượt đánh giá</span>
+        <div>
+          <span className="italic">{`{${data?.rating.length}}: lượt đánh giá`}</span>
         </div>
         <span class="text-sm font-bold text-gray-900 dark:text-white hover:underline cursor-pointer">
           {formatPrice(data?.price)}

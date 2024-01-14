@@ -14,7 +14,7 @@ import {
   // FaCcPaypal,
   
 } from "react-icons/fa";
-import {AiOutlineEye, AiOutlineEyeInvisible} from 'react-icons/ai'
+import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle } from 'react-icons/ai'
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
   MdShoppingCart,
@@ -45,6 +45,7 @@ import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
 import { RiRefreshFill, RiLockPasswordLine } from "react-icons/ri";
 import { IoIosArrowForward } from "react-icons/io";
+import { CgSpinner } from "react-icons/cg"
 
 export {
   FaEnvelope,
@@ -59,7 +60,7 @@ export {
   FaStar,
   FaArrowLeft,
 
-  AiOutlineEye, AiOutlineEyeInvisible,
+  AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle ,
 
   FcClearFilters,
   FcGoogle,
@@ -96,5 +97,7 @@ export {
   RiRefreshFill,
   RiLockPasswordLine,
 
-  IoIosArrowForward
+  IoIosArrowForward,
+
+  CgSpinner
 };

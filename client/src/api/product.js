@@ -12,3 +12,9 @@ export const apiGetProductDetail = (pid) =>
       url: `/product/${pid}`,
       method: "GET",
     });
+
+export const apiGetProductByCategory= (category) =>
+  axios({
+      url: `/product/category/${category}`,
+      method: "GET",
+    });

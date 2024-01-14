@@ -2,7 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import ProductCard from "./ProductCard";
 
-const ProductSlider = ({products, activeTabs}) => {
+const ProductSlider = ({products, activeTabs, normal}) => {
   const settings = {
     dots: false,
     infinite: false,
@@ -20,6 +20,7 @@ const ProductSlider = ({products, activeTabs}) => {
               pid={el.id}
               data={el}
               isNew={activeTabs === 1 ? false : true}
+              normal={normal}
             />
           ))}
         </Slider>

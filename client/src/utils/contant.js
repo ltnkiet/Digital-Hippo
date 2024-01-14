@@ -15,13 +15,8 @@ export const navigation = [
     value: "THƯƠNG HIỆU",
     path: `/${path.BRAND}`
   },
-  // {
-  //   id: 4,
-  //   value: "DANH MỤC",
-  //   path: `/${path.CATEGORY}`
-  // },
   {
-    id: 5,
+    id: 4,
     value: "VỀ CHÚNG TÔI",
     path: `/${path.ABOUT_US}`
   },

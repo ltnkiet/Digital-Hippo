@@ -6,6 +6,7 @@ export const getCategory = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     const response = await api.apiGetCategory();
     if (!response.success) return rejectWithValue(response);
+    console.log(response.category)
     return response.category;
   }
 );

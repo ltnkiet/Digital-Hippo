@@ -25,6 +25,13 @@ module.exports = {
         primary: '#F5F5F5',
         'overlay-70': 'rgba(0,0,0,0.7)',
       },
+      listStyleType: {
+        none: "none",
+        disc: "disc",
+        decimal: "decimal",
+        square: "square",
+        roman: "upper-roman",
+      },
       keyframes: {
         "slide-top": {
           "0%": {

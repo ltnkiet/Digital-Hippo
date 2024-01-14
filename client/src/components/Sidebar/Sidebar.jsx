@@ -1,7 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { NavLink } from "react-router-dom";
-import { createSlug } from "../../utils/helpers";
 
 const Sidebar = () => {
   const { categories } = useSelector((state) => state.app);
@@ -11,7 +10,7 @@ const Sidebar = () => {
       {categories?.map((el) => (
         <NavLink
           key={el._id}
-          to={createSlug(el.name)}
+          to={el.name}
           className={({ isActive }) =>
             isActive
               ? "text-main hover:text-main flex flex-row items-center gap-4"

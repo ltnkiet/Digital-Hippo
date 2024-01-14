@@ -1,4 +1,5 @@
 const Product = require("../models/product");
+const Category = require("../models/category");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 
@@ -36,14 +37,24 @@ const getProductList = asyncHandler(async (req, res) => {
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
   queries.status = 1;
+
   let queryString = JSON.stringify(queries);
   queryString = queryString.replace(
     /\b(gte|gt|lt|lte|size)\b/g,
     (matchedEl) => `$${matchedEl}`
-  );
-  const formatQueries = JSON.parse(queryString);
-
-  //filter
+    );
+    const formatQueries = JSON.parse(queryString);
+  if (queries.category) {
+    const cate = await Category.findOne({ name: queries.category });
+    if (cate) {
+      queries.category = cate._id;
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found",
+      });
+    }
+  }
   if (queries?.title)
     formatQueries.title = { $regex: queries.title, $options: "i" };
   let queryCommand = Product.find(formatQueries).populate("category");
@@ -51,21 +62,18 @@ const getProductList = asyncHandler(async (req, res) => {
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
     queryCommand = queryCommand.sort(sortBy);
-  } else {
-    queryCommand = queryCommand.sort("-createdAt");
-  }
+  } else queryCommand = queryCommand.sort("-createdAt");
   //field
   if (req.query.fields) {
     const fields = req.query.fields.split(",").join(" ");
     queryCommand = queryCommand.select(fields);
-  } else {
-    queryCommand = queryCommand.select("-__v");
-  }
+  } else queryCommand = queryCommand.select("-__v");
   //pagination - limit
   const page = +req.query.page || 1;
   const limit = +req.query.limit || process.env.LIMIT_PRODUCT;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
+
   queryCommand
     .then(async (response) => {
       const counts = await Product.find(formatQueries).countDocuments();
@@ -78,6 +86,28 @@ const getProductList = asyncHandler(async (req, res) => {
     .catch((err) => {
       throw new Error(err.message);
     });
+});
+
+const getProductByCategory = asyncHandler(async (req, res) => {
+  const { categoryName } = req.params;
+  const productCategory = await Category.findOne({ name: categoryName });
+  if (!productCategory) {
+    return res.status(404).json({
+      success: false,
+      error: "Category not found",
+    });
+  }
+  const products = await Product.find({ category: productCategory._id })
+    .populate("category")
+    .sort("-sold");
+  const counts = await Product.find({ category: productCategory._id })
+    .populate("category")
+    .countDocuments();
+  return res.status(200).json({
+    success: true,
+    qty: counts,
+    productByCategory: products,
+  });
 });
 
 const updateProduct = asyncHandler(async (req, res) => {
@@ -171,4 +201,5 @@ module.exports = {
   deleteProduct,
   rating,
   uploadImgProduct,
+  getProductByCategory,
 };
