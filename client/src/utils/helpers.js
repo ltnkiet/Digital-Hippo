@@ -1,4 +1,4 @@
-import { FaRegStar, FaStar, FaStarHalfAlt } from "../asset/icons";
+import { FaRegStar, FaStar, FaStarHalfAlt } from "asset/icons";
 
 export const createSlug = (string) => {
   return string
@@ -26,6 +26,11 @@ export const renderStar = (number) => {
   for (let i = star.length; i < 5; i++) star.push(<FaRegStar key={i} className="text-amber-400 text-lg" />);
   return star;
 };
+
+export const generateRange = (start, end) => {
+  const length = end + 1 - start
+  return Array.from({ length }, (_, index) => start + index)
+}
 
 export const validate = (payload, setInvalidFields) => {
   let invalids = 0;
@@ -76,6 +81,7 @@ export const validate = (payload, setInvalidFields) => {
           ]);
           invalids++;
         }
+        break;
       default:
         break;
       case "phone":
@@ -129,5 +135,5 @@ export const validate = (payload, setInvalidFields) => {
   });
   return invalids;
 };
-
 export default validate
+

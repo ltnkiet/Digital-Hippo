@@ -1,6 +1,5 @@
 import React from "react";
-import { formatPrice, renderStar } from "../../utils/helpers";
-import path from '../../utils/path'
+import { formatPrice, renderStar } from "utils/helpers";
 import {Link} from 'react-router-dom'
 
 const ProductCardV2 = ({ data }) => {

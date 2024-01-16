@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import { AiFillPlusCircle, AiFillMinusCircle } from "../../asset/icons";
+import { AiFillPlusCircle, AiFillMinusCircle } from "asset/icons";
 
 const SelectQuantity = ({ quantity, handleQuantity, handleChangeQuantity }) => {
   return (

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Thumbnail } from '../../asset/img'
+import { Thumbnail } from 'asset/img'
 
 const Banner = () => {
   return (

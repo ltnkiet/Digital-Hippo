@@ -1,6 +1,6 @@
 import React from "react";
-import { Sidebar, Banner, BestSeller, FeaturedProduct } from "../../../components";
-import { useSelector } from "react-redux";
+import { Sidebar, Banner, BestSeller, FeaturedProduct } from "components";
+
 const Home = () => {
 
   // const { newProducts } = useSelector((state) => state.product)

@@ -12,7 +12,7 @@ const commonConfig = {
 }
 const userConfig = {
   ...commonConfig,
-  whitelist: ['isLoggedIn', 'token']
+  whitelist: ['isLoggedIn', 'token', 'current']
 }
 
 export const store = configureStore({
@@ -21,6 +21,12 @@ export const store = configureStore({
     product: productSlice,
     user: persistReducer(userConfig, userSlice)
   },
+  // middleware: (getDefaultMiddleware) => {
+  //   getDefaultMiddleware({ 
+  //     serializableCheck : {
+  //       ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] 
+  //   }})
+  // }
 });
 
 export const persistor = persistStore(store)

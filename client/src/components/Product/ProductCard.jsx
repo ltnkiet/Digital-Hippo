@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import { formatPrice, renderStar } from "../../utils/helpers";
-import labelNew from "../../asset/img/LabelNew.png";
-import labelTrending from "../../asset/img/LabelTrending.png";
+import { formatPrice, renderStar } from "utils/helpers";
+import labelNew from "asset/img/LabelNew.png";
+import labelTrending from "asset/img/LabelTrending.png";
 import SelectOption from "../Common/SelectOption";
-import { FaEye, FaRegHeart } from "../../asset/icons";
+import { FaEye, FaRegHeart } from "asset/icons";
 import { Link } from "react-router-dom";
-import path from "../../utils/path";
+
 
 const ProductCard = ({ data, isNew, normal }) => {
   const [showOption, setShowOption] = useState(false);
   return (
-    <div className="mx-4">
+    <div className="mx-4 border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <Link
-        class="w-full max-w-xs bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700"
+        class="w-full max-w-xs bg-white"
         to={`/${data?.category?.name}/${data?._id}/${data?.title}`}>
         <div
           className="w-full relative"

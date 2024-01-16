@@ -1,5 +1,6 @@
 import React, { memo } from "react"
-import { CgSpinner } from '../../asset/icons'
+import { CgSpinner } from 'asset/icons'
+
 const ButtonV2 = ({
   children,
   handleOnClick,

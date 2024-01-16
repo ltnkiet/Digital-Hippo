@@ -3,7 +3,7 @@ import React, { memo } from "react";
 const InputForm = ({ label, value, setValue, keyPayload, invalidFields, setInvalidFields, type,}) => {
   return (
     <div className="w-full">
-      <label htmlFor={keyPayload} className="text-sm font-medium text-white">
+      <label htmlFor={keyPayload} className="text-sm font-medium text-main">
         {label}
       </label>
       <input

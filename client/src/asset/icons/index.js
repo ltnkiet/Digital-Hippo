@@ -14,7 +14,7 @@ import {
   // FaCcPaypal,
   
 } from "react-icons/fa";
-import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle } from 'react-icons/ai'
+import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle, AiOutlineDown, AiOutlineLogout} from 'react-icons/ai'
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
   MdShoppingCart,
@@ -23,6 +23,7 @@ import {
   MdDelete,
   MdOutlineKeyboardBackspace,
   MdEmail,
+  MdOutlineLibraryBooks
 } from "react-icons/md";
 import {
   BsToggles2,
@@ -39,12 +40,13 @@ import {
   BiSolidMap,
   BiUser,
   BiSolidNotepad,
+  BiDotsHorizontalRounded
 } from "react-icons/bi";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
 import { RiRefreshFill, RiLockPasswordLine } from "react-icons/ri";
-import { IoIosArrowForward } from "react-icons/io";
+import { IoIosArrowForward, IoMdArrowDropdown  } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg"
 
 export {
@@ -60,7 +62,8 @@ export {
   FaStar,
   FaArrowLeft,
 
-  AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle ,
+  AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle,
+  AiOutlineDown, AiOutlineLogout,
 
   FcClearFilters,
   FcGoogle,
@@ -70,7 +73,7 @@ export {
   MdSearch,
   MdOutlineKeyboardBackspace,
   MdEmail,
-  MdDelete,
+  MdDelete, MdOutlineLibraryBooks,
 
   BsToggles2,
   BsFillBellFill,
@@ -88,6 +91,7 @@ export {
   BiSolidMap,
   BiUser,
   BiSolidNotepad,
+  BiDotsHorizontalRounded,
 
   HiCurrencyRupee,
   HiOutlineMail,
@@ -97,7 +101,7 @@ export {
   RiRefreshFill,
   RiLockPasswordLine,
 
-  IoIosArrowForward,
+  IoIosArrowForward, IoMdArrowDropdown,
 
   CgSpinner
 };

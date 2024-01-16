@@ -18,3 +18,9 @@ export const apiGetProductByCategory= (category) =>
       url: `/product/category/${category}`,
       method: "GET",
     });
+export const apiRatings = (data) =>
+  axios({
+    url: "/product/rating",
+    method: "PUT",
+    data,
+  })

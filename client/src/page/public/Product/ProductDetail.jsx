@@ -3,27 +3,48 @@ import { useParams } from "react-router-dom";
 import ReactImageMagnify from "react-image-magnify";
 import Slider from "react-slick";
 import DOMPurify from "dompurify";
-import { useSelector } from "react-redux"
-
-
-import { Breadcrumbs, SelectQuantity, ButtonV2, ProductReview, ProductSlider } from "../../../components";
-
-import { formatPrice, renderStar } from "../../../utils/helpers";
-
-import { apiGetProductByCategory, apiGetProductDetail } from "../../../api/product";
+import { Breadcrumbs, SelectQuantity, ButtonV2, ProductReview, ProductSlider } from "components";
+import { formatPrice, renderStar } from "utils/helpers";
+import { apiGetProductByCategory, apiGetProductDetail } from "api";
 
 const ProductDetail = () => {
-  const { current } = useSelector((state) => state.user)
 
   const titleRef = useRef()
   const { pid, title, category } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProduct, setRelatedProduct] = useState(null)
   const [currentImage, setCurrentImage] = useState(null)
-  // const [category, setCategory] = useState(null)
   const [update, setUpdate] = useState(false)
   const [quantity, setQuantity] = useState(1);
 
+  const fetchProductDetail = async () => {
+    const response = await apiGetProductDetail(pid);
+    if (response.success) {
+      setProduct(response.productDetail)
+      setCurrentImage(response.productDetail?.thumb)
+    }
+  };
+
+  const fetchRelatedProducts = async () => {
+    const response = await apiGetProductByCategory(category);
+    if (response.success) setRelatedProduct(response.productByCategory)
+  };
+
+  useEffect(() => {
+    if (pid) {
+      fetchProductDetail();
+      fetchRelatedProducts();
+    }
+    titleRef.current.scrollIntoView({ block: "center" })
+  }, [pid]);
+
+  useEffect(() => {
+    if (pid) fetchProductDetail()
+  }, [update])
+
+  const rerender = useCallback(() => {
+    setUpdate(!update)
+  }, [update])
   const handleQuantity = useCallback(
     (number) => {
       if (!Number(number) || Number(number) < 1) {
@@ -44,32 +65,12 @@ const ProductDetail = () => {
   );
   const handleAddToCart = async () => {};
 
-  const fetchProductDetail = async () => {
-    const response = await apiGetProductDetail(pid);
-    if (response.success) {
-      setProduct(response.productDetail)
-      setCurrentImage(response.productDetail?.thumb)
-    }
-  };
-
-  const fetchRelatedProducts = async () => {
-    const response = await apiGetProductByCategory(category);
-    if (response.success) setRelatedProduct(response.productByCategory)
-  };
 
   const handleClickImage = (e, el) => {
     e.stopPropagation()
     setCurrentImage(el)
   }
-
-  useEffect(() => {
-    if (pid) {
-      fetchProductDetail();
-      fetchRelatedProducts();
-    }
-    titleRef.current.scrollIntoView({ block: "center" })
-  }, [pid]);
-
+  
   const settings = {
     dots: false,
     infinite: false,
@@ -77,7 +78,6 @@ const ProductDetail = () => {
     slidesToShow: 4,
     slidesToScroll: 3,
   };
-
   return (
     <div className="w-full">
       <div className="h-[80px] flex items-center justify-center bg-gray-200">
@@ -161,7 +161,13 @@ const ProductDetail = () => {
         </div>
       </div>
       <div className="w-main m-auto mt-10 border-y-4 border-main">
-        <ProductReview />
+        <ProductReview 
+          totalRating={product?.totalRating}
+          rating={product?.rating}
+          nameProduct={product?.title}
+          pid={product?._id}
+          rerender={rerender}
+        />
       </div>
       <div className="w-main m-auto mt-10">
         <h3 className="text-2xl font-semibold">Sản phẩm tương tự có thể bạn sẽ thích</h3>

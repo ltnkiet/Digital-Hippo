@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { apiGetProduct } from "../../api/product";
-import { getNewProduct } from "../../store/product/asyncActions";
-import { ProductSlider } from "../../components";
+import { apiGetProduct } from "api/product";
+import { getNewProduct } from "store/product/asyncActions";
+import { ProductSlider } from "components";
 import { useDispatch, useSelector } from "react-redux";
 
 const tabs = [
@@ -18,7 +18,7 @@ const BestSeller = () => {
   const { newProducts } = useSelector((state) => state.product);
 
   const fetchProduct = async () => {
-    const response = await apiGetProduct({ sort: "-sold" });
+    const response = await apiGetProduct({ sort: "-sold", limit:10 });
     if (response.success) {
       setBestSeller(response.productList);
       setProductTab(response.productList);
@@ -33,7 +33,7 @@ const BestSeller = () => {
   useEffect(() => {
     if (activeTabs === 1) setProductTab(bestSeller);
     if (activeTabs === 2) setProductTab(newProducts);
-  }, [activeTabs]);
+  }, [bestSeller]);// eslint-disable-next-line
 
   return (
     <div>

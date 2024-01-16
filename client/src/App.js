@@ -11,12 +11,14 @@ import {
   ProductDetail,
   AboutUs,
   ProductByCategory
-} from "././page/public";
-import path from "./utils/path";
-import { getCategory } from "./store/app/asyncAction";
-import { useDispatch } from "react-redux";
+} from "page/public";
+import path from "utils/path";
+import { getCategory } from "store/app/asyncAction";
+import { useDispatch, useSelector } from "react-redux";
+import { Modal } from 'components'
 
 function App() {
+  const { isShowModal, modalChildren } = useSelector((state) => state.app)
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getCategory()); // eslint-disable-next-line
@@ -24,6 +26,7 @@ function App() {
 
   return (
     <div className="min-h-screen">
+      {isShowModal && <Modal>{modalChildren}</Modal>}
       <Routes>
         <Route path={path.PUBLIC} element={<Public />}>
           <Route path={path.HOME} element={<Home />} />
@@ -33,9 +36,9 @@ function App() {
           <Route path={path.PRODUCT_DETAIL__ID__TITLE} element={<ProductDetail />}/>
           <Route path={path.PRODUCTS} element={<Products />} />
           <Route path={path.PRODUCTS_CATEGORY} element={<ProductByCategory />} />
-          <Route path={path.LOGIN} element={<Login />} />
           <Route path={path.RESET_PASSWORD} element={<ResetPassword />} />
         </Route>
+          <Route path={path.LOGIN} element={<Login />} />
           <Route path={path.REGISTER} element={<Register />} />
       </Routes>
     </div>

@@ -1,23 +1,39 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import { getCurrent } from "../../store/user/asyncActions";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getCurrent } from "store/user/asyncActions";
+import { clearMessage, logout } from "store/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import path from "../../utils/path";
-import { Logo } from "../../asset/img";
-import {
-  MdShoppingCart,
-  FaUserCircle,
-  BsFillHeartFill,
-} from "../../asset/icons";
+import path from "utils/path";
+import { Logo } from "asset/img";
+import { MdShoppingCart, FaUserCircle, BsFillHeartFill, MdOutlineLibraryBooks, AiOutlineLogout, IoMdArrowDropdown } from "asset/icons";
+import Swal from "sweetalert2";
 
 const Header = () => {
+
   const dispatch = useDispatch();
-  const { isLoggedIn, current } = useSelector((state) => state.user);
+  const navigate = useNavigate();
+  const [isShowMenu, setIsShowMenu] = useState(false);
+
+
+  const { isLoggedIn, current, msg } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (isLoggedIn) dispatch(getCurrent());
+    const setTimeoutId = setTimeout(() => {
+      if (isLoggedIn) dispatch(getCurrent());
+    }, 1000);
+    return () => {
+      clearTimeout(setTimeoutId);
+    };
   }, [dispatch, isLoggedIn]);
 
+  useEffect(() => {
+    if (msg)
+      Swal.fire("Sự cố", msg, "info").then(() => {
+        dispatch(clearMessage());
+        navigate(`/${path.LOGIN}`);
+      });
+  }, [msg]);
+  
   return (
     <div className="w-main flex justify-between items-center">
       <Link to={`/${path.HOME}`}>
@@ -59,16 +75,24 @@ const Header = () => {
         </div>
       </form> */}
       <div className="flex flex-row items-center justify-between gap-8 text-main">
-        <Link to={path.LOGIN} className="flex items-center cursor-pointer">
-          {isLoggedIn ? (
-            <div className="flex flex-row items-center gap-2">
-              <img src={current?.avatar} alt="" className="w-10 rounded-full" />
-              <span className="font-medium">Chào {current?.name}</span>
-            </div>
+        <div className="flex items-center cursor-pointer">
+          {isLoggedIn && current ? (
+              <div className="flex flex-row items-center gap-2">
+                <img src={current?.avatar} alt="" className="w-10 rounded-full"></img>
+                <span className="font-medium">Chào {current?.name}</span>
+                <span
+                  onClick={() => dispatch(logout())}
+                  className="hover:rounded-full hover:bg-gray-200 cursor-pointer hover:text-main p-2"
+                >
+                  <AiOutlineLogout size={18} />
+                </span>
+              </div>
           ) : (
-            <FaUserCircle className="w-8 h-8" />
+            <Link to={path.LOGIN}>
+              <FaUserCircle className="w-8 h-8" />
+            </Link>
           )}
-        </Link>
+        </div>
         <div className="relative cursor-pointer">
           <BsFillHeartFill className="text-2xl cursor-pointer w-8" />
           {/* <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-4">

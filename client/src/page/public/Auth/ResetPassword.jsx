@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { InputForm, Button } from "../../../components";
+import { InputForm, Button } from "components";
 import { useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { apiResetPassword } from "../../../api";
-import validate from "../../../utils/helpers";
+import { apiResetPassword } from "api";
+import validate from "utils/helpers";
 
 const ResetPassword = () => {
   const [payload, setPayload] = useState({ password: "", confirmPass: "" });
