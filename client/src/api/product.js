@@ -24,3 +24,19 @@ export const apiRatings = (data) =>
     method: "PUT",
     data,
   })
+export const apiUpdateCart = (data) =>
+  axios({
+    url: "/user/cart",
+    method: "PUT",
+    data,
+  })
+export const apiRemoveCart = (pid, color) =>
+  axios({
+    url: `/user/cart/remove/${pid}/${color}`,
+    method: "DELETE",
+  })
+export const apiUpdateWishlist = (pid) =>
+  axios({
+    url: `/user/wishlist/` + pid,
+    method: "PUT",
+  })

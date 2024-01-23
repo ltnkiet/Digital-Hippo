@@ -1,6 +1,6 @@
 import {
-  FaEnvelope,
-  FaLock,
+  FaEnvelope, FaHistory ,
+  FaLock , FaCartPlus ,
   FaCloudUploadAlt,
   FaCheck,
   FaArrowLeft,
@@ -10,27 +10,31 @@ import {
   FaStar,
   FaEye,
   FaRegHeart,
-  // FaCcVisa,
-  // FaCcPaypal,
+  FaUserEdit, FaShoppingCart 
   
 } from "react-icons/fa";
-import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle, AiOutlineDown, AiOutlineLogout} from 'react-icons/ai'
+import { ImBin } from 'react-icons/im'
+
+import { FaHeartCirclePlus } from "react-icons/fa6";
+import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle, AiOutlineDown, 
+  AiOutlineLogout, AiOutlineCaretDown, AiOutlineCaretRight, AiFillCloseCircle} from 'react-icons/ai'
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
-  MdShoppingCart,
-  MdLogout,
+  MdShoppingCart, MdSpaceDashboard ,
+  MdLogout, MdGroups, MdCategory,
   MdSearch,
   MdDelete,
   MdOutlineKeyboardBackspace,
   MdEmail,
-  MdOutlineLibraryBooks
+  MdOutlineLibraryBooks, MdAdminPanelSettings 
 } from "react-icons/md";
 import {
   BsToggles2,
   BsFillBellFill,
   BsExclamationTriangleFill,
   BsFillTelephoneFill,
-  BsFillHeartFill
+  BsFillHeartFill,
+  BsFillCartCheckFill 
 } from "react-icons/bs";
 import { IoFastFood, IoBasket, IoArrowBackOutline  } from "react-icons/io5";
 import {
@@ -38,20 +42,30 @@ import {
   BiMinus,
   BiPlus,
   BiSolidMap,
-  BiUser,
+  BiUserCircle ,
   BiSolidNotepad,
   BiDotsHorizontalRounded
 } from "react-icons/bi";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
-import { RiRefreshFill, RiLockPasswordLine } from "react-icons/ri";
+import { RiRefreshFill, RiLockPasswordLine, RiBillLine, RiShareForwardLine } from "react-icons/ri";
 import { IoIosArrowForward, IoMdArrowDropdown  } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg"
+import { TbArrowForwardUp, TbBrandProducthunt } from 'react-icons/tb'
 
 export {
-  FaEnvelope,
-  FaLock,
+
+  TbBrandProducthunt, MdGroups, RiBillLine, MdCategory,
+
+  RiShareForwardLine,
+
+  ImBin,
+
+  TbArrowForwardUp,
+
+  FaEnvelope, FaUserEdit, FaShoppingCart, FaHeartCirclePlus,
+  FaLock, FaHistory , FaCartPlus,
   FaUserCircle,
   FaEye,
   FaRegHeart, 
@@ -63,19 +77,21 @@ export {
   FaArrowLeft,
 
   AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle,
-  AiOutlineDown, AiOutlineLogout,
+  AiOutlineDown, AiOutlineLogout, AiOutlineCaretDown, AiOutlineCaretRight,
+  AiFillCloseCircle,
 
   FcClearFilters,
   FcGoogle,
 
-  MdShoppingCart,
+  MdShoppingCart, MdSpaceDashboard ,
   MdLogout,
   MdSearch,
   MdOutlineKeyboardBackspace,
   MdEmail,
   MdDelete, MdOutlineLibraryBooks,
+  MdAdminPanelSettings,
 
-  BsToggles2,
+  BsToggles2, BsFillCartCheckFill ,
   BsFillBellFill,
   BsFillHeartFill,
   BsExclamationTriangleFill,
@@ -89,7 +105,7 @@ export {
   BiMinus,
   BiPlus,
   BiSolidMap,
-  BiUser,
+  BiUserCircle ,
   BiSolidNotepad,
   BiDotsHorizontalRounded,
 

@@ -32,9 +32,6 @@ const Login = () => {
       password: "",
     });
   };
-  useEffect(() => {
-    isLoggedIn && navigate(`/${path.HOME}`);
-  }, [isLoggedIn]);
 
   const handleSubmit = useCallback(async () => {
     const { name, phone, ...data } = payload;
@@ -53,6 +50,7 @@ const Login = () => {
         } else Swal.fire("Sự cố!", response.msg, "error");
       } else {
         const res = await apiLogin(data);
+        console.log(res.user)
         if (res.success) {
           Swal.fire("Hoàn tất", res.msg, "success").then(() => {
             dispatch(
@@ -62,12 +60,36 @@ const Login = () => {
                 userData: res.user,
               })
             );
-            navigate(`/${path.HOME}`);
+            const { role } = res.user;
+            if (role === 1 || role === 2) {
+              // Navigate to the admin path
+              navigate(`/${path.ADMIN}`);
+            } else {
+              // Navigate to the home path for other roles
+              navigate(`/${path.HOME}`);
+            }
           });
         } else Swal.fire("Sự cố!", res.msg, "error");
       }
     }
   }, [payload]);
+
+  useEffect(() => {
+    isLoggedIn && navigate(`/${path.HOME}`);
+    // if (isLoggedIn) {
+    //   // Assuming user roles are stored in the userData object
+    //   const { role } = useSelector((state) => state.user.userData);
+    //   if (role === 1 || role === 2) {
+    //     // Navigate to the admin path
+    //     navigate(`/${path.ADMIN}`);
+    //   } else {
+    //     // Navigate to the home path for other roles
+    //     navigate(`/${path.HOME}`);
+    //   }
+    // }
+  }, [isLoggedIn]);
+
+
 
   const handleForgotPass = async () => {
     const response = await apiForgotPassword(payload);
@@ -77,7 +99,7 @@ const Login = () => {
     }
   };
   return (
-    <div className="w-full flex items-center justify-center p-5 ">
+    <div className="w-full flex items-center justify-center p-5">
       <div className="w-2/5 flex flex-col items-center justify-center p-8 rounded-md shadow-lg border border-main">
         <div className="w-full flex items-start">
           <Link to={`/${path.HOME}`}>

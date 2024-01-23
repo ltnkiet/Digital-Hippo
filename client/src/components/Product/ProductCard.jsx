@@ -2,18 +2,63 @@ import React, { useState } from "react";
 import { formatPrice, renderStar } from "utils/helpers";
 import labelNew from "asset/img/LabelNew.png";
 import labelTrending from "asset/img/LabelTrending.png";
-import SelectOption from "../Common/SelectOption";
-import { FaEye, FaRegHeart } from "asset/icons";
-import { Link } from "react-router-dom";
+import SelectOption from "../Search/SelectOption";
+import { FaEye, FaRegHeart, FaCartPlus, BsFillCartCheckFill  } from "asset/icons";
+import withBaseComponent from "hocs/withBaseComponent";
+import { apiUpdateCart } from "api";
+import Swal from "sweetalert2";
+import { createSearchParams } from "react-router-dom";
+import { getCurrent } from "store/user/asyncActions";
+import path from "utils/path";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
-
-const ProductCard = ({ data, isNew, normal }) => {
+const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
+  const { current } = useSelector((state) => state.user);
   const [showOption, setShowOption] = useState(false);
+
+  const handleClickOptions = async (e, flag) => {
+    e.stopPropagation();
+    if (flag === "CART") {
+      if (!current)
+        return Swal.fire({
+          title: "Khoan..",
+          text: "Vui lòng đăng nhập!",
+          icon: "info",
+          showCancelButton: true,
+          cancelButtonText: "Không phải bây giờ!",
+          confirmButtonText: "Đăng nhập ngay",
+        }).then(async (rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname,
+              }).toString(),
+            });
+        });
+      const response = await apiUpdateCart({
+        pid: data?._id,
+        color: data?.color,
+        quantity: 1,
+        price: data?.price,
+        thumbnail: data?.thumb,
+        title: data?.title,
+      });
+      if (response.success) {
+        toast.success(response.msg);
+        dispatch(getCurrent());
+      } else toast.error(response.msg);
+    }
+  };
+
   return (
     <div className="mx-4 border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <Link
+      <div
         class="w-full max-w-xs bg-white"
-        to={`/${data?.category?.name}/${data?._id}/${data?.title}`}>
+        onClick={(e) =>
+          navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
+        }>
         <div
           className="w-full relative"
           onMouseEnter={(e) => {
@@ -24,7 +69,7 @@ const ProductCard = ({ data, isNew, normal }) => {
             e.stopPropagation();
             setShowOption(false);
           }}>
-          {!normal && (       
+          {!normal && (
             <img
               src={isNew ? labelNew : labelTrending}
               className="absolute -top-1 -left-[8px] w-24 object-cover"
@@ -39,9 +84,30 @@ const ProductCard = ({ data, isNew, normal }) => {
             alt="Ảnh sản phẩm"
           />
           {showOption && (
-            <div className="absolute flex justify-center bottom-1 left-0 right-0 gap-2 animate-slide-top">
-              <SelectOption icon={<FaEye />} />
-              <SelectOption icon={<FaRegHeart />} />
+            <div className="absolute flex justify-center bottom-2 left-0 right-0 gap-2 animate-slide-top">
+              <span
+                title="Quick view"
+                onClick={(e) => handleClickOptions(e, "QUICK_VIEW")}>
+                <SelectOption icon={<FaEye />} />
+              </span>
+              <span
+                title="Add to Wishlist"
+                onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+                <SelectOption icon={<FaRegHeart />} />
+              </span>
+              {current?.cart?.some(
+                (el) => el.products?._id === data._id.toString()
+              ) ? (
+                <span title="Added to Cart">
+                  <SelectOption icon={<BsFillCartCheckFill  color="green" />} />
+                </span>
+              ) : (
+                <span
+                  title="Add to Cart"
+                  onClick={(e) => handleClickOptions(e, "CART")}>
+                  <SelectOption icon={<FaCartPlus />} />
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -70,9 +136,9 @@ const ProductCard = ({ data, isNew, normal }) => {
             </p> */}
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 };
 
-export default ProductCard;
+export default withBaseComponent(ProductCard);

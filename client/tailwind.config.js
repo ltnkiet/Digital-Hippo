@@ -32,21 +32,40 @@ module.exports = {
         square: "square",
         roman: "upper-roman",
       },
+      gridTemplateRows: {
+        10: "repeat(10, minmax(0, 1fr))",
+        layout: "200px minmax(900px, 1fr) 100px",
+      },
+      gridRow: {
+        "span-7": "span 7 / span 7",
+      },
       keyframes: {
         "slide-top": {
           "0%": {
-            "-webkit-transform": "translateY(-60px)",
-            transform: "translateY(-60px)",
+            "-webkit-transform": "translateY(60px)",
+            transform: "translateY(60px)",
           },
           "100%": {
-            "-webkit-transform": "translateY(20px)",
-            transform: "translateY(20px)",
+            "-webkit-transform": "translateY(0px)",
+            transform: "translateY(0px)",
+          },
+        },
+        "slide-right": {
+          "0%": {
+            "-webkit-transform": "translateX(20px);",
+            transform: "translateX(20px);",
+          },
+          "100%": {
+            "-webkit-transform": "translateX(0);",
+            transform: "translateX(0);",
           },
         },
       },
       animation: {
         "slide-top":
-          "animation: slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;",
+          "slide-top 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;",
+        "slide-right":
+          "slide-right 0.5s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;",
       },
     },
   },

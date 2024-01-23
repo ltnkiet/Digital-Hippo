@@ -30,3 +30,21 @@ export const apiGetCurrent = () =>
     url: "/user/current",
     method: "GET",
   });
+  export const apiGetUsers = (params) =>
+  axios({
+    url: "/user/",
+    method: "GET",
+    params,
+  })
+export const apiUpdateUser = (data, uid) =>
+  axios({
+    url: "/user/" + uid,
+    method: "PUT",
+    data,
+  })
+export const apiDeleteUser = (uid) =>
+  axios({
+    url: "/user/" + uid,
+    method: "DELETE",
+  })
+

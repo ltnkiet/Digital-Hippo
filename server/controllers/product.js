@@ -189,12 +189,11 @@ const rating = asyncHandler(async (req, res) => {
     (sum, el) => sum + +el.star,
     0
   );
-  updatedTotalRating.totalRating =
-    Math.round((sumRating * 10) / ratingCount) / 10;
+  updatedTotalRating.totalRating = Math.round((sumRating * 10) / ratingCount) / 10;
   await updatedTotalRating.save();
   return res.status(200).json({
-    status: true,
-    msg: "",
+    success: updatedTotalRating ? true : false,
+    msg: "Cảm ơn bạn đã để lại đánh giá!",
     updatedTotalRating,
   });
 });

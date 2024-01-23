@@ -17,8 +17,7 @@ const VoteOption = ({ nameProduct, handleSubmitVoteOption }) => {
     <div
       onClick={(e) => e.stopPropagation()}
       ref={modalRef}
-      className="bg-white w-[700px] p-4 flex-col gap-4 flex items-center justify-center">
-      {/* <img src={logo} alt="logo" className="w-[300px] my-8 object-contain" /> */}
+      className="bg-white w-[700px] p-5 flex-col gap-4 flex items-center justify-center rounded-lg">
       <h2 className="text-center text-medium text-lg">
         Đánh giá sản phẩm
         <span className="text-main ml-2">{nameProduct}</span>

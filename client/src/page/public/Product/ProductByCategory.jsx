@@ -11,13 +11,6 @@ import { Breadcrumbs, ProductCard, SearchItem, InputSelect, Pagination} from "co
 import { apiGetProduct } from "api";
 import { sorts } from 'utils/contant'
 
-// const breakpointColumnsObj = {
-//   default: 4,
-//   1100: 3,
-//   700: 2,
-//   500: 1,
-// }
-
 const ProductByCategory = () => {
 
   const navigate = useNavigate()

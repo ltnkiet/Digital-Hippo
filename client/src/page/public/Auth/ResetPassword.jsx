@@ -24,8 +24,8 @@ const ResetPassword = () => {
   };
   return (
     <div className="w-full flex items-center justify-center p-10">
-      <div className="bg-main w-2/5 p-8 rounded-md shadow-sm">
-        <h3 className="font-semibold text-2xl mb-6">Cập nhật mật khẩu</h3>
+      <div className="border border-main bg-white w-2/5 p-8 rounded-md shadow-sm flex flex-col justify-center items-center">
+        <h3 className="font-semibold text-2xl mb-6 text-main">Cập nhật mật khẩu</h3>
         <div className="w-full flex flex-col gap-5">
           <InputForm
             setInvalidFields={setInvalidFields}
@@ -53,8 +53,8 @@ const ResetPassword = () => {
           </button>
           <Button
             text={"Xác nhận"}
-            bgColor="bg-white"
-            textColor="text-black"
+            bgColor="bg-main"
+            textColor="text-white"
             fullWidth
             onClick={handleReset}
           />

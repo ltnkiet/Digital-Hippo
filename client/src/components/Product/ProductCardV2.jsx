@@ -1,13 +1,73 @@
-import React from "react";
+import React, { useState } from "react";
 import { formatPrice, renderStar } from "utils/helpers";
-import {Link} from 'react-router-dom'
+import SelectOption from "../Search/SelectOption";
+import { FaEye, FaRegHeart, FaCartPlus, BsFillCartCheckFill } from "asset/icons";
+import withBaseComponent from "hocs/withBaseComponent";
+import { getCurrent } from "store/user/asyncActions";
+import path from "utils/path";
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { apiUpdateCart } from "api";
+import Swal from "sweetalert2";
+import { createSearchParams } from "react-router-dom";
 
-const ProductCardV2 = ({ data }) => {
+const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
+  const { current } = useSelector((state) => state.user);
+  const [showOption, setShowOption] = useState(false);
+
+  const handleClickOptions = async (e, flag) => {
+    e.stopPropagation();
+    if (flag === "CART") {
+      if (!current)
+        return Swal.fire({
+          title: "Khoan..",
+          text: "Vui lòng đăng nhập!",
+          icon: "info",
+          cancelButtonText: "Không phải bây giờ!",
+          showCancelButton: true,
+          confirmButtonText: "Đăng nhập ngay",
+        }).then(async (rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname,
+              }).toString(),
+            });
+        });
+      const response = await apiUpdateCart({
+        pid: data?._id,
+        color: data?.color,
+        quantity: 1,
+        price: data?.price,
+        thumbnail: data?.thumb,
+        title: data?.title,
+      });
+      if (response.success) {
+        toast.success(response.msg);
+        dispatch(getCurrent());
+      } else toast.error(response.msg);
+    }
+  };
   return (
-    <Link className="w-full border flex flex-auto"
-    to={`/${data?.category?.name}/${data?._id}/${data?.title}`}
-    >
-      <img src={data?.thumb} alt="" className="w-[150px] object-contain p-4 hover:p-0" />
+    <div
+      className="w-full border flex flex-auto relative"
+      onClick={(e) =>
+        navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
+      }
+      onMouseEnter={(e) => {
+        e.stopPropagation();
+        setShowOption(true);
+      }}
+      onMouseLeave={(e) => {
+        e.stopPropagation();
+        setShowOption(false);
+      }}>
+      <img
+        src={data?.thumb}
+        alt=""
+        className="w-[150px] object-contain p-4 hover:p-0"
+      />
       <div className="flex flex-col py-4 gap-2">
         <p class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">
           {data?.title}
@@ -25,8 +85,35 @@ const ProductCardV2 = ({ data }) => {
           {formatPrice(data?.price)}
         </span>
       </div>
-    </Link>
+      {showOption && (
+        <div className="absolute flex flex-col justify-center bottom-1 top-1 right-2 gap-2 animate-slide-right">
+          <span
+            title="Quick view"
+            onClick={(e) => handleClickOptions(e, "QUICK_VIEW")}>
+            <SelectOption icon={<FaEye />} />
+          </span>
+          <span
+            title="Add to Wishlist"
+            onClick={(e) => handleClickOptions(e, "WISHLIST")}>
+            <SelectOption icon={<FaRegHeart />} />
+          </span>
+          {current?.cart?.some(
+            (el) => el.products?._id === data._id.toString()
+          ) ? (
+            <span title="Added to Cart">
+              <SelectOption icon={<BsFillCartCheckFill  color="green" />} />
+            </span>
+          ) : (
+            <span
+              title="Add to Cart"
+              onClick={(e) => handleClickOptions(e, "CART")}>
+              <SelectOption icon={<FaCartPlus />} />
+            </span>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 
-export default ProductCardV2;
+export default withBaseComponent(ProductCardV2);

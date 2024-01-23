@@ -1,21 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useState, Fragment } from "react";
+import { Link } from "react-router-dom";
 import { getCurrent } from "store/user/asyncActions";
 import { clearMessage, logout } from "store/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import path from "utils/path";
-import { Logo } from "asset/img";
-import { MdShoppingCart, FaUserCircle, BsFillHeartFill, MdOutlineLibraryBooks, AiOutlineLogout, IoMdArrowDropdown } from "asset/icons";
+import { Logo, Cart, NonUser, Wishlist } from "asset/img";
+import { AiOutlineLogout, BiUserCircle  } from "asset/icons";
 import Swal from "sweetalert2";
+import withBaseComponent from 'hocs/withBaseComponent'
+import { showCart } from "store/app/appSlice"
 
-const Header = () => {
+const Header = ({dispatch, navigate}) => {
 
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [isShowMenu, setIsShowMenu] = useState(false);
-
-
   const { isLoggedIn, current, msg } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    const handleClickoutOptions = (e) => {
+      const profile = document.getElementById("profile")
+      if (!profile?.contains(e.target)) setIsShowMenu(false)
+    }
+    document.addEventListener("click", handleClickoutOptions)
+    return () => {
+      document.removeEventListener("click", handleClickoutOptions)
+    }
+  }, [])
 
   useEffect(() => {
     const setTimeoutId = setTimeout(() => {
@@ -39,7 +48,7 @@ const Header = () => {
       <Link to={`/${path.HOME}`}>
         <img src={Logo} alt="" className="h-32" />
       </Link>
-      {/* <form className="w-[60%]">
+      <form className="w-[50%]">
         <label
           for="default-search"
           className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
@@ -73,41 +82,69 @@ const Header = () => {
             Tìm
           </button>
         </div>
-      </form> */}
+      </form>
       <div className="flex flex-row items-center justify-between gap-8 text-main">
         <div className="flex items-center cursor-pointer">
-          {isLoggedIn && current ? (
-              <div className="flex flex-row items-center gap-2">
-                <img src={current?.avatar} alt="" className="w-10 rounded-full"></img>
-                <span className="font-medium">Chào {current?.name}</span>
-                <span
-                  onClick={() => dispatch(logout())}
-                  className="hover:rounded-full hover:bg-gray-200 cursor-pointer hover:text-main p-2"
-                >
-                  <AiOutlineLogout size={18} />
-                </span>
-              </div>
-          ) : (
-            <Link to={path.LOGIN}>
-              <FaUserCircle className="w-8 h-8" />
-            </Link>
-          )}
+          <Fragment>
+            {isLoggedIn && current ? (
+                <div className="flex flex-row items-center gap-2 relative"          
+                onClick={() => setIsShowMenu((prev) => !prev)}
+                id="profile">
+                  <img src={current?.avatar} alt="" className="w-12 h-12 rounded-full object-cover"></img>
+                  <span className="font-medium hover:rounded-full hover:bg-gray-200 p-2">{current?.name}</span>
+                  {isShowMenu && (
+                    <div onClick={(e) => e.stopPropagation()}
+                    className="absolute top-full flex-col flex mt-4 right-4 md:left-[16px] bg-white rounded-md border md:min-w-[200px] py-4 px-2">
+                      <Link
+                        className="p-2 w-full hover:rounded-full hover:bg-gray-200 flex items-center gap-2 px-4"
+                        to={`/${path.MEMBER}`}
+                      >
+                        <span>Trang cá nhân</span>
+                        <BiUserCircle size={22}/>
+                      </Link>
+                      {+current.role === 2 && (
+                        <Link
+                          className="p-2 w-full hover:rounded-full hover:bg-gray-200 px-4"
+                          to={`/${path.ADMIN}`}
+                        >
+                          Trang quản trị
+                        </Link>
+                      )}
+                      <span
+                        onClick={() => dispatch(logout())}
+                        className="hover:rounded-full hover:bg-gray-200 cursor-pointer hover:text-main p-2 flex items-center gap-2 px-4"
+                      >
+                        <span>Đăng xuất</span>
+                        <AiOutlineLogout size={18} />
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <Link to={path.LOGIN}>
+                  <img src={NonUser} alt="" className="w-10" />
+                </Link>
+              )
+            }
+          </Fragment>
         </div>
         <div className="relative cursor-pointer">
-          <BsFillHeartFill className="text-2xl cursor-pointer w-8" />
+          <img src={Wishlist} alt="" className="w-10" />
           {/* <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-3 -right-4">
             <p className="text-white text-sm font-semibold">1</p>
           </div> */}
         </div>
-        <div className="relative cursor-pointer">
-          <MdShoppingCart className="text-2xl cursor-pointer w-8 h-8" />
-          {/* <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-2 -right-3">
-            <p className="text-white text-sm font-semibold">2</p>
-          </div> */}
+        <div className="relative cursor-pointer"
+          onClick={() => dispatch(showCart())}
+        >
+          <img src={Cart} alt="" className="w-10" />
+          <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-2 -right-3">
+            <p className="text-white font-semibold">{current?.cart?.length || 0}</p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Header;
+export default withBaseComponent(Header);

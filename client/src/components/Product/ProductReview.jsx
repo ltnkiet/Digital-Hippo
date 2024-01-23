@@ -7,6 +7,7 @@ import { renderStar } from 'utils/helpers'
 import { apiRatings } from 'api'
 import Swal from 'sweetalert2'
 import path from 'utils/path'
+
 const ProductReview = ({ totalRating, rating, nameProduct, pid, rerender }) => {
 
   const dispatch = useDispatch()
@@ -15,12 +16,12 @@ const ProductReview = ({ totalRating, rating, nameProduct, pid, rerender }) => {
   const { isLoggedIn } = useSelector(state => state.user)
 
   const handleSubmitVoteOption = async ({ comment, score }) => {
-    if (!comment || !pid || !score) {
-      alert('Please vote when click submit')
+    if (!pid || !score) {
+      alert('Vui lòng để lại đánh giá!')
       return
     }
     const res = await apiRatings({ star: score, comment, pid, updatedAt: Date.now() })
-    console.log(res)
+    if (res.success) Swal.fire("Hoàn tất", res.msg, "success");
     dispatch(showModal({ isShowModal: false, modalChildren: null }))
     rerender()
   }
@@ -30,8 +31,10 @@ const ProductReview = ({ totalRating, rating, nameProduct, pid, rerender }) => {
           text: 'Vui lòng đăng nhập để đánh giá',
           cancelButtonText: 'Hủy',
           confirmButtonText: 'Đăng nhập',
-          title: 'Khoan!',
+          title: 'Khoan...!',
           showCancelButton: true,
+          icon: "info",
+
       }).then((rs) => {
         if (rs.isConfirmed) navigate(`/${path.LOGIN}`)
       })
@@ -69,7 +72,7 @@ const ProductReview = ({ totalRating, rating, nameProduct, pid, rerender }) => {
           </div>
         </div>
         <div className='p-4 flex items-center justify-center text-sm flex-col gap-2'>
-          <span>Để lại đánh giá của bạn</span>
+          {/* <span>Để lại đánh giá của bạn</span> */}
           <ButtonV2 handleOnClick={handleVoteNow}>Đánh giá ngay!</ButtonV2>
         </div>
         <div className='flex flex-col gap-4'>

@@ -29,15 +29,17 @@ var userSchema = new mongoose.Schema(
     },
     role: {
       type: Number,
-      default: 0,
       enum: [0, 1, 2], //["user", "employee", "admin"],
+      default: 0,
     },
-    cart: [
-      {
-        products: { type: mongoose.Types.ObjectId, ref: "Product" },
-        quantity: Number,
-      },
-    ],
+    cart: [ {
+      products: { type: mongoose.Types.ObjectId, ref: "Product" },
+      quantity: Number,
+      color: String,
+      price: Number,
+      thumbnail: String,
+      title: String
+    } ],
     address: String,
     wishlist: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     isBlocked: {

@@ -6,10 +6,12 @@ import DOMPurify from "dompurify";
 import { Breadcrumbs, SelectQuantity, ButtonV2, ProductReview, ProductSlider } from "components";
 import { formatPrice, renderStar } from "utils/helpers";
 import { apiGetProductByCategory, apiGetProductDetail } from "api";
+import { useSelector } from 'react-redux'
 
 const ProductDetail = () => {
 
   const titleRef = useRef()
+  const { current } = useSelector((state) => state.user)
   const { pid, title, category } = useParams();
   const [product, setProduct] = useState(null);
   const [relatedProduct, setRelatedProduct] = useState(null)
@@ -82,7 +84,7 @@ const ProductDetail = () => {
     <div className="w-full">
       <div className="h-[80px] flex items-center justify-center bg-gray-200">
         <div ref={titleRef} className="w-main">
-          <h1 className="text-xl font-medium">{title}</h1>
+          <h1 className="text-xl font-medium">{title}</h1>  
           <Breadcrumbs title={title} category={product?.category?.name} />
         </div>
       </div>

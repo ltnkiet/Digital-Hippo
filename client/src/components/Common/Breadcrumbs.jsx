@@ -3,14 +3,15 @@
   import { Link } from "react-router-dom";
   import { IoIosArrowForward } from "asset/icons";
 
-  const Breadcrumbs = ({ title, category }) => {
+  const Breadcrumbs = ({ title, category, product }) => {
     const routes = [
       { path: "/", breadcrumb: "TRANG CHỦ" },
+      { path: `/${product}`, breadcrumb: "SẢN PHẨM" },
+      { path: `/${product}/:pid/:title`, breadcrumb: title },
       { path: "/:category", breadcrumb: category },
       { path: "/:category/:pid/:title", breadcrumb: title },
     ];
     const breadcrumbs = useBreadcrumbs(routes);
-
     return (
       <div className="text-sm text-textColor flex items-center">
         {breadcrumbs

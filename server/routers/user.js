@@ -1,21 +1,28 @@
 const router = require("express").Router();
 const userController = require("../controllers/user");
 const { verifyAccessToken, isAdmin } = require("../middlewares/verifyToken");
+const uploader = require("../config/cloudinary.config")
 
+// Auth
 router.post("/register", userController.register);
-router.get("/register/verify/:token", userController.emailVerify);
 router.post("/login", userController.login);
 router.post("/refreshtoken", userController.refreshAccessToken);
 router.get("/logout", userController.logout);
 router.post("/password/forgot", userController.forgotPassword);
 router.put("/password/reset", userController.resetPassword);
+router.get("/register/verify/:token", userController.emailVerify);
+// CRUD CURRENT
 router.get("/current", verifyAccessToken, userController.getCurrent);
-router.get("/", [verifyAccessToken, isAdmin], userController.getUser);
-router.delete("/", [verifyAccessToken, isAdmin], userController.deleteUser);
-router.put("/current", [verifyAccessToken], userController.updateUser);
+router.put("/current", [verifyAccessToken], uploader.single("avatar"), userController.updateUser);
 router.put("/address", [verifyAccessToken],userController.updateAddressUser);
-router.put("/cart", [verifyAccessToken],userController.updateCart);
+// CRUD USER BY ADMIN
+router.get("/", [verifyAccessToken, isAdmin], userController.getUsers);
+router.post("/mocks", [verifyAccessToken, isAdmin], userController.createUsers);
+router.delete("/", [verifyAccessToken, isAdmin], userController.deleteUser);
 router.put("/:uid", [verifyAccessToken, isAdmin],userController.updateUserByAdmin);
-
+// PRODUCT CART
+router.put("/cart", [verifyAccessToken],userController.updateCart);
+router.delete("/cart/remove/:pid/:color",[verifyAccessToken], userController.removeProductInCart)
+router.put("/wishlist/:pid", [verifyAccessToken], userController.updateWishlist)
 
 module.exports = router;
