@@ -1,42 +1,47 @@
 import axios from "../axios";
 
+export const apiCreateProduct = (data) =>
+  axios({
+    url: "/product",
+    method: "POST",
+    data,
+  });
 export const apiGetProduct = (params) =>
   axios({
-      url: "/product",
-      method: "GET",
-      params: params,
-    });
-
+    url: "/product",
+    method: "GET",
+    params: params,
+  });
 export const apiGetProductDetail = (pid) =>
   axios({
-      url: `/product/${pid}`,
-      method: "GET",
-    });
-
-export const apiGetProductByCategory= (category) =>
+    url: `/product/${pid}`,
+    method: "GET",
+  });
+export const apiGetProductByCategory = (category) =>
   axios({
-      url: `/product/category/${category}`,
-      method: "GET",
-    });
+    url: `/product/category/${category}`,
+    method: "GET",
+  });
 export const apiRatings = (data) =>
   axios({
     url: "/product/rating",
     method: "PUT",
     data,
-  })
-export const apiUpdateCart = (data) =>
+  });
+export const apiAddVarriant = (data, pid) =>
   axios({
-    url: "/user/cart",
+    url: `/product/varriant/${pid}`,
+    method: "PUT",
+    data,
+  });
+export const apiUpdateProduct = (data, pid) =>
+  axios({
+    url: `/product/${pid}`,
     method: "PUT",
     data,
   })
-export const apiRemoveCart = (pid, color) =>
+export const apiDeleteProduct = (pid) =>
   axios({
-    url: `/user/cart/remove/${pid}/${color}`,
+    url: `/product/${pid}`,
     method: "DELETE",
-  })
-export const apiUpdateWishlist = (pid) =>
-  axios({
-    url: `/user/wishlist/` + pid,
-    method: "PUT",
   })

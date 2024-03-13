@@ -1,39 +1,53 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { apiGetUsers, apiUpdateUser, apiDeleteUser } from 'api'
-import { roles, blockStatus } from 'utils/contant'
-import moment from 'moment'
-import { InputField, Pagination, InputFormV2, Select, Button } from 'components'
-import useDebounce from 'hooks/useDebounce'
-import { useSearchParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-toastify'
-import Swal from 'sweetalert2'
-import clsx from 'clsx'
+import React, { useCallback, useEffect, useState } from "react";
+import { apiGetUsers, apiUpdateUser, apiDeleteUser } from "api";
+import { blockStatus } from "utils/contant";
+import moment from "moment";
+import {
+  InputField,
+  Pagination,
+  InputFormV2,
+  Select,
+  ButtonV2,
+} from "components";
+import useDebounce from "hooks/useDebounce";
+import { useSearchParams } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import Swal from "sweetalert2";
+import clsx from "clsx";
 
 const ManageUser = () => {
-  const { handleSubmit, register, formState: { errors }, reset } = useForm({
-    email: '',
-    name: '',
-    role: '',
-    phone: '',
-    isBlocked: ''
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+    reset,
+  } = useForm({
+    email: "",
+    name: "",
+    role: "",
+    phone: "",
+    isBlocked: "",
   });
-  const [users, setUsers] = useState(null)
-  const [queries, setQueries] = useState({q: ""})
-  const [update, setUpdate] = useState(false)
-  const [editElm, setEditElm] = useState(null)
-  const [params] = useSearchParams()
+  const [users, setUsers] = useState(null);
+  const [queries, setQueries] = useState({ q: "" });
+  const [update, setUpdate] = useState(false);
+  const [editElm, setEditElm] = useState(null);
+  const [params] = useSearchParams();
 
   const fetchUsers = async (params) => {
-    const response = await apiGetUsers({ ...params, limit: process.env.REACT_APP_LIMIT })
-    if (response.success) setUsers(response)
-  }
+    const response = await apiGetUsers({
+      ...params,
+      limit: process.env.REACT_APP_LIMIT,
+    });
+    if (response.success) setUsers(response);
+  };
 
   const render = useCallback(() => {
     setUpdate(!update);
   }, [update]);
-  const queriesDebounce = useDebounce(queries.q, 800);
 
+  const queriesDebounce = useDebounce(queries.q, 800);
   useEffect(() => {
     const queries = Object.fromEntries([...params]);
     if (queriesDebounce) queries.q = queriesDebounce;
@@ -45,8 +59,8 @@ const ManageUser = () => {
     if (response.success) {
       setEditElm(null);
       render();
-      toast.success(response.mes);
-    } else toast.error(response.mes);
+      toast.success(response.msg);
+    } else toast.error(response.msg);
   };
 
   const handleDeleteUser = (uid) => {
@@ -66,9 +80,9 @@ const ManageUser = () => {
   };
 
   return (
-        <div className={clsx("w-full", editElm && "pl-16")}>
+    <div className={clsx("w-full", editElm && "pl-16")}>
       <h1 className="h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b">
-        <span className='uppercase'>Quản lý tài khoản</span>
+        <span className="uppercase">Quản lý tài khoản người dùng</span>
       </h1>
       <div className="w-full p-4">
         <div className="flex justify-end py-2">
@@ -82,7 +96,7 @@ const ManageUser = () => {
           />
         </div>
         <form onSubmit={handleSubmit(handleUpdate)}>
-          {editElm && <Button type="submit">Update</Button>}
+          {editElm && <ButtonV2 type="submit">Cập nhật</ButtonV2>}
           <table className="table-auto mb-6 text-left w-full">
             <thead className="font-bold bg-main text-[13px] text-white">
               <tr className="border border-gray-500">
@@ -158,11 +172,11 @@ const ManageUser = () => {
                         fullWidth
                         errors={errors}
                         defaultValue={editElm?.phone}
-                        id={"mobile"}
+                        id={"phone"}
                         validate={{
                           required: "Require fill.",
                           pattern: {
-                            value: /^[62|0]+\d{9}/gi,
+                            value: /^\d{9}$/,
                             message: "Invalid phone number",
                           },
                         }}
@@ -197,19 +211,17 @@ const ManageUser = () => {
                         Hủy
                       </span>
                     ) : (
-                      <>
-                        <span
-                          onClick={() => setEditElm(el)}
-                          className="px-2 text-orange-600 hover:underline cursor-pointer">
-                          Sửa
-                        </span>
-                        <span
-                          onClick={() => handleDeleteUser(el._id)}
-                          className="px-2 text-orange-600 hover:underline cursor-pointer">
-                          Xóa
-                        </span>
-                      </>
+                      <span
+                        onClick={() => setEditElm(el)}
+                        className="px-2 text-orange-600 hover:underline cursor-pointer">
+                        Sửa
+                      </span>
                     )}
+                    <span
+                      onClick={() => handleDeleteUser(el._id)}
+                      className="px-2 text-orange-600 hover:underline cursor-pointer">
+                      Xóa
+                    </span>
                   </td>
                 </tr>
               ))}
@@ -221,7 +233,7 @@ const ManageUser = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ManageUser
+export default ManageUser;

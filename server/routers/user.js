@@ -15,14 +15,14 @@ router.get("/register/verify/:token", userController.emailVerify);
 router.get("/current", verifyAccessToken, userController.getCurrent);
 router.put("/current", [verifyAccessToken], uploader.single("avatar"), userController.updateUser);
 router.put("/address", [verifyAccessToken],userController.updateAddressUser);
-// CRUD USER BY ADMIN
-router.get("/", [verifyAccessToken, isAdmin], userController.getUsers);
-router.post("/mocks", [verifyAccessToken, isAdmin], userController.createUsers);
-router.delete("/", [verifyAccessToken, isAdmin], userController.deleteUser);
-router.put("/:uid", [verifyAccessToken, isAdmin],userController.updateUserByAdmin);
 // PRODUCT CART
 router.put("/cart", [verifyAccessToken],userController.updateCart);
 router.delete("/cart/remove/:pid/:color",[verifyAccessToken], userController.removeProductInCart)
 router.put("/wishlist/:pid", [verifyAccessToken], userController.updateWishlist)
+// CRUD USER BY ADMIN
+router.get("/", [verifyAccessToken, isAdmin], userController.getUsers);
+router.post("/mocks", [verifyAccessToken, isAdmin], userController.createUsers);
+router.delete("/", [verifyAccessToken, isAdmin], userController.deleteUser);
+router.put("/admin/update/:uid", [verifyAccessToken, isAdmin],userController.updateUserByAdmin);
 
 module.exports = router;

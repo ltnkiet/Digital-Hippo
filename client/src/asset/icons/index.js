@@ -44,12 +44,13 @@ import {
   BiSolidMap,
   BiUserCircle ,
   BiSolidNotepad,
-  BiDotsHorizontalRounded
+  BiDotsHorizontalRounded,
+  BiCustomize, BiEdit
 } from "react-icons/bi";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
-import { RiRefreshFill, RiLockPasswordLine, RiBillLine, RiShareForwardLine } from "react-icons/ri";
+import { RiRefreshFill, RiLockPasswordLine, RiBillLine, RiShareForwardLine, RiDeleteBin6Line } from "react-icons/ri";
 import { IoIosArrowForward, IoMdArrowDropdown  } from "react-icons/io";
 import { CgSpinner } from "react-icons/cg"
 import { TbArrowForwardUp, TbBrandProducthunt } from 'react-icons/tb'
@@ -101,7 +102,7 @@ export {
   IoBasket,
   IoArrowBackOutline,
 
-  BiChevronsRight,
+  BiChevronsRight, BiCustomize, BiEdit,
   BiMinus,
   BiPlus,
   BiSolidMap,
@@ -115,7 +116,7 @@ export {
   FiUploadCloud,
 
   RiRefreshFill,
-  RiLockPasswordLine,
+  RiLockPasswordLine, RiDeleteBin6Line,
 
   IoIosArrowForward, IoMdArrowDropdown,
 

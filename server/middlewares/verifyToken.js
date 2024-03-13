@@ -23,7 +23,7 @@ const verifyAccessToken = asyncHandler(async (req, res, next) => {
 
 const isEmployee = asyncHandler(async (req, res, next) => {
   const { role } = req.user;
-  if (role !== 1 && role !== 2)
+  if (role === 0 && role !== 1 && role !== 2)
     return res.status(401).json({
       success: false,
       msg: "Require employee role",
@@ -33,7 +33,7 @@ const isEmployee = asyncHandler(async (req, res, next) => {
 
 const isAdmin = asyncHandler(async (req, res, next) => {
   const { role } = req.user;
-  if (role !== 2)
+  if (role === 0 || role !== 2)
     return res.status(401).json({
       success: false,
       msg: "Require admin role",

@@ -2,29 +2,48 @@ const Product = require("../models/product");
 const Category = require("../models/category");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
+const makeSKU = require("uniqid");
+
+// const createProduct = asyncHandler(async (req, res) => {
+//   if (Object.keys(req.body).length === 0) throw new Error("Missing input");
+//   const { title } = req.body;
+//   const existingProduct = await Product.findOne({ title });
+//   if (existingProduct) {
+//     return res.status(400).json({
+//       success: false,
+//       error: "Product with this title already exists",
+//     });
+//   }
+//   const slug = slugify(title, "-");
+//   req.body.slug = slug;
+//   const newProduct = await Product.create(req.body);
+//   return res.status(200).json({
+//     success: newProduct ? true : false,
+//     createProduct: newProduct ? newProduct : "Cannot create new product",
+//   });
+// });
 
 const createProduct = asyncHandler(async (req, res) => {
-  if (Object.keys(req.body).length === 0) throw new Error("Missing input");
-  const { title } = req.body;
-  const existingProduct = await Product.findOne({ title });
-  if (existingProduct) {
-    return res.status(400).json({
-      success: false,
-      error: "Product with this title already exists",
-    });
-  }
-  const slug = slugify(title, "-");
-  req.body.slug = slug;
+  const { title, price, description, brand, category, color } = req.body;
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((el) => el.path);
+  if (!(title && price && description && brand && category && color))
+    throw new Error("Missing inputs");
+  req.body.slug = slugify(title);
+  if (thumb) req.body.thumb = thumb;
+  if (images) req.body.images = images;
   const newProduct = await Product.create(req.body);
   return res.status(200).json({
     success: newProduct ? true : false,
-    createProduct: newProduct ? newProduct : "Cannot create new product",
+    msg: newProduct ? "Tạo thành công" : "Lỗi hệ thống.",
   });
 });
 
 const getProductDetail = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  const product = await Product.findById(pid).populate("category").populate('rating.postBy');
+  const product = await Product.findById(pid)
+    .populate("category")
+    .populate("rating.postBy");
   return res.status(200).json({
     success: product ? true : false,
     productDetail: product ? product : "Cannot get product",
@@ -37,10 +56,12 @@ const getProductList = asyncHandler(async (req, res) => {
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
   queries.status = 1;
-  
+
   // Query Category
   if (queries.category) {
-    const cate = await Category.findOne({ name: { $regex: queries.category, $options: "i" }});
+    const cate = await Category.findOne({
+      name: { $regex: queries.category, $options: "i" },
+    });
     if (cate) {
       queries.category = cate._id;
     } else {
@@ -50,35 +71,38 @@ const getProductList = asyncHandler(async (req, res) => {
       });
     }
   }
-  
+
   let queryString = JSON.stringify(queries);
-  queryString = queryString.replace(/\b(gte|gt|lt|lte|size)\b/g,(matchedEl) => `$${matchedEl}`);
+  queryString = queryString.replace(
+    /\b(gte|gt|lt|lte|size)\b/g,
+    (matchedEl) => `$${matchedEl}`
+  );
   const formatQueries = JSON.parse(queryString);
-  let colorQueryObject = {}
-  
+  let colorQueryObject = {};
+
   // Query field
   if (queries?.title)
     formatQueries.title = { $regex: queries.title, $options: "i" };
   if (queries?.color) {
-    delete formatQueries.color
-    const colorArr = queries.color?.split(",")
+    delete formatQueries.color;
+    const colorArr = queries.color?.split(",");
     const colorQuery = colorArr.map((el) => ({
       color: { $regex: el, $options: "i" },
-    }))
-    colorQueryObject = { $or: colorQuery }
+    }));
+    colorQueryObject = { $or: colorQuery };
   }
-  let queryObject = {}
+  let queryObject = {};
   if (queries?.q) {
-    delete formatQueries.q
+    delete formatQueries.q;
     queryObject = {
       $or: [
         { color: { $regex: queries.q, $options: "i" } },
         { title: { $regex: queries.q, $options: "i" } },
-        { brand: { $regex: queries.q, $options: "i" } },  
+        { brand: { $regex: queries.q, $options: "i" } },
       ],
-    }
+    };
   }
-  const qr = { ...colorQueryObject, ...formatQueries, ...queryObject }
+  const qr = { ...colorQueryObject, ...formatQueries, ...queryObject };
   let queryCommand = Product.find(qr).populate("category");
   //sort
   if (req.query.sort) {
@@ -98,7 +122,7 @@ const getProductList = asyncHandler(async (req, res) => {
 
   queryCommand
     .then(async (response) => {
-      const counts = await Product.find(formatQueries).countDocuments();  
+      const counts = await Product.find(formatQueries).countDocuments();
       return res.status(200).json({
         success: response ? true : false,
         counts,
@@ -134,11 +158,16 @@ const getProductByCategory = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
-  if (req.body && req.body.title) req.body.slug = slugify(req.body.title, "_");
-  const product = await Product.findByIdAndUpdate(pid, req.body, { new: true });
+  const files = req?.files;
+  if (files?.thumb) req.body.thumb = files?.thumb[0]?.path;
+  if (files?.images) req.body.images = files?.images?.map((el) => el.path);
+  if (req.body && req.body.title) req.body.slug = slugify(req.body.title);
+  const updatedProduct = await Product.findByIdAndUpdate(pid, req.body, {
+    new: true,
+  });
   return res.status(200).json({
-    success: product ? true : false,
-    productDetail: product ? product : "Cannot update product",
+    success: updatedProduct ? true : false,
+    msg: updatedProduct ? "Cập nhật thành công." : "Lỗi hệ thống",
   });
 });
 
@@ -156,7 +185,9 @@ const rating = asyncHandler(async (req, res) => {
   const { star, comment, pid, updatedAt } = req.body;
   if (!star || !pid) throw new Error("Missing Input");
   const ratingProduct = await Product.findById(pid);
-  const alreadyRating = ratingProduct?.rating?.find((el) => el.postBy.toString() === _id);
+  const alreadyRating = ratingProduct?.rating?.find(
+    (el) => el.postBy.toString() === _id
+  );
   if (alreadyRating) {
     //update comment, star
     await Product.updateOne(
@@ -164,8 +195,8 @@ const rating = asyncHandler(async (req, res) => {
         rating: { $elemMatch: alreadyRating },
       },
       {
-        $set: { 
-          "rating.$.star": star, 
+        $set: {
+          "rating.$.star": star,
           "rating.$.comment": comment,
           "rating.$.updatedAt": updatedAt,
         },
@@ -189,7 +220,8 @@ const rating = asyncHandler(async (req, res) => {
     (sum, el) => sum + +el.star,
     0
   );
-  updatedTotalRating.totalRating = Math.round((sumRating * 10) / ratingCount) / 10;
+  updatedTotalRating.totalRating =
+    Math.round((sumRating * 10) / ratingCount) / 10;
   await updatedTotalRating.save();
   return res.status(200).json({
     success: updatedTotalRating ? true : false,
@@ -214,6 +246,34 @@ const uploadImgProduct = asyncHandler(async (req, res) => {
   });
 });
 
+const addVarriant = asyncHandler(async (req, res) => {
+  const { pid } = req.params;
+  const { title, price, color } = req.body;
+  const thumb = req?.files?.thumb[0]?.path;
+  const images = req.files?.images?.map((el) => el.path);
+  if (!(title && price && color)) throw new Error("Missing inputs");
+  const response = await Product.findByIdAndUpdate(
+    pid,
+    {
+      $push: {
+        varriants: {
+          color,
+          price,
+          title,
+          thumb,
+          images,
+          sku: makeSKU().toUpperCase(),
+        },
+      },
+    },
+    { new: true }
+  );
+  return res.status(200).json({
+    success: response ? true : false,
+    msg: response ? "Thêm thành công" : "Lỗi hệ thống",
+  });
+});
+
 module.exports = {
   createProduct,
   getProductDetail,
@@ -223,4 +283,5 @@ module.exports = {
   rating,
   uploadImgProduct,
   getProductByCategory,
+  addVarriant,
 };

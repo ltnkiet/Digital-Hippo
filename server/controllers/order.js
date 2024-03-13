@@ -3,6 +3,30 @@ const User = require("../models/user");
 const Coupons = require("../models/coupons");
 const asyncHandler = require("express-async-handler");
 
+const createOrderV2 = asyncHandler(async (req, res) => {
+  const { _id } = req.user
+  const { products, total, address, status, coupons } = req.body
+  if (address) {
+    await User.findByIdAndUpdate(_id, { address, cart: [] })
+  }
+  const data = { products, total, orderBy: _id, coupons }
+  if (coupons) {
+    const seletedCoupons = await Coupons.findById(coupons);
+    if (seletedCoupons.expiry && new Date(seletedCoupons.expiry) < new Date()) {
+      throw new Error("Voucher đã hết hạn");
+    };
+    total = Math.round((total * (1 - +seletedCoupons?.discount / 100)) / 1000) * 1000 || total;
+    data.total = total;
+    data.coupons = coupons;
+  }
+  if (status) data.status = status
+  const rs = await Order.create(data)
+  return res.json({
+    success: rs ? true : false,
+    rs: rs ? rs : "Something went wrong",
+  })
+})
+
 const createOrder = asyncHandler(async (req, res) => {
   const { _id } = req.user;
   const { coupons } = req.body;
@@ -74,4 +98,4 @@ const getOrder = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { createOrder, createOrderbyAdmin, updateStatus, getUserOrder, getOrder };
+module.exports = { createOrder, createOrderV2, createOrderbyAdmin, updateStatus, getUserOrder, getOrder };

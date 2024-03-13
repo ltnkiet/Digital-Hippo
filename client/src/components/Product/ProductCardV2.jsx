@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { formatPrice, renderStar } from "utils/helpers";
 import SelectOption from "../Search/SelectOption";
-import { FaEye, FaRegHeart, FaCartPlus, BsFillCartCheckFill } from "asset/icons";
+import {
+  FaEye,
+  FaRegHeart,
+  FaCartPlus,
+  BsFillCartCheckFill,
+} from "asset/icons";
 import withBaseComponent from "hocs/withBaseComponent";
 import { getCurrent } from "store/user/asyncActions";
 import path from "utils/path";
@@ -10,9 +15,11 @@ import { toast } from "react-toastify";
 import { apiUpdateCart } from "api";
 import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
+import { showModal } from "store/app/appSlice";
+import { ProductDetail } from "page/public";
 
 const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
-  const { current } = useSelector((state) => state.user);
+  const { current, currentCart } = useSelector((state) => state.user);
   const [showOption, setShowOption] = useState(false);
 
   const handleClickOptions = async (e, flag) => {
@@ -47,6 +54,19 @@ const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
         toast.success(response.msg);
         dispatch(getCurrent());
       } else toast.error(response.msg);
+    }
+    if (flag === "QUICK_VIEW") {
+      dispatch(
+        showModal({
+          isShowModal: true,
+          modalChildren: (
+            <ProductDetail
+              data={{ pid: data?._id, category: data?.category?.name }}
+              isQuickView
+            />
+          ),
+        })
+      );
     }
   };
   return (
@@ -97,11 +117,11 @@ const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
             onClick={(e) => handleClickOptions(e, "WISHLIST")}>
             <SelectOption icon={<FaRegHeart />} />
           </span>
-          {current?.cart?.some(
-            (el) => el.products?._id === data._id.toString()
+          {currentCart?.some(
+            (el) => el.product?._id === data._id.toString()
           ) ? (
             <span title="Added to Cart">
-              <SelectOption icon={<BsFillCartCheckFill  color="green" />} />
+              <SelectOption icon={<BsFillCartCheckFill color="green" />} />
             </span>
           ) : (
             <span

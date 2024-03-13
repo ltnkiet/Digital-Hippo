@@ -3,18 +3,25 @@ import { formatPrice, renderStar } from "utils/helpers";
 import labelNew from "asset/img/LabelNew.png";
 import labelTrending from "asset/img/LabelTrending.png";
 import SelectOption from "../Search/SelectOption";
-import { FaEye, FaRegHeart, FaCartPlus, BsFillCartCheckFill  } from "asset/icons";
+import {
+  FaEye,
+  FaRegHeart,
+  FaCartPlus,
+  BsFillCartCheckFill,
+} from "asset/icons";
 import withBaseComponent from "hocs/withBaseComponent";
+import { getCurrent } from "store/user/asyncActions";
 import { apiUpdateCart } from "api";
 import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
-import { getCurrent } from "store/user/asyncActions";
 import path from "utils/path";
-import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { showModal } from "store/app/appSlice";
+import { ProductDetail } from "page/public";
 
 const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
-  const { current } = useSelector((state) => state.user);
+  const { current, currentCart } = useSelector((state) => state.user);
   const [showOption, setShowOption] = useState(false);
 
   const handleClickOptions = async (e, flag) => {
@@ -49,6 +56,19 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
         toast.success(response.msg);
         dispatch(getCurrent());
       } else toast.error(response.msg);
+    }
+    if (flag === "QUICK_VIEW") {
+      dispatch(
+        showModal({
+          isShowModal: true,
+          modalChildren: (
+            <ProductDetail
+              data={{ pid: data?._id, category: data?.category?.name }}
+              isQuickView
+            />
+          ),
+        })
+      );
     }
   };
 
@@ -95,11 +115,11 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
                 onClick={(e) => handleClickOptions(e, "WISHLIST")}>
                 <SelectOption icon={<FaRegHeart />} />
               </span>
-              {current?.cart?.some(
-                (el) => el.products?._id === data._id.toString()
+              {currentCart?.some(
+                (el) => el.product?._id === data._id.toString()
               ) ? (
                 <span title="Added to Cart">
-                  <SelectOption icon={<BsFillCartCheckFill  color="green" />} />
+                  <SelectOption icon={<BsFillCartCheckFill color="green" />} />
                 </span>
               ) : (
                 <span
@@ -131,9 +151,6 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
             <span class="text-xl font-bold text-gray-900 dark:text-white">
               {formatPrice(data?.price)}
             </span>
-            {/* <p class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-              Giỏ hàng
-            </p> */}
           </div>
         </div>
       </div>

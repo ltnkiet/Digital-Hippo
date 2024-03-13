@@ -30,7 +30,7 @@ export const userSlice = createSlice({
       const { pid, color, quantity } = action.payload
       const updatingCart = JSON.parse(JSON.stringify(state.currentCart))
       state.currentCart = updatingCart.map(el => {
-        if (el.color === color && el.products?._id === pid) {
+        if (el.color === color && el.product?._id === pid) {
           return { ...el, quantity }
         } else return el
       })
@@ -59,6 +59,6 @@ export const userSlice = createSlice({
   },
 });
 
-export const { login,logout, clearMessage } = userSlice.actions;
+export const { login,logout, clearMessage, updateCart } = userSlice.actions;
 
 export default userSlice.reducer;

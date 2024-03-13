@@ -1,10 +1,10 @@
 const User = require("../models/user");
-const Product = require('../models/product')
+const Product = require("../models/product");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const crypto = require("crypto");
-const { usersTest } = require('../utils/contants')
+const { usersTest } = require("../utils/contants");
 
 const {
   generateAccessToken,
@@ -12,18 +12,22 @@ const {
 } = require("../middlewares/jwt");
 
 //Đăng ký
-const register = asyncHandler(async (req, res) => {   
+const register = asyncHandler(async (req, res) => {
   const { name, email, password, phone } = req.body;
   if (!name || !email || !password || !phone)
     return res.status(400).json({
       success: false,
       msg: "Missing Input",
     });
-  const user = await User.findOne({email})
-  if(user) throw new Error("Email này đã tồn tại.")
+  const user = await User.findOne({ email });
+  if (user) throw new Error("Email này đã tồn tại.");
   else {
     const token = crypto.randomBytes(32).toString("hex");
-    res.cookie("data", {...req.body, token}, { httpOnly: true, maxAge: 3 * 60 * 1000 });
+    res.cookie(
+      "data",
+      { ...req.body, token },
+      { httpOnly: true, maxAge: 3 * 60 * 1000 }
+    );
     const html = `
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
         Cảm ơn bạn vì đã chọn đồng hành cùng chúng tôi
@@ -50,16 +54,21 @@ const register = asyncHandler(async (req, res) => {
 const emailVerify = asyncHandler(async (req, res) => {
   const cookie = req.cookies;
   const { token } = req.params;
-  if(!cookie || cookie?.data?.token !== token) return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`)
+  if (!cookie || cookie?.data?.token !== token)
+    return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`);
   const newUser = await User.create({
     name: cookie?.data?.name,
     phone: cookie?.data?.phone,
     email: cookie?.data?.email,
     password: cookie?.data?.password,
-  })
-  res.clearCookie('data')
-  if(newUser) return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/thanh-cong`)
-  else return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`) 
+  });
+  res.clearCookie("data");
+  if (newUser)
+    return res.redirect(
+      `${process.env.CLIENT_URL}/dang-ky/xac-thuc/thanh-cong`
+    );
+  else
+    return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`);
 });
 
 //Đăng nhập
@@ -103,10 +112,11 @@ const getCurrent = asyncHandler(async (req, res) => {
     .populate({
       path: "cart",
       populate: {
-        path: "products",
+        path: "product",
         select: "title thumb price color",
       },
     });
+
   return res.status(200).json({
     success: user ? true : false,
     users: user ? user : "User Not Found",
@@ -155,7 +165,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) throw new Error("Email chưa được đăng ký");
   const resetToken = user.createPasswordChangedToken();
-  await user.save(); 
+  await user.save();
   const html = `
     <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
       Bạn nhận được email này vì bạn hoặc ai đó đã yêu cầu lấy lại mật khẩu
@@ -176,7 +186,9 @@ const forgotPassword = asyncHandler(async (req, res) => {
     <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">
   `;
 
-  const data = { email, html,
+  const data = {
+    email,
+    html,
     subject: "[Digital Hippo] Password Reset E-Mail",
   };
 
@@ -184,7 +196,7 @@ const forgotPassword = asyncHandler(async (req, res) => {
   return res.status(200).json({
     success: true,
     result,
-    msg:"Thư báo đã được gửi tới email của bạn"
+    msg: "Thư báo đã được gửi tới email của bạn",
   });
 });
 
@@ -199,7 +211,8 @@ const resetPassword = asyncHandler(async (req, res) => {
     passwordResetToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-  if (!user) throw new Error("Đã hết thời gian thay đổi mật khẩu. Vui lòng thử lại!");
+  if (!user)
+    throw new Error("Đã hết thời gian thay đổi mật khẩu. Vui lòng thử lại!");
   user.password = password;
   user.passwordResetToken = undefined;
   user.passwordChangedAt = Date.now();
@@ -211,89 +224,119 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
+// const test {
+//   app.post(
+//     "/api/QuanLyNguoiDung/XacMinhTokenVaCapNhatMatKhau",
+//     async (req, res) => {
+//       const { token, newPassword } = req.body;
+
+//       try {
+//         const decoded = jwt.verify(token, "secretKey");
+//         const email = decoded.email;
+
+//         const hashPassword = md5(newPassword);
+//         dbConn.query(
+//           "UPDATE nguoidungvm SET matKhau = ? WHERE email = ?",
+//           [hashPassword, email],
+//           function (error, results) {
+//             if (error) {
+//               return res.status(500).send("Lỗi khi cập nhật mật khẩu");
+//             }
+//             res.send("Cập nhật mật khẩu thành công");
+//           }
+//         );
+//       } catch (error) {
+//         res.status(400).send("Token không hợp lệ hoặc đã hết hạn");
+//       }
+//     }
+//   );
+// }
+
 const getUsers = asyncHandler(async (req, res) => {
-  const queries = { ...req.query }
-  const excludeFields = ["limit", "sort", "page", "fields"]
-  excludeFields.forEach((el) => delete queries[el])
+  const queries = { ...req.query };
+  const excludeFields = ["limit", "sort", "page", "fields"];
+  excludeFields.forEach((el) => delete queries[el]);
   queries.role = 0;
 
-  let queryString = JSON.stringify(queries)
+  let queryString = JSON.stringify(queries);
   queryString = queryString.replace(
     /\b(gte|gt|lt|lte)\b/g,
     (macthedEl) => `$${macthedEl}`
-  )
-  const formatedQueries = JSON.parse(queryString)
-  if (queries?.name) formatedQueries.name = { $regex: queries.name, $options: "i" }
+  );
+  const formatedQueries = JSON.parse(queryString);
+  if (queries?.name)
+    formatedQueries.name = { $regex: queries.name, $options: "i" };
   if (req.query.q) {
-    delete formatedQueries.q
+    delete formatedQueries.q;
     formatedQueries["$or"] = [
       { name: { $regex: req.query.q, $options: "i" } },
       { email: { $regex: req.query.q, $options: "i" } },
-    ]
+    ];
   }
-  let queryCommand = User.find(formatedQueries)
+  let queryCommand = User.find(formatedQueries);
 
   if (req.query.sort) {
-    const sortBy = req.query.sort.split(",").join(" ")
-    queryCommand = queryCommand.sort(sortBy)
+    const sortBy = req.query.sort.split(",").join(" ");
+    queryCommand = queryCommand.sort(sortBy);
   }
 
   if (req.query.fields) {
-    const fields = req.query.fields.split(",").join(" ")
-    queryCommand = queryCommand.select(fields)
+    const fields = req.query.fields.split(",").join(" ");
+    queryCommand = queryCommand.select(fields);
   }
 
-  const page = +req.query.page || 1
-  const limit = +req.query.limit || process.env.LIMIT_TABLE
-  const skip = (page - 1) * limit
-  queryCommand.skip(skip).limit(limit)
+  const page = +req.query.page || 1;
+  const limit = +req.query.limit || process.env.LIMIT_TABLE;
+  const skip = (page - 1) * limit;
+  queryCommand.skip(skip).limit(limit);
   queryCommand
-  .then(async (response) => {
-    const counts = await User.find(formatedQueries).countDocuments();  
-    return res.status(200).json({
-      success: response ? true : false,
-      counts,
-      users: response ? response : "Cannot get user list",
+    .then(async (response) => {
+      const counts = await User.find(formatedQueries).countDocuments();
+      return res.status(200).json({
+        success: response ? true : false,
+        counts,
+        users: response ? response : "Cannot get user list",
+      });
+    })
+    .catch((err) => {
+      throw new Error(err.message);
     });
-  })
-  .catch((err) => {
-    throw new Error(err.message);
-  });
-})
+});
 
 const createUsers = asyncHandler(async (req, res) => {
-  const response = await User.create(usersTest)
+  const response = await User.create(usersTest);
   return res.status(200).json({
     success: response ? true : false,
     users: response ? response : "Some thing went wrong",
-  })
-})
+  });
+});
 
 const deleteUser = asyncHandler(async (req, res) => {
-  const { uid } = req.params
-  const response = await User.findByIdAndDelete(uid)
+  const { uid } = req.params;
+  const response = await User.findByIdAndDelete(uid);
   return res.status(200).json({
     success: response ? true : false,
     msg: response
       ? `User with email ${response.email} deleted`
       : "No user delete",
-  })
-})
+  });
+});
+
 const updateUser = asyncHandler(async (req, res) => {
-  const { _id } = req.user
-  const { name, email, phonne, address } = req.body
-  const data = { name, email, phonne, address }
-  if (req.file) data.avatar = req.file.path
+  const { _id } = req.user;
+  const { name, email, phonne, address } = req.body;
+  const data = { name, email, phonne, address };
+  if (req.file) data.avatar = req.file.path;
   if (!_id || Object.keys(req.body).length === 0)
-    throw new Error("Missing inputs")
+    throw new Error("Missing inputs");
   const response = await User.findByIdAndUpdate(_id, data, {
     new: true,
-  }).select("-password -role -refreshToken")
+  }).select("-password -role -refreshToken");
   return res.status(200).json({
     success: response ? true : false,
     msg: response ? "Updated." : "Some thing went wrong",
-  })
-})
+  });
+});
 
 const updateUserByAdmin = asyncHandler(async (req, res) => {
   const { uid } = req.params;
@@ -303,7 +346,7 @@ const updateUserByAdmin = asyncHandler(async (req, res) => {
   }).select("-refreshToken -password -role");
   return res.status(200).json({
     success: response ? true : false,
-    updatedUser: response ? response : "Error",
+    msg: response ? "Cập nhật thành công" : "Lỗi hệ thống",
   });
 });
 
@@ -325,11 +368,10 @@ const updateAddressUser = asyncHandler(async (req, res) => {
 
 const updateCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
-  const { pid, quantity = 1, color, price, thumbnail, title } = req.body;
+  const { pid, quantity, color, price, thumbnail, title } = req.body;
   if (!pid || !color) throw new Error("Missing input");
-  // Check if the product quantity is sufficient in the database
-  const product = await Product.findById(pid);
-  if (!product || product.quantity < quantity) {
+  const prod = await Product.findById(pid);
+  if (!prod || prod.quantity < quantity) {
     return res.status(400).json({
       success: false,
       msg: "Số lượng sản phẩm không đủ!",
@@ -337,88 +379,96 @@ const updateCart = asyncHandler(async (req, res) => {
   }
   const user = await User.findById(_id).select("cart");
   const alreadyProduct = user?.cart?.find(
-    (el) => el.products._id === pid && el.color === color
+    (el) => el.product.toString() === pid && el.color === color
   );
   if (alreadyProduct) {
     //nếu trùng id thì thêm số lượng
+    alreadyQty = parseInt(quantity) + parseInt(alreadyProduct.quantity);
     const response = await User.updateOne(
       { cart: { $elemMatch: alreadyProduct } },
-      { $set: { 
-        "cart.$.quantity": quantity,
-        "cart.$.price": price,
-        "cart.$.thumbnail": thumbnail,
-        "cart.$.title": title,
-      } },
-      { new: true }
+      {
+        $set: {
+          "cart.$.quantity": alreadyQty,
+          "cart.$.price": price,
+          "cart.$.thumbnail": thumbnail,
+          "cart.$.title": title,
+        },
+      }
     );
     return res.status(200).json({
       success: response ? true : false,
-      msg: response ? "Đã thêm sản phẩm vào giỏ" : "Không thể thêm sản phẩm vào giỏ",
+      msg: response ? "Đã thêm vào giỏ" : "Không thể thêm vào giỏ",
     });
   } else {
     // khác thì thêm sp mới
     const response = await User.findByIdAndUpdate(
       _id,
-      { $push: { cart: { products: pid, quantity, color, price, thumbnail, title } } },
+      {
+        $push: {
+          cart: { product: pid, quantity, color, price, thumbnail, title },
+        },
+      },
       { new: true }
     );
     return res.status(200).json({
       success: response ? true : false,
-      msg: response ? "Đã thêm sản phẩm vào giỏ" : "Không thể thêm sản phẩm vào giỏ",
+      msg: response
+        ? "Đã thêm sản phẩm vào giỏ"
+        : "Không thể thêm sản phẩm vào giỏ",
     });
   }
 });
 
 const removeProductInCart = asyncHandler(async (req, res) => {
-  const { _id } = req.user
-  const { pid, color } = req.body
-  const user = await User.findById(_id).select("cart")
+  const { _id } = req.user;
+  const { pid, color } = req.params;
+  const user = await User.findById(_id).select("cart");
   const alreadyProduct = user?.cart?.find(
-    (el) => el.products.toString() === pid && el.color === color
-  )
+    (el) => el.product.toString() === pid && el.color === color
+  );
   if (!alreadyProduct)
     return res.status(200).json({
       success: true,
-      mes: "Updated your cart",
-    })
+      msg: "Updated your cart",
+    });
   const response = await User.findByIdAndUpdate(
     _id,
     { $pull: { cart: { product: pid, color } } },
     { new: true }
-  )
+  );
   return res.status(200).json({
     success: response ? true : false,
-    mes: response ? "Updated your cart" : "Some thing went wrong",
-  })
-})
+    msg: response ? "Đã xóa" : "Some thing went wrong",
+  });
+});
 
 const updateWishlist = asyncHandler(async (req, res) => {
-  const { pid } = req.params
-  const { _id } = req.user
-  const user = await User.findById(_id)
-  const alreadyInWishlist = user.wishlist?.find((el) => el.toString() === pid)
+  const { pid } = req.params;
+  const { _id } = req.user;
+  const user = await User.findById(_id);
+  const alreadyInWishlist = user.wishlist?.find((el) => el.toString() === pid);
   if (alreadyInWishlist) {
     const response = await User.findByIdAndUpdate(
       _id,
       { $pull: { wishlist: pid } },
       { new: true }
-    )
+    );
     return res.json({
       success: response ? true : false,
       mes: response ? "Updated your wishlist." : "Failed to update wihlist!",
-    })
+    });
   } else {
     const response = await User.findByIdAndUpdate(
       _id,
       { $push: { wishlist: pid } },
       { new: true }
-    )
+    );
     return res.json({
       success: response ? true : false,
       mes: response ? "Updated your wishlist." : "Failed to update wihlist!",
-    })
+    });
   }
-})
+});
 
 module.exports = {
   register,
@@ -435,6 +485,7 @@ module.exports = {
   updateUserByAdmin,
   updateAddressUser,
   updateCart,
-  removeProductInCart, updateWishlist,
-  createUsers
+  removeProductInCart,
+  updateWishlist,
+  createUsers,
 };

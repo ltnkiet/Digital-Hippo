@@ -16,24 +16,21 @@ const BestSeller = () => {
   const [productTab, setProductTab] = useState(null);
   const dispatch = useDispatch();
   const { newProducts } = useSelector((state) => state.product);
-
   const fetchProduct = async () => {
-    const response = await apiGetProduct({ sort: "-sold", limit:10 });
+    const response = await apiGetProduct({ sort: "-sold", limit: 10 });
     if (response.success) {
       setBestSeller(response.productList);
       setProductTab(response.productList);
     }
   };
-
   useEffect(() => {
+    dispatch(getNewProduct());
     fetchProduct();
-    dispatch(getNewProduct());// eslint-disable-next-line
   }, []);
-
   useEffect(() => {
     if (activeTabs === 1) setProductTab(bestSeller);
     if (activeTabs === 2) setProductTab(newProducts);
-  }, [bestSeller]);// eslint-disable-next-line
+  }, [bestSeller, newProducts]);
 
   return (
     <div>

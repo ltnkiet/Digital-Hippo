@@ -3,12 +3,12 @@ import { InputForm, Button } from "components";
 import validate from "utils/helpers";
 import { apiLogin, apiRegister, apiForgotPassword } from "api";
 import Swal from "sweetalert2";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import path from "utils/path";
 import { login } from "store/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { LogoV3 } from "asset/img";
-import { IoArrowBackOutline } from 'asset/icons'
+import { IoArrowBackOutline } from "asset/icons";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -18,6 +18,8 @@ const Login = () => {
   const [isRegister, setIsRegister] = useState(false);
   const [invalidFields, setInvalidFields] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [searchParams] = useSearchParams();
+
   const [payload, setPayload] = useState({
     name: "",
     email: "",
@@ -50,7 +52,6 @@ const Login = () => {
         } else Swal.fire("Sự cố!", response.msg, "error");
       } else {
         const res = await apiLogin(data);
-        console.log(res.user)
         if (res.success) {
           Swal.fire("Hoàn tất", res.msg, "success").then(() => {
             dispatch(
@@ -60,14 +61,9 @@ const Login = () => {
                 userData: res.user,
               })
             );
-            const { role } = res.user;
-            if (role === 1 || role === 2) {
-              // Navigate to the admin path
-              navigate(`/${path.ADMIN}`);
-            } else {
-              // Navigate to the home path for other roles
-              navigate(`/${path.HOME}`);
-            }
+            searchParams.get("redirect")
+              ? navigate(searchParams.get("redirect"))
+              : navigate(`/${path.HOME}`);
           });
         } else Swal.fire("Sự cố!", res.msg, "error");
       }
@@ -76,20 +72,7 @@ const Login = () => {
 
   useEffect(() => {
     isLoggedIn && navigate(`/${path.HOME}`);
-    // if (isLoggedIn) {
-    //   // Assuming user roles are stored in the userData object
-    //   const { role } = useSelector((state) => state.user.userData);
-    //   if (role === 1 || role === 2) {
-    //     // Navigate to the admin path
-    //     navigate(`/${path.ADMIN}`);
-    //   } else {
-    //     // Navigate to the home path for other roles
-    //     navigate(`/${path.HOME}`);
-    //   }
-    // }
   }, [isLoggedIn]);
-
-
 
   const handleForgotPass = async () => {
     const response = await apiForgotPassword(payload);
@@ -103,7 +86,7 @@ const Login = () => {
       <div className="w-2/5 flex flex-col items-center justify-center p-8 rounded-md shadow-lg border border-main">
         <div className="w-full flex items-start">
           <Link to={`/${path.HOME}`}>
-            <IoArrowBackOutline className="text-2xl"/>
+            <IoArrowBackOutline className="text-2xl" />
           </Link>
         </div>
         <img src={LogoV3} className="w-40" alt="" />
@@ -142,8 +125,7 @@ const Login = () => {
             <div className="font-semibold text-2xl my-5 flex items-center justify-center text-main">
               {isRegister
                 ? "Chào mừng bạn đến với Digital Hippo"
-                : "Chào mừng bạn trở lại với Digital Hippo"
-              }
+                : "Chào mừng bạn trở lại với Digital Hippo"}
             </div>
             <div className="w-full flex flex-col gap-5">
               {isRegister && (
@@ -201,8 +183,7 @@ const Login = () => {
             <div className="w-full mt-7 text-xl">
               {isRegister ? (
                 <small>
-                  <span>Bạn đã có tài khoản?</span>
-                  {" "}
+                  <span>Bạn đã có tài khoản?</span>{" "}
                   <span
                     onClick={() => {
                       setIsRegister(false);

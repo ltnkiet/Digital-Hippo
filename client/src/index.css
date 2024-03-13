@@ -4,9 +4,17 @@
 
 @import url(https://fonts.googleapis.com/css?family=Roboto:100,100italic,300,300italic,regular,italic,500,500italic,700,700italic,900,900italic);
 
+html {
+  height: 100%;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
 body {
+  height: 100%;
   margin: 0;
   padding: 0;
+  overflow-x: hidden;
   font-family: "Roboto", sans-serif;
   background-color: white;
 }
@@ -17,10 +25,46 @@ body {
   border-color: #6b7280;
   border-width: 1px;
   border-radius: 0px;
-  padding-top: 0.5rem/* 8px */;
-  padding-right: 0.75rem/* 12px */;
-  padding-bottom: 0.5rem/* 8px */;
-  padding-left: 0.75rem/* 12px */;
-  font-size: 1rem/* 16px */;
-  line-height: 1.5rem/* 24px */;
+  padding-top: 0.5rem /* 8px */;
+  padding-right: 0.75rem /* 12px */;
+  padding-bottom: 0.5rem /* 8px */;
+  padding-left: 0.75rem /* 12px */;
+  font-size: 1rem /* 16px */;
+  line-height: 1.5rem /* 24px */;
+}
+
+.image-slider button.slick-next {
+  right: 0px;
+  z-index: 10;
+  top: 55px;
+}
+
+.image-slider button.slick-prev {
+  left: 0px;
+  top: 55px;
+  z-index: 10;
+}
+
+.image-slider button.slick-next::before {
+  color: gray;
+  content: "\276F";
+  background-color: #1c20ff;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-slider button.slick-prev::before {
+  color: gray;
+  content: "\276E";
+  background-color: #1c20ff;
+  width: 40px;
+  height: 40px;
+  font-size: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
