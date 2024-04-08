@@ -1,32 +1,49 @@
 import {
-  FaEnvelope, FaHistory ,
-  FaLock , FaCartPlus ,
+  FaEnvelope,
+  FaHistory,
+  FaLock,
+  FaCartPlus,
   FaCloudUploadAlt,
   FaCheck,
   FaArrowLeft,
   FaUserCircle,
   FaRegStar,
-  FaStarHalfAlt ,
+  FaStarHalfAlt,
   FaStar,
   FaEye,
+  FaHeart ,
   FaRegHeart,
-  FaUserEdit, FaShoppingCart 
-  
+  FaUserEdit,
+  FaShoppingCart,
 } from "react-icons/fa";
-import { ImBin } from 'react-icons/im'
+import { ImBin } from "react-icons/im";
 
 import { FaHeartCirclePlus } from "react-icons/fa6";
-import {AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle, AiOutlineDown, 
-  AiOutlineLogout, AiOutlineCaretDown, AiOutlineCaretRight, AiFillCloseCircle} from 'react-icons/ai'
+import {
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiFillPlusCircle,
+  AiFillMinusCircle,
+  AiOutlineDown,
+  AiOutlineLogout,
+  AiOutlineCaretDown,
+  AiOutlineCaretRight,
+  AiFillCloseCircle,
+  AiOutlineUserAdd,
+} from "react-icons/ai";
 import { FcGoogle, FcClearFilters } from "react-icons/fc";
 import {
-  MdShoppingCart, MdSpaceDashboard ,
-  MdLogout, MdGroups, MdCategory,
+  MdShoppingCart,
+  MdSpaceDashboard,
+  MdLogout,
+  MdGroups,
+  MdCategory,
   MdSearch,
   MdDelete,
   MdOutlineKeyboardBackspace,
   MdEmail,
-  MdOutlineLibraryBooks, MdAdminPanelSettings 
+  MdOutlineLibraryBooks,
+  MdAdminPanelSettings,
 } from "react-icons/md";
 import {
   BsToggles2,
@@ -34,91 +51,107 @@ import {
   BsExclamationTriangleFill,
   BsFillTelephoneFill,
   BsFillHeartFill,
-  BsFillCartCheckFill 
+  BsFillCartCheckFill, BsFillSuitHeartFill
 } from "react-icons/bs";
-import { IoFastFood, IoBasket, IoArrowBackOutline  } from "react-icons/io5";
+import { IoFastFood, IoBasket, IoArrowBackOutline } from "react-icons/io5";
 import {
   BiChevronsRight,
   BiMinus,
   BiPlus,
   BiSolidMap,
-  BiUserCircle ,
+  BiUserCircle,
   BiSolidNotepad,
   BiDotsHorizontalRounded,
-  BiCustomize, BiEdit
+  BiCustomize,
+  BiEdit,
 } from "react-icons/bi";
 import { HiOutlineMail } from "react-icons/hi";
 import { HiCurrencyRupee } from "react-icons/hi2";
 import { FiUploadCloud } from "react-icons/fi";
-import { RiRefreshFill, RiLockPasswordLine, RiBillLine, RiShareForwardLine, RiDeleteBin6Line } from "react-icons/ri";
-import { IoIosArrowForward, IoMdArrowDropdown  } from "react-icons/io";
-import { CgSpinner } from "react-icons/cg"
-import { TbArrowForwardUp, TbBrandProducthunt } from 'react-icons/tb'
+import {
+  RiRefreshFill,
+  RiLockPasswordLine,
+  RiBillLine,
+  RiShareForwardLine,
+  RiDeleteBin6Line,
+  RiCoupon3Fill 
+} from "react-icons/ri";
+import { IoIosArrowForward, IoMdArrowDropdown } from "react-icons/io";
+import { CgSpinner } from "react-icons/cg";
+import { TbArrowForwardUp, TbBrandProducthunt } from "react-icons/tb";
 
 export {
-
-  TbBrandProducthunt, MdGroups, RiBillLine, MdCategory,
-
+  TbBrandProducthunt,
+  MdGroups,
+  RiBillLine,
+  MdCategory,
   RiShareForwardLine,
-
   ImBin,
-
   TbArrowForwardUp,
-
-  FaEnvelope, FaUserEdit, FaShoppingCart, FaHeartCirclePlus,
-  FaLock, FaHistory , FaCartPlus,
+  FaEnvelope,
+  FaUserEdit,
+  FaShoppingCart,
+  FaHeartCirclePlus,
+  FaLock,
+  FaHistory,
+  FaCartPlus,
   FaUserCircle,
   FaEye,
-  FaRegHeart, 
+  FaHeart ,
+  FaRegHeart,
   FaCloudUploadAlt,
   FaCheck,
   FaRegStar,
   FaStarHalfAlt,
   FaStar,
   FaArrowLeft,
-
-  AiOutlineEye, AiOutlineEyeInvisible, AiFillPlusCircle, AiFillMinusCircle,
-  AiOutlineDown, AiOutlineLogout, AiOutlineCaretDown, AiOutlineCaretRight,
+  AiOutlineEye,
+  AiOutlineEyeInvisible,
+  AiFillPlusCircle,
+  AiFillMinusCircle,
+  AiOutlineDown,
+  AiOutlineLogout,
+  AiOutlineCaretDown,
+  AiOutlineCaretRight,
   AiFillCloseCircle,
-
+  AiOutlineUserAdd,
   FcClearFilters,
   FcGoogle,
-
-  MdShoppingCart, MdSpaceDashboard ,
+  MdShoppingCart,
+  MdSpaceDashboard,
   MdLogout,
   MdSearch,
   MdOutlineKeyboardBackspace,
   MdEmail,
-  MdDelete, MdOutlineLibraryBooks,
+  MdDelete,
+  MdOutlineLibraryBooks,
   MdAdminPanelSettings,
-
-  BsToggles2, BsFillCartCheckFill ,
+  BsToggles2,
+  BsFillCartCheckFill,
   BsFillBellFill,
   BsFillHeartFill,
   BsExclamationTriangleFill,
   BsFillTelephoneFill,
-
   IoFastFood,
   IoBasket,
   IoArrowBackOutline,
-
-  BiChevronsRight, BiCustomize, BiEdit,
+  IoIosArrowForward,
+  IoMdArrowDropdown,
+  BiChevronsRight,
+  BiCustomize,
+  BiEdit,
   BiMinus,
   BiPlus,
   BiSolidMap,
-  BiUserCircle ,
+  BiUserCircle,
   BiSolidNotepad,
-  BiDotsHorizontalRounded,
-
+  BiDotsHorizontalRounded, BsFillSuitHeartFill,
   HiCurrencyRupee,
   HiOutlineMail,
-
   FiUploadCloud,
-
   RiRefreshFill,
-  RiLockPasswordLine, RiDeleteBin6Line,
-
-  IoIosArrowForward, IoMdArrowDropdown,
-
-  CgSpinner
+  RiLockPasswordLine,
+  RiDeleteBin6Line,
+  RiCoupon3Fill ,
+  CgSpinner,
 };

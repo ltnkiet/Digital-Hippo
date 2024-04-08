@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import { formatPrice, renderStar } from "utils/helpers";
 import SelectOption from "../Search/SelectOption";
 import {
-  FaEye,
-  FaRegHeart,
+  FaEye, BsFillSuitHeartFill,
   FaCartPlus,
   BsFillCartCheckFill,
 } from "asset/icons";
@@ -12,13 +11,13 @@ import { getCurrent } from "store/user/asyncActions";
 import path from "utils/path";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { apiUpdateCart } from "api";
+import { apiUpdateCart, apiUpdateWishlist } from "api";
 import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
 import { showModal } from "store/app/appSlice";
 import { ProductDetail } from "page/public";
 
-const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
+const ProductCardV2 = ({ data, location, dispatch, navigate, pid }) => {
   const { current, currentCart } = useSelector((state) => state.user);
   const [showOption, setShowOption] = useState(false);
 
@@ -50,6 +49,31 @@ const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
         thumbnail: data?.thumb,
         title: data?.title,
       });
+      if (response.success) {
+        toast.success(response.msg);
+        dispatch(getCurrent());
+      } else toast.error(response.msg);
+    }
+    if (flag === "WISH_LIST") {
+      if (!current)
+        return Swal.fire({
+          title: "Khoan..",
+          text: "Vui lòng đăng nhập!",
+          icon: "info",
+          showCancelButton: true,
+          cancelButtonText: "Không phải bây giờ!",
+          confirmButtonText: "Đăng nhập ngay",
+        }).then(async (rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname,
+              }).toString(),
+            });
+        });
+      const response = apiUpdateWishlist(pid);
+      console.log(pid);
       if (response.success) {
         toast.success(response.msg);
         dispatch(getCurrent());
@@ -89,19 +113,19 @@ const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
         className="w-[150px] object-contain p-4 hover:p-0"
       />
       <div className="flex flex-col py-4 gap-2">
-        <p class="text-sm font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">
+        <p className="text-sm font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-2">
           {data?.title}
         </p>
-        <div class="flex items-center">
+        <div className="flex items-center">
           {renderStar(data?.totalRating)}
-          <span class="bg-blue-100 text-blue-800 text-sm font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+          <span className="bg-blue-100 text-blue-800 text-sm font-semibold px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
             {data?.totalRating}
           </span>
         </div>
         <div>
           <span className="italic">{`{${data?.rating.length}}: lượt đánh giá`}</span>
         </div>
-        <span class="text-sm font-bold text-gray-900 dark:text-white hover:underline cursor-pointer">
+        <span className="text-sm font-bold text-gray-900 dark:text-white hover:underline cursor-pointer">
           {formatPrice(data?.price)}
         </span>
       </div>
@@ -114,8 +138,18 @@ const ProductCardV2 = ({ data, location, dispatch, navigate }) => {
           </span>
           <span
             title="Add to Wishlist"
-            onClick={(e) => handleClickOptions(e, "WISHLIST")}>
-            <SelectOption icon={<FaRegHeart />} />
+            onClick={(e) => handleClickOptions(e, "WISH_LIST")}>
+            <SelectOption
+              icon={
+                <BsFillSuitHeartFill
+                  color={
+                    current?.wishlist?.some((i) => i._id === pid)
+                      ? "red"
+                      : "gray"
+                  }
+                />
+              }
+            />
           </span>
           {currentCart?.some(
             (el) => el.product?._id === data._id.toString()

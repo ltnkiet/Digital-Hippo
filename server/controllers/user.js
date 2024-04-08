@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const Product = require("../models/product");
+const Order = require("../models/order");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
@@ -11,7 +12,6 @@ const {
   generateRefreshToken,
 } = require("../middlewares/jwt");
 
-//Đăng ký
 const register = asyncHandler(async (req, res) => {
   const { name, email, password, phone } = req.body;
   if (!name || !email || !password || !phone)
@@ -71,7 +71,6 @@ const emailVerify = asyncHandler(async (req, res) => {
     return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`);
 });
 
-//Đăng nhập
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -115,7 +114,8 @@ const getCurrent = asyncHandler(async (req, res) => {
         path: "product",
         select: "title thumb price color",
       },
-    });
+    })
+    .populate("wishlist");
 
   return res.status(200).json({
     success: user ? true : false,
@@ -220,37 +220,9 @@ const resetPassword = asyncHandler(async (req, res) => {
   await user.save();
   res.status(200).json({
     success: user ? true : false,
-    msg: user ? "Cập nhật thành công" : "X",
+    msg: user ? "Cập nhật thành công" : "Lỗi hệ thống",
   });
 });
-
-// const test {
-//   app.post(
-//     "/api/QuanLyNguoiDung/XacMinhTokenVaCapNhatMatKhau",
-//     async (req, res) => {
-//       const { token, newPassword } = req.body;
-
-//       try {
-//         const decoded = jwt.verify(token, "secretKey");
-//         const email = decoded.email;
-
-//         const hashPassword = md5(newPassword);
-//         dbConn.query(
-//           "UPDATE nguoidungvm SET matKhau = ? WHERE email = ?",
-//           [hashPassword, email],
-//           function (error, results) {
-//             if (error) {
-//               return res.status(500).send("Lỗi khi cập nhật mật khẩu");
-//             }
-//             res.send("Cập nhật mật khẩu thành công");
-//           }
-//         );
-//       } catch (error) {
-//         res.status(400).send("Token không hợp lệ hoặc đã hết hạn");
-//       }
-//     }
-//   );
-// }
 
 const getUsers = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
@@ -289,18 +261,39 @@ const getUsers = asyncHandler(async (req, res) => {
   const limit = +req.query.limit || process.env.LIMIT_TABLE;
   const skip = (page - 1) * limit;
   queryCommand.skip(skip).limit(limit);
-  queryCommand
-    .then(async (response) => {
-      const counts = await User.find(formatedQueries).countDocuments();
-      return res.status(200).json({
-        success: response ? true : false,
-        counts,
-        users: response ? response : "Cannot get user list",
-      });
-    })
-    .catch((err) => {
-      throw new Error(err.message);
+
+  try {
+    const users = await queryCommand.exec();
+    const userIds = users.map((user) => user._id);
+
+    const orderCounts = await Order.aggregate([
+      { $match: { orderBy: { $in: userIds } } },
+      {
+        $group: {
+          _id: "$orderBy",
+          totalOrders: { $sum: 1 },
+        },
+      },
+    ]);
+    const orderCountMap = new Map(
+      orderCounts.map((item) => [item._id.toString(), item.totalOrders])
+    );
+    const usersWithOrders = users.map((user) => {
+      return {
+        ...user.toObject(),
+        totalOrders: orderCountMap.get(user._id.toString()) || 0,
+      };
     });
+    const totalCount = await User.countDocuments(formatedQueries);
+    res.status(200).json({
+      success: true,
+      counts: totalCount,
+      users: usersWithOrders,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, error: "Internal server error" });
+  }
 });
 
 const createUsers = asyncHandler(async (req, res) => {
@@ -455,7 +448,7 @@ const updateWishlist = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      mes: response ? "Updated your wishlist." : "Failed to update wihlist!",
+      msg: response ? "Đã xóa khỏi mục yêu thích" : "Lỗi hệ thống!",
     });
   } else {
     const response = await User.findByIdAndUpdate(
@@ -465,7 +458,7 @@ const updateWishlist = asyncHandler(async (req, res) => {
     );
     return res.json({
       success: response ? true : false,
-      mes: response ? "Updated your wishlist." : "Failed to update wihlist!",
+      msg: response ? "Đã thêm vào mục yêu thích" : "Lỗi hệ thống!",
     });
   }
 });

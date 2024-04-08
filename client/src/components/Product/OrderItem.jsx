@@ -13,6 +13,7 @@ const OrderItem = ({
   thumbnail,
   pid,
 }) => {
+  
   const [quantity, setQuantity] = useState(() => dfQuantity);
   const handleQuantity = (number) => {
     if (+number > 1) setQuantity(number);

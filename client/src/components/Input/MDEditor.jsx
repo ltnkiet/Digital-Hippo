@@ -47,7 +47,7 @@ const MDEditor = ({
             "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
         }}
         onChange={(e) =>
-          changeValue((prev) => ({ ...prev, [name]: e.target.getContent() }))
+          changeValue((prev) => ({ ...prev, [name]: [e.target.getContent()] }))
         }
         onFocus={() => {
           setInvalidFields && setInvalidFields([]);

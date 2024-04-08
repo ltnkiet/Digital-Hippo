@@ -14,8 +14,10 @@ const BestSeller = () => {
   // eslint-disable-next-line
   const [activeTabs, setActiveTabs] = useState(1);
   const [productTab, setProductTab] = useState(null);
+
   const dispatch = useDispatch();
   const { newProducts } = useSelector((state) => state.product);
+
   const fetchProduct = async () => {
     const response = await apiGetProduct({ sort: "-sold", limit: 10 });
     if (response.success) {
@@ -23,21 +25,23 @@ const BestSeller = () => {
       setProductTab(response.productList);
     }
   };
+
   useEffect(() => {
     dispatch(getNewProduct());
     fetchProduct();
   }, []);
+
   useEffect(() => {
     if (activeTabs === 1) setProductTab(bestSeller);
     if (activeTabs === 2) setProductTab(newProducts);
-  }, [bestSeller, newProducts]);
+  }, [activeTabs]);
 
   return (
     <div>
       <div className="flex text-[20px] gap-8">
-        {tabs.map((el) => (
+        {tabs.map((el, index) => (
           <p
-            key={el.id}
+            key={index}
             onClick={() => setActiveTabs(el.id)}
             className={`font-semibold uppercase cursor-pointer ${
               activeTabs === el.id ? "text-black" : `text-gray-400`

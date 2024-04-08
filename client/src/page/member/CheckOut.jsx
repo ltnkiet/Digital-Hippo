@@ -17,13 +17,10 @@ const CheckOut = ({ dispatch, navigate }) => {
     if (isSuccess) dispatch(getCurrent());
   }, [isSuccess]);
 
-  console.log(currentCart);
-  console.log(current);
-
   useEffect(() => {
     if (paymentMethod === "OFFLINE") {
       const total = Math.round(
-        +current?.cart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0)
+        +currentCart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0)
       );
       Swal.fire({
         icon: "info",
@@ -46,9 +43,9 @@ const CheckOut = ({ dispatch, navigate }) => {
 
   const handleSaveOrder = async () => {
     const payload = {
-      products: current?.cart,
+      products: currentCart,
       total: Math.round(
-        +current?.cart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0) /
+        +currentCart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0) /
           24640
       ),
       address: current?.address,
@@ -57,7 +54,7 @@ const CheckOut = ({ dispatch, navigate }) => {
     if (response.success) {
       setIsSuccess(true);
       setTimeout(() => {
-        Swal.fire("Congrat!", "Đặt hàng thành công.", "success").then(() => {
+        Swal.fire("Hoàn tất", "Đặt hàng thành công.", "success").then(() => {
           navigate("/");
         });
       }, 1500);
@@ -84,7 +81,7 @@ const CheckOut = ({ dispatch, navigate }) => {
                 </tr>
               </thead>
               <tbody>
-                {current?.cart?.map((el) => (
+                {currentCart?.map((el) => (
                   <tr className="border" key={el?._id}>
                     <td className="text-left p-2">
                       <div className="w-20 h-20">
@@ -109,7 +106,7 @@ const CheckOut = ({ dispatch, navigate }) => {
                 <span className="font-medium">Tổng tiền:</span>
                 <span className="text-main font-bold">
                   {formatPrice(
-                    current?.cart?.reduce(
+                    currentCart?.reduce(
                       (sum, el) => +el?.price * el.quantity + sum,
                       0
                     )
@@ -136,9 +133,9 @@ const CheckOut = ({ dispatch, navigate }) => {
               <div className="w-full mx-auto">
                 <PayPal
                   payload={{
-                    products: current?.cart,
+                    products: currentCart,
                     total: Math.round(
-                      +current?.cart?.reduce(
+                      +currentCart?.reduce(
                         (sum, el) => +el?.price * el.quantity + sum,
                         0
                       ) / 24640
@@ -147,7 +144,7 @@ const CheckOut = ({ dispatch, navigate }) => {
                   }}
                   setIsSuccess={setIsSuccess}
                   amount={Math.round(
-                    +current?.cart?.reduce(
+                    +currentCart?.reduce(
                       (sum, el) => +el?.price * el.quantity + sum,
                       0
                     ) / 24640

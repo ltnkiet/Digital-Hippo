@@ -16,7 +16,7 @@ const Sidebar = () => {
               ? "text-main hover:text-main flex flex-row items-center gap-4"
               : "px-5 py-[15px] hover:text-main flex flex-row items-center gap-4"
           }>
-          <img src={el.image[0]} alt="" className="w-12 px-2" />
+          <img src={el.thumb} alt="" className="w-12 px-2" />
           <p className="text-lg font-medium">{el.name}</p>
         </NavLink>
       ))}

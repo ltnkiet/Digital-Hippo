@@ -9,6 +9,8 @@ import { apiRemoveCart } from "api";
 import { getCurrent } from "store/user/asyncActions";
 import { toast } from "react-toastify";
 import path from "utils/path";
+import Swal from 'sweetalert2'
+
 
 const ProductCart = ({ dispatch, navigate }) => {
   const { currentCart } = useSelector((state) => state.user);
@@ -72,11 +74,18 @@ const ProductCart = ({ dispatch, navigate }) => {
             )}
           </span>
         </div>
-        {/* <span className='text-center text-gray-700 italic text-xs'>Shipping, taxes, and discounts calculated at checkout.</span> */}
         <ButtonV2
           handleOnClick={() => {
-            dispatch(showCart());
-            navigate(`/${path.MEMBER}/${path.DETAIL_CART}`);
+            if (currentCart && currentCart.length === 0) {
+              Swal.fire({
+                icon: 'info',
+                title: 'Sự cố',
+                text: 'Giỏ hàng của bạn đang trống. Vui lòng chọn mặt hàng trước khi tiến hành thanh toán.',
+              });
+            } else {
+              dispatch(showCart());
+              navigate(`/${path.MEMBER}/${path.DETAIL_CART}`);
+            }
           }}
           style="rounded-none w-full bg-main py-3">
           Tiến hành thanh toán

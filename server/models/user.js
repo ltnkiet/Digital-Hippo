@@ -1,6 +1,6 @@
 const mongoose = require("mongoose"); // Erase if already required
 const bcrypt = require("bcrypt");
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema(
@@ -13,7 +13,7 @@ var userSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
-      index: true
+      index: true,
     },
     phone: {
       type: Number,
@@ -25,21 +25,24 @@ var userSchema = new mongoose.Schema(
     },
     avatar: {
       type: String,
-      default: "https://res.cloudinary.com/ltnkiet/image/upload/v1704719811/DigitalHippo/thumb/hgspymoubcqrn7stki4n.png"
+      default:
+        "https://res.cloudinary.com/ltnkiet/image/upload/v1704719811/DigitalHippo/thumb/hgspymoubcqrn7stki4n.png",
     },
     role: {
       type: Number,
       enum: [0, 1, 2], //["user", "employee", "admin"],
       default: 0,
     },
-    cart: [ {
-      product: { type: mongoose.Types.ObjectId, ref: "Product" },
-      quantity: Number,
-      color: String,
-      price: Number,
-      thumbnail: String,
-      title: String
-    } ],
+    cart: [
+      {
+        product: { type: mongoose.Types.ObjectId, ref: "Product" },
+        quantity: Number,
+        color: String,
+        price: Number,
+        thumbnail: String,
+        title: String,
+      },
+    ],
     address: String,
     wishlist: [{ type: mongoose.Types.ObjectId, ref: "Product" }],
     isBlocked: {
@@ -62,7 +65,6 @@ var userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
     next();
@@ -72,7 +74,6 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods = {
-
   isCorrectPassword: async function (password) {
     return await bcrypt.compare(password, this.password);
   },
@@ -84,7 +85,7 @@ userSchema.methods = {
       .digest("hex");
     this.passwordResetExpires = Date.now() + 5 * 60 * 1000;
     return resetToken;
-  }
+  },
 };
 
 //Export the model

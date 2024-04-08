@@ -10,7 +10,7 @@ import { apiUpdateCart } from 'api'
 
 const DetailCart = ({ location, navigate }) => {
   const { currentCart, current } = useSelector((state) => state.user);
-  console.log(currentCart);
+
   const handleSubmit = () => {
     if (!current?.address)
       return Swal.fire({

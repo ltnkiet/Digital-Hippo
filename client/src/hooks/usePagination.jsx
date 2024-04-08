@@ -43,13 +43,4 @@ const usePagination = (totalProductCount, currentPage, siblingCount = 1) => {
   return paginationArray;
 };
 export default usePagination;
-// fist + last + current + sibling + 2*DOTS
-// min = 6 => sibling + 5
-// totalPagination : 58, limitProduct = 10 => = 5.8 = 6
-// totalPaginationItem : sibling + 5 = 6
-// sibling = 1
 
-// [1,2,3,4,5,6]
-// [1,...,6,7,8,9,10]
-// [1,2,3,4,5, ...,10]
-// [1,...,5,6,7,...,10]

@@ -14,6 +14,7 @@ router.post(
 );
 router.get("/", productController.getProductList);
 router.put("/rating", verifyAccessToken, productController.rating);
+router.get("/rating", [verifyAccessToken, isEmployee], productController.getAllRatings);
 router.get("/category/:categoryName", productController.getProductByCategory);
 
 router.put(
@@ -22,6 +23,7 @@ router.put(
   uploader.array("images", 10),
   productController.uploadImgProduct
 );
+
 router.put(
   "/:pid",
   [verifyAccessToken, isEmployee],
@@ -33,6 +35,7 @@ router.delete(
   productController.deleteProduct
 );
 router.get("/:pid", productController.getProductDetail);
+
 router.put('/varriant/:pid', [verifyAccessToken, isEmployee], uploader.fields([
   { name: 'images', maxCount: 10 },
   { name: 'thumb', maxCount: 1 }

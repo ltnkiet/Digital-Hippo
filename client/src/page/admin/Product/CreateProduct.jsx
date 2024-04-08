@@ -1,64 +1,38 @@
-import { InputFormV2, MDEditor, Select, ButtonV2, Loading } from "components";
-import React, { memo, useState, useEffect, useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
+import { InputFormV2, Select, ButtonV2, MDEditor, Loading } from "components";
 import { useForm } from "react-hook-form";
+import { useSelector, useDispatch } from "react-redux";
 import { validate, getBase64 } from "utils/helpers";
 import { toast } from "react-toastify";
-import { apiUpdateProduct } from "api";
+import { apiCreateProduct } from "api";
 import { showModal } from "store/app/appSlice";
-import { useSelector, useDispatch } from "react-redux";
 
-const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
-  const { categories } = useSelector((state) => state.app);
+const CreateProduct = () => {
+  const { categories, brands } = useSelector((state) => state.app);
+
   const dispatch = useDispatch();
-
   const {
     register,
-    handleSubmit,
     formState: { errors },
     reset,
+    handleSubmit,
     watch,
   } = useForm();
-
   const [payload, setPayload] = useState({
-    description: "",
+    description: [],
   });
   const [preview, setPreview] = useState({
     thumb: null,
     images: [],
   });
-
-  useEffect(() => {
-    reset({
-      title: editProduct?.title || "",
-      price: editProduct?.price || "",
-      quantity: editProduct?.quantity || "",
-      color: editProduct?.color || "",
-      category: editProduct?.category?._id || "",
-      brand: editProduct?.brand?.toLowerCase() || "",
-    });
-    setPayload({
-      description:
-        typeof editProduct?.description === "object"
-          ? editProduct?.description?.join(", ")
-          : editProduct?.description,
-    });
-    setPreview({
-      thumb: editProduct?.thumb || "",
-      images: editProduct?.images || [],
-    });
-  }, [editProduct]);
-
   const [invalidFields, setInvalidFields] = useState([]);
-  const changeValue = useCallback(
-    (e) => {
-      setPayload(e);
-    },
-    [payload]
-  );
+  const changeValue = useCallback((e) => setPayload(e), [payload]);
+
   const handlePreviewThumb = async (file) => {
     const base64Thumb = await getBase64(file);
     setPreview((prev) => ({ ...prev, thumb: base64Thumb }));
   };
+
   const handlePreviewImages = async (files) => {
     const imagesPreview = [];
     for (let file of files) {
@@ -67,67 +41,61 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
         return;
       }
       const base64 = await getBase64(file);
-      imagesPreview.push(base64);
+      imagesPreview.push({ name: file.name, path: base64 });
     }
     setPreview((prev) => ({ ...prev, images: imagesPreview }));
   };
   useEffect(() => {
-    if (watch("thumb") instanceof FileList && watch("thumb").length > 0)
-      handlePreviewThumb(watch("thumb")[0]);
+    handlePreviewThumb(watch("thumb")[0]);
   }, [watch("thumb")]);
   useEffect(() => {
-    if (watch("images") instanceof FileList && watch("images").length > 0)
-      handlePreviewImages(watch("images"));
+    handlePreviewImages(watch("images"));
   }, [watch("images")]);
 
-  const handleUpdateProduct = async (data) => {
+  const handleCreateProduct = async (data) => {
     const invalids = validate(payload, setInvalidFields);
     if (invalids === 0) {
       if (data.category)
         data.category = categories?.find((el) => el._id === data.category)?._id;
+      if (data.brand)
+        data.brand = brands?.find((el) => el._id === data.brand)?._id;
       const finalPayload = { ...data, ...payload };
-      finalPayload.thumb =
-        data?.thumb?.length === 0 ? preview.thumb : data.thumb[0];
       const formData = new FormData();
       for (let i of Object.entries(finalPayload)) formData.append(i[0], i[1]);
-      finalPayload.images =
-        data.images?.length === 0 ? preview.images : data.images;
-      for (let image of finalPayload.images) formData.append("images", image);
+      if (finalPayload.thumb) formData.append("thumb", finalPayload.thumb[0]);
+      if (finalPayload.images) {
+        for (let image of finalPayload.images) formData.append("images", image);
+      }
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-      const response = await apiUpdateProduct(formData, editProduct._id);
+      const response = await apiCreateProduct(formData);
       dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response.success) {
         toast.success(response.msg);
-        render();
-        setEditProduct(null);
+        reset();
+        setPayload({
+          thumb: "",
+          image: [],
+        });
       } else toast.error(response.msg);
     }
   };
   return (
-    <div className="w-full flex flex-col gap-4 relative">
-      <div className="h-[69px] w-full"></div>
-      <div className="p-4 border-b bg-gray-100 flex justify-between items-center right-0 left-[327px] fixed top-0">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Chỉnh sửa sản phẩm
-        </h1>
-        <span
-          className="text-main hover:underline cursor-pointer"
-          onClick={() => setEditProduct(null)}>
-          Hủy
-        </span>
-      </div>
+    <div className="w-full">
+      <h1 className="h-[75px] flex justify-between items-center text-3xl font-bold px-4 border-b">
+        <span>Tạo sản phẩm</span>
+      </h1>
       <div className="p-4">
-        <form onSubmit={handleSubmit(handleUpdateProduct)}>
+        <form onSubmit={handleSubmit(handleCreateProduct)}>
           <InputFormV2
             label="Tên sản phẩm"
             register={register}
             errors={errors}
             id="title"
             validate={{
-              required: "Need fill this field",
+              required: "Vui lòng nhập thông tin",
             }}
             fullWidth
-            placeholder="Nhập tên"
+            placeholder="Nhập tên sản phẩm"
           />
           <div className="w-full my-6 flex gap-4">
             <InputFormV2
@@ -136,10 +104,11 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
               errors={errors}
               id="price"
               validate={{
-                required: "Need fill this field",
+                required: "Vui lòng nhập thông tin",
+                min: { value: 0, message: "Số lượng không được âm" }, 
               }}
               style="flex-auto"
-              placeholder="Nhập giá"
+              placeholder="Nhập giá sản phẩm"
               type="number"
             />
             <InputFormV2
@@ -148,22 +117,23 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
               errors={errors}
               id="quantity"
               validate={{
-                required: "Need fill this field",
+                required: "Vui lòng nhập thông tin",
+                min: { value: 0, message: "Số lượng không được âm" },
               }}
               style="flex-auto"
-              placeholder="Nhập số lượng"
+              placeholder="Nhập số lượng sản phẩm"
               type="number"
             />
             <InputFormV2
-              label="Màu sản phẩm"
+              label="Màu"
               register={register}
               errors={errors}
               id="color"
               validate={{
-                required: "Need fill this field",
+                required: "Vui lòng nhập thông tin",
               }}
               style="flex-auto"
-              placeholder="Nhập màu"
+              placeholder="Nhập màu sản phẩm"
             />
           </div>
           <div className="w-full my-6 flex gap-4">
@@ -175,36 +145,43 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
               }))}
               register={register}
               id="category"
-              validate={{ required: "Need fill this field" }}
+              validate={{ required: "Vui lòng nhập thông tin" }}
               style="flex-auto"
               errors={errors}
               fullWidth
             />
             <Select
-              label="Thương hiệu (Optional)"
-              options={categories
-                ?.find((el) => el._id === watch("category"))
-                ?.brand?.map((el) => ({ code: el, value: el }))}
+              label="Thương hiệu"
+              options={brands?.map((el) => ({
+                code: el._id,
+                value: el.name,
+              }))}
               register={register}
               id="brand"
+              validate={{ required: "Vui lòng nhập thông tin" }}
               style="flex-auto"
               errors={errors}
               fullWidth
             />
           </div>
-          <MDEditor
-            label="Mô tả"
-            name="description"
-            changeValue={changeValue}
-            invalidFields={invalidFields}
-            setInvalidFields={setInvalidFields}
-            value={payload.description}
-          />
+          <div className="w-full my-6">
+            <MDEditor
+              label="Mô tả"
+              name="description"
+              changeValue={changeValue}
+              invalidFields={invalidFields}
+              setInvalidFields={setInvalidFields}
+            />
+          </div>
           <div className="flex flex-col gap-2 mt-8">
             <label className="font-semibold" htmlFor="thumb">
               Ảnh bìa
             </label>
-            <input type="file" id="thumb" {...register("thumb")} />
+            <input
+              type="file"
+              id="thumb"
+              {...register("thumb", { required: "Need fill" })}
+            />
             {errors["thumb"] && (
               <small className="text-xs text-red-500">
                 {errors["thumb"]?.message}
@@ -222,9 +199,14 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
           )}
           <div className="flex flex-col gap-2 mt-8">
             <label className="font-semibold" htmlFor="products">
-              Ảnh chi tiết
+              Ảnh chi tiết sản phẩm
             </label>
-            <input type="file" id="products" multiple {...register("images")} />
+            <input
+              type="file"
+              id="products"
+              multiple
+              {...register("images", { required: "Need fill" })}
+            />
             {errors["images"] && (
               <small className="text-xs text-red-500">
                 {errors["images"]?.message}
@@ -236,7 +218,7 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
               {preview.images?.map((el, idx) => (
                 <div key={idx} className="w-fit relative">
                   <img
-                    src={el}
+                    src={el.path}
                     alt="product"
                     className="w-[200px] object-contain"
                   />
@@ -245,7 +227,7 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
             </div>
           )}
           <div className="my-6">
-            <ButtonV2 type="submit">Lưu</ButtonV2>
+            <ButtonV2 type="submit">Xác nhận</ButtonV2>
           </div>
         </form>
       </div>
@@ -253,4 +235,4 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
   );
 };
 
-export default memo(UpdateProduct);
+export default CreateProduct;

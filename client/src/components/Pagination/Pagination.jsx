@@ -23,12 +23,12 @@ const Pagination = ({ totalCount }) => {
         )} - ${Math.min(
           +process.env.REACT_APP_LIMIT,
           totalCount
-        )} trên ${totalCount} sản phẩm`}</span>
+        )} trên ${totalCount}`}</span>
       ) : (
         ""
       )}
       {+params.get("page") ? (
-        <span className="text-sm hidden lg:inline-block italic">{`Hiển thị ${range()} trên ${totalCount} sản phẩm`}</span>
+        <span className="text-sm hidden lg:inline-block italic">{`Hiển thị ${range()} trên ${totalCount}`}</span>
       ) : (
         ""
       )}

@@ -9,13 +9,13 @@ var categorySchema = new mongoose.Schema(
       unique: true,
       index: true,
     },
-    image: {
-      type: Array,
+    thumb: {
+      type: String,
     },
     brand: {
       type: Array,
-      require: true
-    }
+      require: true,
+    },
   },
   { timestamps: true }
 );

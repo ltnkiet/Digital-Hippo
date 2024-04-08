@@ -14,14 +14,16 @@ const FeaturedProduct = () => {
   useEffect(() => {
     fetchProduct();
   }, []);
+
+
   return (
     <div className="my-8">
       <h3 className="font-semibold uppercase cursor-pointer text-black text-[20px]">
         Sản phẩm nổi bật
       </h3>
       <div className="grid grid-cols-3 gap-9 my-4 py-6 border-y-4 border-main">
-        {products?.map((el) => (
-          <ProductCardV2 key={el.id} data={el} />
+        {products?.map((el, index) => (
+          <ProductCardV2 key={index} data={el} pid={el._id}/>
         ))}
       </div>
     </div>

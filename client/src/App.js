@@ -21,6 +21,11 @@ import {
   ManageUser,
   ManageOrder,
   CreateProduct,
+  CreateCategory,
+  ManageBrand,
+  CreateBrand,
+  ManageCoupons,
+  CreateCoupons,
 } from "page/admin";
 import {
   LayoutMember,
@@ -30,7 +35,7 @@ import {
   WishList,
 } from "page/member";
 import path from "utils/path";
-import { getCategory } from "store/app/asyncAction";
+import { getCategory, getBrand } from "store/app/asyncAction";
 import { showCart } from "store/app/appSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Modal, ProductCart } from "components";
@@ -43,7 +48,8 @@ function App() {
   );
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getCategory()); // eslint-disable-next-line
+    dispatch(getCategory());
+    dispatch(getBrand()); // eslint-disable-next-line
   }, []);
 
   return (
@@ -83,9 +89,19 @@ function App() {
         {/* Admin */}
         <Route path={path.ADMIN} element={<Layout />}>
           <Route path={path.DASHBOARD} element={<Dashboard />} />
+
           <Route path={path.MANAGE_PRODUCTS} element={<ManageProduct />} />
           <Route path={path.CREATE_PRODUCTS} element={<CreateProduct />} />
+          
+          <Route path={path.MANAGE_COUPON} element={<ManageCoupons />} />
+          <Route path={path.CREATE_COUPON} element={<CreateCoupons />} />
+
           <Route path={path.MANAGE_CATEGORY} element={<ManageCategory />} />
+          <Route path={path.CREATE_CATEGORY} element={<CreateCategory />} />
+
+          <Route path={path.MANAGE_BRAND} element={<ManageBrand />} />
+          <Route path={path.CREATE_BRAND} element={<CreateBrand />} />
+          
           <Route path={path.MANAGE_ORDER} element={<ManageOrder />} />
           <Route path={path.MANAGE_USER} element={<ManageUser />} />
         </Route>

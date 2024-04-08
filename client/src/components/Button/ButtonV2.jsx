@@ -1,10 +1,11 @@
-import React, { memo } from "react"
-import { CgSpinner } from 'asset/icons'
+import React, { memo } from "react";
+import { CgSpinner } from "asset/icons";
 
 const ButtonV2 = ({
   children,
   handleOnClick,
   style,
+  bgColor,
   fw,
   type = "button",
   disabled,
@@ -15,14 +16,13 @@ const ButtonV2 = ({
       className={
         style
           ? style
-          : `px-4 py-2 rounded-xl text-white flex items-center justify-center bg-main text-semibold my-2 ${
-              fw ? "w-full" : "w-fit"
-            }`
+          : `px-4 py-2 rounded-xl text-white flex items-center justify-center ${
+              bgColor ? bgColor : `bg-main`
+            }  text-semibold my-2 ${fw ? "w-full" : "w-fit"}`
       }
       onClick={() => {
-        handleOnClick && handleOnClick()
-      }}
-    >
+        handleOnClick && handleOnClick();
+      }}>
       {disabled && (
         <span className="animate-spin">
           <CgSpinner size={18} />
@@ -30,7 +30,7 @@ const ButtonV2 = ({
       )}
       {children}
     </button>
-  )
-}
+  );
+};
 
-export default memo(ButtonV2)
+export default memo(ButtonV2);

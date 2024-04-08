@@ -2,7 +2,7 @@ import React from "react";
 import Slider from "react-slick";
 import ProductCard from "./ProductCard";
 
-const ProductSlider = ({products, activeTabs, normal}) => {
+const ProductSlider = ({ products, activeTabs, normal }) => {
   const settings = {
     dots: false,
     infinite: false,
@@ -11,15 +11,15 @@ const ProductSlider = ({products, activeTabs, normal}) => {
     slidesToScroll: 3,
   };
   return (
-    <div> 
+    <div>
       {products && (
         <Slider {...settings}>
-          {products?.map((el) => (
+          {products?.map((el, index) => (
             <ProductCard
-              key={el.id}
-              pid={el.id}
+              key={index}
+              pid={el._id}
               data={el}
-              isNew={activeTabs === 1 ? false : true}
+              isNew={activeTabs === 2 ? true : false}
               normal={normal}
             />
           ))}

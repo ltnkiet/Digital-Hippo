@@ -26,6 +26,7 @@ export { default as InputSelect } from "./Input/InputSelect";
 export { default as InputField } from "./Input/InputField";
 export { default as Select } from "./Input/Select";
 export { default as MDEditor } from "./Input/MDEditor";
+export { default as CustomSelect } from "./Input/CustomSelect";
 // Button
 export { default as Button } from "./Button/Button";
 export { default as ButtonV2 } from "./Button/ButtonV2";
@@ -37,6 +38,7 @@ export { default as Modal } from "./Common/Modal";
 export { default as Congrat } from "./Common/Congrat";
 export { default as Loading } from "./Common/Loading";
 export { default as PayPal } from "./Common/PayPal";
+export { default as SliderCustom } from "./Common/SliderCustom";
 // Search
 export { default as SearchItem } from "./Search/SearchItem";
 export { default as SelectOption } from "./Search/SelectOption";
@@ -47,3 +49,6 @@ export { default as Pagination } from "./Pagination/Pagination";
 export { default as VoteBar } from "./Ratings/VoteBar";
 export { default as Comment } from "./Ratings/Comment";
 export { default as VoteOption } from "./Ratings/VoteOption";
+// Chart
+export { default as BoxInfor } from   "./Chart/BoxInfor";
+export { default as CustomChart } from "./Chart/CustomChart";

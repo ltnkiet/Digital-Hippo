@@ -69,7 +69,7 @@ const ButtonWrapper = ({
   );
 };
 
-export default function PayPal({ amount, payload, setIsSuccess }) { 
+export default function PayPal({ amount, payload, setIsSuccess }) {
   return (
     <div style={{ maxWidth: "750px", minHeight: "200px", margin: "auto" }}>
       <PayPalScriptProvider

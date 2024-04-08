@@ -1,37 +1,34 @@
 const Product = require("../models/product");
 const Category = require("../models/category");
+const Brand = require("../models/brand");
 const asyncHandler = require("express-async-handler");
 const slugify = require("slugify");
 const makeSKU = require("uniqid");
 
-// const createProduct = asyncHandler(async (req, res) => {
-//   if (Object.keys(req.body).length === 0) throw new Error("Missing input");
-//   const { title } = req.body;
-//   const existingProduct = await Product.findOne({ title });
-//   if (existingProduct) {
-//     return res.status(400).json({
-//       success: false,
-//       error: "Product with this title already exists",
-//     });
-//   }
-//   const slug = slugify(title, "-");
-//   req.body.slug = slug;
-//   const newProduct = await Product.create(req.body);
-//   return res.status(200).json({
-//     success: newProduct ? true : false,
-//     createProduct: newProduct ? newProduct : "Cannot create new product",
-//   });
-// });
-
 const createProduct = asyncHandler(async (req, res) => {
   const { title, price, description, brand, category, color } = req.body;
+
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
+
   if (!(title && price && description && brand && category && color))
     throw new Error("Missing inputs");
+
+  const checkName = await Product.findOne({
+    title: { $regex: new RegExp("^" + title + "$", "i") },
+  });
+  if (checkName) {
+    return res.status(400).json({
+      success: false,
+      msg: "Sản phẩm đã tồn tại",
+    });
+  }
+
   req.body.slug = slugify(title);
+
   if (thumb) req.body.thumb = thumb;
   if (images) req.body.images = images;
+
   const newProduct = await Product.create(req.body);
   return res.status(200).json({
     success: newProduct ? true : false,
@@ -39,10 +36,15 @@ const createProduct = asyncHandler(async (req, res) => {
   });
 });
 
+const importProduct = asyncHandler(async (req, res) => {
+
+})
+
 const getProductDetail = asyncHandler(async (req, res) => {
   const { pid } = req.params;
   const product = await Product.findById(pid)
     .populate("category")
+    .populate("brand")
     .populate("rating.postBy");
   return res.status(200).json({
     success: product ? true : false,
@@ -50,26 +52,27 @@ const getProductDetail = asyncHandler(async (req, res) => {
   });
 });
 
-//filter pagination sorting limit fields
 const getProductList = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const exludeFields = ["limit", "sort", "page", "fields"];
   exludeFields.forEach((el) => delete queries[el]);
   queries.status = 1;
 
-  // Query Category
   if (queries.category) {
     const cate = await Category.findOne({
       name: { $regex: queries.category, $options: "i" },
     });
     if (cate) {
       queries.category = cate._id;
-    } else {
-      return res.status(404).json({
-        success: false,
-        message: "Category not found",
-      });
-    }
+    } else throw new Error("Không tìm thấy");
+  }
+  if (queries.brand) {
+    const bra = await Brand.findOne({
+      name: { $regex: queries.brand, $options: "i" },
+    });
+    if (bra) {
+      queries.brand = bra._id;
+    } else throw new Error("Không tìm thấy");
   }
 
   let queryString = JSON.stringify(queries);
@@ -98,12 +101,11 @@ const getProductList = asyncHandler(async (req, res) => {
       $or: [
         { color: { $regex: queries.q, $options: "i" } },
         { title: { $regex: queries.q, $options: "i" } },
-        { brand: { $regex: queries.q, $options: "i" } },
       ],
     };
   }
   const qr = { ...colorQueryObject, ...formatQueries, ...queryObject };
-  let queryCommand = Product.find(qr).populate("category");
+  let queryCommand = Product.find(qr).populate("category").populate("brand");
   //sort
   if (req.query.sort) {
     const sortBy = req.query.sort.split(",").join(" ");
@@ -230,6 +232,18 @@ const rating = asyncHandler(async (req, res) => {
   });
 });
 
+const getAllRatings = asyncHandler(async (req, res) => {
+  const allRatings = await Product.find({}).populate({
+    path: "rating.postBy",
+  });
+
+  if (!allRatings) {
+    return res.status(404).json({ success: false, msg: "No ratings found" });
+  }
+
+  return res.status(200).json({ success: true, allRatings });
+});
+
 const uploadImgProduct = asyncHandler(async (req, res) => {
   const { pid } = req.params;
   if (!req.files) throw new Error("Missing Input");
@@ -251,7 +265,7 @@ const addVarriant = asyncHandler(async (req, res) => {
   const { title, price, color } = req.body;
   const thumb = req?.files?.thumb[0]?.path;
   const images = req.files?.images?.map((el) => el.path);
-  if (!(title && price && color)) throw new Error("Missing inputs");
+  if (!(title && price && color)) throw new Error("Lỗi hệ thống");
   const response = await Product.findByIdAndUpdate(
     pid,
     {
@@ -284,4 +298,5 @@ module.exports = {
   uploadImgProduct,
   getProductByCategory,
   addVarriant,
+  getAllRatings,
 };

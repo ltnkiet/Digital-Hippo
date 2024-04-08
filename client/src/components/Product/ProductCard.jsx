@@ -5,13 +5,13 @@ import labelTrending from "asset/img/LabelTrending.png";
 import SelectOption from "../Search/SelectOption";
 import {
   FaEye,
-  FaRegHeart,
   FaCartPlus,
   BsFillCartCheckFill,
+  BsFillSuitHeartFill,
 } from "asset/icons";
 import withBaseComponent from "hocs/withBaseComponent";
 import { getCurrent } from "store/user/asyncActions";
-import { apiUpdateCart } from "api";
+import { apiUpdateCart, apiUpdateWishlist } from "api";
 import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
 import path from "utils/path";
@@ -20,7 +20,15 @@ import { useSelector } from "react-redux";
 import { showModal } from "store/app/appSlice";
 import { ProductDetail } from "page/public";
 
-const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
+const ProductCard = ({
+  data,
+  pid,
+  isNew,
+  normal,
+  navigate,
+  dispatch,
+  location,
+}) => {
   const { current, currentCart } = useSelector((state) => state.user);
   const [showOption, setShowOption] = useState(false);
 
@@ -57,6 +65,31 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
         dispatch(getCurrent());
       } else toast.error(response.msg);
     }
+    if (flag === "WISH_LIST") {
+      if (!current)
+        return Swal.fire({
+          title: "Khoan..",
+          text: "Vui lòng đăng nhập!",
+          icon: "info",
+          showCancelButton: true,
+          cancelButtonText: "Không phải bây giờ!",
+          confirmButtonText: "Đăng nhập ngay",
+        }).then(async (rs) => {
+          if (rs.isConfirmed)
+            navigate({
+              pathname: `/${path.LOGIN}`,
+              search: createSearchParams({
+                redirect: location.pathname,
+              }).toString(),
+            });
+        });
+      const response = apiUpdateWishlist(pid);
+      console.log(pid);
+      if (response.success) {
+        toast.success(response.msg);
+        dispatch(getCurrent());
+      } else toast.error(response.msg);
+    }
     if (flag === "QUICK_VIEW") {
       dispatch(
         showModal({
@@ -75,7 +108,7 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
   return (
     <div className="mx-4 border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
       <div
-        class="w-full max-w-xs bg-white"
+        className="w-full max-w-xs bg-white"
         onClick={(e) =>
           navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
         }>
@@ -96,7 +129,7 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
             />
           )}
           <img
-            class="p-5 rounded-t-lg object-contain w-[250px] h-[280px] hover:p-0"
+            className="p-5 rounded-t-lg object-contain w-[250px] h-[280px] hover:p-0"
             src={
               data?.thumb ||
               `https://res.cloudinary.com/ltnkiet/image/upload/v1701678798/DigitalHippo/thumb/quwxatr8sxviufr44np5.webp`
@@ -112,8 +145,18 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
               </span>
               <span
                 title="Add to Wishlist"
-                onClick={(e) => handleClickOptions(e, "WISHLIST")}>
-                <SelectOption icon={<FaRegHeart />} />
+                onClick={(e) => handleClickOptions(e, "WISH_LIST")}>
+                <SelectOption
+                  icon={
+                    <BsFillSuitHeartFill
+                      color={
+                        current?.wishlist?.some((i) => i._id === pid)
+                          ? "red"
+                          : "gray"
+                      }
+                    />
+                  }
+                />
               </span>
               {currentCart?.some(
                 (el) => el.product?._id === data._id.toString()
@@ -131,24 +174,24 @@ const ProductCard = ({ data, isNew, normal, navigate, dispatch, location }) => {
             </div>
           )}
         </div>
-        <div class="px-5 pb-5">
+        <div className="px-5 pb-5">
           <div>
-            <h5 class="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-1">
+            <h5 className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-1">
               {data?.title}
             </h5>
             <div className="underline my-2 cursor-pointer hover:text-main">
               {data?.category?.name}
             </div>
           </div>
-          <div class="flex items-center justify-between mt-2.5 mb-5">
+          <div className="flex items-center justify-between mt-2.5 mb-5">
             {renderStar(data?.totalRating)}
-            <span class="bg-blue-100 text-blue-800 text-sm font-semibold mx-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
+            <span className="bg-blue-100 text-blue-800 text-sm font-semibold mx-2 px-2.5 py-0.5 rounded dark:bg-blue-200 dark:text-blue-800 ms-3">
               {data?.totalRating}
             </span>
             <span className="text-xs">Đã bán {data?.sold}</span>
           </div>
-          <div class="flex items-center justify-between">
-            <span class="text-xl font-bold text-gray-900 dark:text-white">
+          <div className="flex items-center justify-between">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">
               {formatPrice(data?.price)}
             </span>
           </div>

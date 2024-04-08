@@ -1,31 +1,35 @@
-import React, { memo, Fragment, useState } from "react"
-import {Logo} from "asset/img"
-import { adminSidebar } from "utils/contant"
-import { NavLink, Link, useNavigate } from "react-router-dom"
-import clsx from "clsx"
-import { AiOutlineCaretDown, AiOutlineCaretRight, RiShareForwardLine } from "asset/icons"
-import withBaseComponent from "hocs/withBaseComponent"
+import React, {  Fragment, useState } from "react";
+import { Logo } from "asset/img";
+import { adminSidebar } from "utils/contant";
+import { NavLink, Link } from "react-router-dom";
+import clsx from "clsx";
+import {
+  AiOutlineCaretDown,
+  AiOutlineCaretRight,
+  RiShareForwardLine,
+} from "asset/icons";
+import withBaseComponent from "hocs/withBaseComponent";
 
-const activedStyle = "px-4 py-2 flex items-center gap-2 bg-blue-500 text-gray-100"
-const notActivedStyle = "px-4 py-2 flex items-center gap-2 hover:bg-blue-100"
+const activedStyle =
+  "px-4 py-2 flex items-center gap-2 bg-blue-500 text-gray-100";
+const notActivedStyle = "px-4 py-2 flex items-center gap-2 hover:bg-blue-100";
 
-const AdminSidebar = ({navigate}) => {
-  const [actived, setActived] = useState([])
+const AdminSidebar = ({ navigate }) => {
+  const [actived, setActived] = useState([]);
   const handleShowTabs = (tabID) => {
     if (actived.some((el) => el === tabID))
-      setActived((prev) => prev.filter((el) => el !== tabID))
-    else setActived((prev) => [...prev, tabID])
-  }
+      setActived((prev) => prev.filter((el) => el !== tabID));
+    else setActived((prev) => [...prev, tabID]);
+  };
   return (
     <div className=" bg-white h-full py-4 uppercase">
       <Link
         to={"/"}
-        className="flex flex-col justify-center items-center p-4 gap-2"
-      >
-        <img src={Logo} alt="logo"/>
+        className="flex flex-col justify-center items-center p-4 gap-2">
+        <img src={Logo} alt="logo" />
         <p>trang quản trị</p>
       </Link>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 ">
         {adminSidebar.map((el) => (
           <Fragment key={el.id}>
             {el.type === "SINGLE" && (
@@ -33,8 +37,7 @@ const AdminSidebar = ({navigate}) => {
                 to={el.path}
                 className={({ isActive }) =>
                   clsx(isActive && activedStyle, !isActive && notActivedStyle)
-                }
-              >
+                }>
                 <span>{el.icon}</span>
                 <span>{el.text}</span>
               </NavLink>
@@ -42,8 +45,7 @@ const AdminSidebar = ({navigate}) => {
             {el.type === "PARENT" && (
               <div
                 onClick={() => handleShowTabs(+el.id)}
-                className="flex flex-col"
-              >
+                className="flex flex-col">
                 <div className="flex items-center justify-between px-4 py-2 hover:bg-blue-100 cursor-pointer">
                   <div className="flex items-center gap-2">
                     <span>{el.icon}</span>
@@ -68,8 +70,7 @@ const AdminSidebar = ({navigate}) => {
                             !isActive && notActivedStyle,
                             "pl-16"
                           )
-                        }
-                      >
+                        }>
                         {item.text}
                       </NavLink>
                     ))}
@@ -86,8 +87,8 @@ const AdminSidebar = ({navigate}) => {
           <span className="uppercase">về trang chủ</span>
         </div>
       </div>
-  </div>
-  )
-}
+    </div>
+  );
+};
 
-export default withBaseComponent(AdminSidebar)
+export default withBaseComponent(AdminSidebar);
