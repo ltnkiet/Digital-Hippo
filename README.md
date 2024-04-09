@@ -43,7 +43,7 @@ REACT_APP_API_URL=
 ```
 # Server
 cd server
-npm install
+npm install --legacy-peer-deps
 npm run dev
 
 # Client
