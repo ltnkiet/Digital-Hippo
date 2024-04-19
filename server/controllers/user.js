@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const crypto = require("crypto");
 const { usersTest } = require("../utils/contants");
+const makeToken = require("uniqid")
 
 const {
   generateAccessToken,

@@ -6,7 +6,6 @@ export const appSlice = createSlice({
   initialState: {
     categories: null,
     brands: null,
-    coupons: null,
     isLoading: false,
     isShowModal: false,
     modalChildren: null,
@@ -48,18 +47,6 @@ export const appSlice = createSlice({
         state.isLoading = false;
         state.errorMessage = action.payload.message;
       })
-      // Gett Coupoun
-      .addCase(actions.getCoupon.pending, (state) => {
-        state.isLoading = true;
-      })
-      .addCase(actions.getCoupon.fulfilled, (state, action) => {
-        state.isLoading = false;
-        state.brands = action.payload;
-      })
-      .addCase(actions.getCoupon.rejected, (state, action) => {
-        state.isLoading = false;
-        state.errorMessage = action.payload.message;
-      });
   },
 });
 

@@ -2,26 +2,73 @@ import React, { useEffect, useState } from "react";
 import { Payment } from "asset/img";
 import { useSelector } from "react-redux";
 import { formatPrice } from "utils/helpers";
-import { Congrat, PayPal } from "components";
+import { Congrat, PayPal, Select } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
 import { getCurrent } from "store/user/asyncActions";
 import Swal from "sweetalert2";
-import { apiCreateOrder } from "api";
+import { apiCreateOrder, apiGetCoupons } from "api";
+import path from "utils/path";
 
 const CheckOut = ({ dispatch, navigate }) => {
   const { currentCart, current } = useSelector((state) => state.user);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [checkoutCompleted, setCheckoutCompleted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
 
+  const [coupons, setCoupons] = useState([]);
+  const [selectedCoupon, setSelectedCoupon] = useState("");
+  const [discountAmount, setDiscountAmount] = useState(0);
+
   useEffect(() => {
-    if (isSuccess) dispatch(getCurrent());
+    const fetchCoupons = async (params) => {
+      const response = await apiGetCoupons({
+        ...params,
+        limit: process.env.REACT_APP_LIMIT,
+        status: 1,
+      });
+      if (response.success) {
+        setCoupons(response.coupons);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  useEffect(() => {
+    if (currentCart.length <= 0 && !checkoutCompleted) {
+      Swal.fire({
+        icon: "warning",
+        title: "Giỏ hàng trống",
+        text: "Vui lòng chọn mặt hàng trước khi thanh toán",
+      }).then(() => {
+        navigate("/");
+      });
+    }
+  }, [currentCart, checkoutCompleted]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      dispatch(getCurrent());
+      setCheckoutCompleted(true);
+    }
   }, [isSuccess]);
+
+  const totalBeforeDiscount = currentCart.reduce(
+    (sum, el) => +el?.price * el.quantity + sum,
+    0
+  );
+
+  const selectedCouponData = coupons.find(
+    (coupon) => coupon._id === selectedCoupon
+  );
+  const discountPercentage = selectedCouponData
+    ? selectedCouponData.discount
+    : 0;
+  const discountValue = totalBeforeDiscount * (discountPercentage / 100);
+  const totalAfterDiscount = totalBeforeDiscount - discountValue;
 
   useEffect(() => {
     if (paymentMethod === "OFFLINE") {
-      const total = Math.round(
-        +currentCart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0)
-      );
+      const total = totalAfterDiscount;
       Swal.fire({
         icon: "info",
         title: "Thanh toán",
@@ -44,18 +91,16 @@ const CheckOut = ({ dispatch, navigate }) => {
   const handleSaveOrder = async () => {
     const payload = {
       products: currentCart,
-      total: Math.round(
-        +currentCart?.reduce((sum, el) => +el?.price * el.quantity + sum, 0) /
-          24640
-      ),
       address: current?.address,
+      coupons: selectedCoupon,
+      total: Math.round(totalAfterDiscount / 24640),
     };
     const response = await apiCreateOrder({ ...payload, status: 1 });
     if (response.success) {
       setIsSuccess(true);
       setTimeout(() => {
         Swal.fire("Hoàn tất", "Đặt hàng thành công.", "success").then(() => {
-          navigate("/");
+          navigate(`/${path.HISTORY}`);
         });
       }, 1500);
     }
@@ -105,12 +150,13 @@ const CheckOut = ({ dispatch, navigate }) => {
               <span className="flex items-center gap-8 text-sm">
                 <span className="font-medium">Tổng tiền:</span>
                 <span className="text-main font-bold">
-                  {formatPrice(
+                  {formatPrice(totalAfterDiscount)}
+                  {/* {formatPrice(
                     currentCart?.reduce(
                       (sum, el) => +el?.price * el.quantity + sum,
                       0
                     )
-                  )}
+                  )} */}
                 </span>
               </span>
               <span className="flex items-center gap-8 text-sm">
@@ -118,16 +164,32 @@ const CheckOut = ({ dispatch, navigate }) => {
                 <span className="text-main font-bold">{current?.address}</span>
               </span>
             </div>
-            <div className="flex items-center gap-4">
-              <span>Chọn phương thức thanh toán: </span>
-              <select
-                onChange={(e) => setPaymentMethod(e.target.value)}
-                value={paymentMethod}
-                className="border rounded-md px-4 py-3 w-[30%]">
-                <option value="">Chọn</option>
-                <option value="OFFLINE">Thanh toán khi nhận hàng</option>
-                <option value="ONLINE">Thanh toán Paypal</option>
-              </select>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4">
+                <span>Mã khuyến mãi: </span>
+                <select
+                  onChange={(e) => setSelectedCoupon(e.target.value)}
+                  value={selectedCoupon}
+                  className="border rounded-md px-4 py-3 w-[30%]">
+                  <option value="">Chọn</option>
+                  {coupons?.map((value) => (
+                    <option key={value._id} value={value._id}>
+                      {value.name} (giảm {value.discount}%)
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-4">
+                <span>Phương thức thanh toán: </span>
+                <select
+                  onChange={(e) => setPaymentMethod(e.target.value)}
+                  value={paymentMethod}
+                  className="border rounded-md px-4 py-3 w-[30%]">
+                  <option value="">Chọn</option>
+                  <option value="OFFLINE">Thanh toán khi nhận hàng</option>
+                  <option value="ONLINE">Thanh toán Paypal</option>
+                </select>
+              </div>
             </div>
             {paymentMethod === "ONLINE" && (
               <div className="w-full mx-auto">

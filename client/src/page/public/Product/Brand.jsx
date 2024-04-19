@@ -26,7 +26,7 @@ const Brand = () => {
         {listBrand?.brands?.map((el) => (
           <div className="w-28">
             <img
-              src={el.thumb}
+              src={el?.thumb}
               alt=""
               className="w-full h-full object-contain"
             />

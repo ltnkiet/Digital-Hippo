@@ -10,7 +10,6 @@ import { useSelector, useDispatch } from "react-redux";
 const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
   const { categories, brands } = useSelector((state) => state.app);
 
-  console.log(brands, categories);
   const dispatch = useDispatch();
   const {
     register,

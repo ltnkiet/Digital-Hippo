@@ -22,6 +22,7 @@ const ResetPassword = () => {
       }
     }
   };
+  
   return (
     <div className="w-full flex items-center justify-center p-10">
       <div className="border border-main bg-white w-2/5 p-8 rounded-md shadow-sm flex flex-col justify-center items-center">

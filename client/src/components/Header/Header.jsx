@@ -11,6 +11,7 @@ import withBaseComponent from "hocs/withBaseComponent";
 import { showCart } from "store/app/appSlice";
 
 const Header = ({ dispatch, navigate }) => {
+  
   const [isShowMenu, setIsShowMenu] = useState(false);
   const { isLoggedIn, current, msg } = useSelector((state) => state.user);
 

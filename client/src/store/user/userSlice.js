@@ -9,7 +9,7 @@ export const userSlice = createSlice({
     token: null,
     isLoading: false,
     msg: "",
-    currentCart: []
+    currentCart: [],
   },
   reducers: {
     login: (state, action) => {
@@ -17,26 +17,25 @@ export const userSlice = createSlice({
       state.token = action.payload.token;
     },
     logout: (state, action) => {
-      state.isLoggedIn = false
-      state.current = null
-      state.token = null
-      state.isLoading = false
-      state.msg = ''
-  },
+      state.isLoggedIn = false;
+      state.current = null;
+      state.token = null;
+      state.isLoading = false;
+      state.msg = "";
+    },
     clearMessage: (state) => {
-      state.msg = ''
+      state.msg = "";
     },
     updateCart: (state, action) => {
-      const { pid, color, quantity } = action.payload
-      const updatingCart = JSON.parse(JSON.stringify(state.currentCart))
-      state.currentCart = updatingCart.map(el => {
+      const { pid, color, quantity } = action.payload;
+      const updatingCart = JSON.parse(JSON.stringify(state.currentCart));
+      state.currentCart = updatingCart.map((el) => {
         if (el.color === color && el.product?._id === pid) {
-          return { ...el, quantity }
-        } else return el
-      })
-  }
+          return { ...el, quantity };
+        } else return el;
+      });
+    },
   },
-  // Code logic xử lý async action
   extraReducers: (builder) => {
     builder.addCase(actions.getCurrent.pending, (state) => {
       state.isLoading = true;
@@ -45,20 +44,18 @@ export const userSlice = createSlice({
       state.isLoading = false;
       state.current = action.payload;
       state.isLoggedIn = true;
-      state.currentCart = action.payload.cart
-
+      state.currentCart = action.payload.cart;
     });
-    // Khi thực hiện action thất bại (Promise rejected)
     builder.addCase(actions.getCurrent.rejected, (state, action) => {
       state.isLoading = false;
       state.current = null;
-      state.isLoggedIn = false
-      state.token = null
-      state.msg = 'Thời hạn đăng nhập đã hết. Vui lòng đăng nhập lại!'
+      state.isLoggedIn = false;
+      state.token = null;
+      state.msg = "Thời hạn đăng nhập đã hết. Vui lòng đăng nhập lại!";
     });
   },
 });
 
-export const { login,logout, clearMessage, updateCart } = userSlice.actions;
+export const { login, logout, clearMessage, updateCart } = userSlice.actions;
 
 export default userSlice.reducer;

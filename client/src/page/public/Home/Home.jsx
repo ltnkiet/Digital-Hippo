@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { createSearchParams } from "react-router-dom";
 
 const Home = ({ navigate }) => {
+  
   const { newProducts } = useSelector((state) => state.product);
   const { categories } = useSelector((state) => state.app);
 

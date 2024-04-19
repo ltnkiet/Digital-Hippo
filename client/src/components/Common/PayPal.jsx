@@ -30,11 +30,11 @@ const ButtonWrapper = ({
   }, [currency, showSpinner]);
 
   const handleSaveOrder = async () => {
-    const response = await apiCreateOrder({ ...payload, status: 3 });
+    const response = await apiCreateOrder({ ...payload, status: 1 });
     if (response.success) {
       setIsSuccess(true);
       setTimeout(() => {
-        Swal.fire("Congrat!", "Order was created.", "success").then(() => {
+        Swal.fire("Hoàn tất", "Đặt hàng thành công.", "success").then(() => {
           navigate("/");
         });
       }, 1500);

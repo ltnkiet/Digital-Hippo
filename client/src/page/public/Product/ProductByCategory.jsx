@@ -5,7 +5,6 @@ import {
   createSearchParams,
   useNavigate,
 } from "react-router-dom"
-
 import { Breadcrumbs, ProductCard, SearchItem, InputSelect, Pagination} from "components";
 
 import { apiGetProduct } from "api";
@@ -35,7 +34,7 @@ const ProductByCategory = () => {
         $and: [
           { price: { gte: queries.from } },
           { price: { lte: queries.to } },
-        ],
+        ],  
       }
       delete queries.price
     } else {

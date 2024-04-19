@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { AdminSidebar } from "components";
 
 const LayoutMember = () => {
+  
   const { isLoggedIn, current } = useSelector((state) => state.user);
   if (!isLoggedIn || !current || +current.role !== 2)
     return <Navigate to={`/${path.LOGIN}`} replace={true} />;

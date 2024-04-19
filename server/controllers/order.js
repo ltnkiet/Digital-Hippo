@@ -19,16 +19,14 @@ const createOrderV2 = asyncHandler(async (req, res) => {
         msg: "Mã giảm giá đã hết lượt",
       });
     }
-    const discountedTotal =
-      Math.round((total * (1 - selectedCoupon.discount / 100)) / 1000) * 1000 ||
-      total;
-    data.total = discountedTotal;
+    discountTotal =  Math.round((total * (1 - selectedCoupon.discount / 100)) / 1000) * 1000 || total;
+    data.total = discountTotal;
     data.coupons = coupons;
     await Coupons.findByIdAndUpdate(coupons, { $inc: { quantity: -1 } });
   }
   if (status) data.status = status;
   const rs = await Order.create(data);
-  
+
   if (status === 3) {
     for (const { product: productId, quantity } of products) {
       const product = await Product.findById(productId);
@@ -41,7 +39,7 @@ const createOrderV2 = asyncHandler(async (req, res) => {
   }
   return res.json({
     success: rs ? true : false,
-    msg: rs ? rs : "Something went wrong",
+    msg: rs ? rs : "Lỗi hệ thống",
   });
 });
 
