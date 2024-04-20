@@ -11,8 +11,8 @@ import "react-datepicker/dist/react-datepicker.css";
 import { formatISO } from "date-fns";
 
 const UpdateCoupons = ({ editCoupon, render, setEditCoupon, dispatch }) => {
-  const [start, setStart] = useState(null);
-  const [end, setEnd] = useState(null);
+  const [start, setStart] = useState(editCoupon?.startDate);
+  const [end, setEnd] = useState(editCoupon?.endDate);
   const [invalidFields, setInvalidFields] = useState([]);
 
   const {
@@ -24,15 +24,13 @@ const UpdateCoupons = ({ editCoupon, render, setEditCoupon, dispatch }) => {
 
   useEffect(() => {
     reset({
-      name: editCoupon?.name || "",
-      discount: editCoupon?.discount || "",
-      quantity: editCoupon?.quantity || "",
-      startDate: editCoupon?.startDate || null,
-      endDate: editCoupon?.endDate || null,
+      name: editCoupon?.name,
+      discount: editCoupon?.discount,
+      quantity: editCoupon?.quantity,
+      startDate: editCoupon?.startDate,
+      endDate: editCoupon?.endDate,
     });
   }, [editCoupon]);
-
-  console.log(editCoupon);
 
   const handleUpdateCoupons = async (data) => {
     const invalids = validate(data, setInvalidFields);

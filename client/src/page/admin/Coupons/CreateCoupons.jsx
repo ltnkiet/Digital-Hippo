@@ -30,12 +30,13 @@ const CreateCoupons = ({ dispatch }) => {
     if (invalids === 0) {
       dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
       const response = await apiCreateCoupons(data);
-      dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response.success) {
         toast.success(response.msg);
         reset();
       } else toast.error(response.msg);
+      dispatch(showModal({ isShowModal: false, modalChildren: null }));
     }
+    console.log(data)
   };
 
   return (
@@ -63,7 +64,7 @@ const CreateCoupons = ({ dispatch }) => {
                 required: "Vui lòng điền phần trăm giảm giá",
                 min: { value: 1, message: "Phần trăm giảm giá tối thiểu là 1" },
                 max: {
-                  value: 100,
+                  value: 99,
                   message: "Phần trăm giảm giá tối đa là 100",
                 },
                 pattern: {

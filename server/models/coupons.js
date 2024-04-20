@@ -42,5 +42,20 @@ couponsSchema.pre("save", function (next) {
   next();
 });
 
+couponsSchema.pre("findOneAndUpdate", function (next) {
+  const currentDate = new Date();
+  const update = this.getUpdate();
+  if (update.startDate || update.endDate) {
+    if (update.endDate < currentDate) {
+      update.status = 2; // Hết hạn
+    } else if (update.startDate <= currentDate) {
+      update.status = 1; // Đang chạy
+    } else {
+      update.status = 0; // Ẩn
+    }
+  }
+  next();
+});
+
 //Export the model
 module.exports = mongoose.model("Coupons", couponsSchema);

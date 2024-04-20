@@ -16,6 +16,13 @@ var categorySchema = new mongoose.Schema(
       type: Array,
       require: true,
     },
+    // brands: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Brand",
+    //     require: true,
+    //   },
+    // ],
   },
   { timestamps: true }
 );

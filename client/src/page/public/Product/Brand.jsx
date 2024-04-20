@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Pagination } from "components";
 import { apiGetBrand } from "api";
+import { useDispatch, useSelector } from "react-redux";
+import { showModal } from "store/app/appSlice";
 
 const Brand = () => {
   const [listBrand, setListBrand] = useState(null);

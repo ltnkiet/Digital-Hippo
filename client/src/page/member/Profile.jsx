@@ -43,10 +43,11 @@ const Profile = ({ navigate }) => {
       if (searchParams.get("redirect")) navigate(searchParams.get("redirect"));
     } else toast.error(response.msg);
   };
+
   return (
     <div className="w-full relative px-4">
       <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">
-        Personal
+        Thôn tin cá nhân
       </header>
       <form
         onSubmit={handleSubmit(handleUpdateInfor)}
@@ -109,7 +110,7 @@ const Profile = ({ navigate }) => {
           <span>{formatTime(current?.createdAt)}</span>
         </div>
         <div className="flex flex-col gap-2">
-          <span className="font-medium">Profile image:</span>
+          <span className="font-medium">Ảnh đại diện:</span>
           <label htmlFor="file">
             <img
               src={current?.avatar}
@@ -129,4 +130,4 @@ const Profile = ({ navigate }) => {
   );
 };
 
-export default Profile;
+export default withBaseComponent(Profile);

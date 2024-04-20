@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { apiGetProduct } from "api/product";
 import { getNewProduct } from "store/product/asyncActions";
-import { ProductSlider } from "components";
+import { ProductSlider, Loading } from "components";
 import { useDispatch, useSelector } from "react-redux";
+import { showModal } from "store/app/appSlice";
+
 
 const tabs = [
   { id: 1, tabname: "bán chạy nhất" },
@@ -19,11 +21,14 @@ const BestSeller = () => {
   const { newProducts } = useSelector((state) => state.product);
 
   const fetchProduct = async () => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiGetProduct({ sort: "-sold", limit: 10 });
     if (response.success) {
       setBestSeller(response.productList);
-      setProductTab(response.productList);
+      setProductTab(response.productList);              
     }
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
+
   };
 
   useEffect(() => {

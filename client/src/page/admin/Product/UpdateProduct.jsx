@@ -20,7 +20,7 @@ const UpdateProduct = ({ editProduct, render, setEditProduct }) => {
   } = useForm();
 
   const [payload, setPayload] = useState({
-    description: [],
+    description: '',
   });
   const [preview, setPreview] = useState({
     thumb: null,

@@ -4,17 +4,15 @@ import ReactImageMagnify from "react-image-magnify";
 import Slider from "react-slick";
 import DOMPurify from "dompurify";
 import clsx from "clsx";
-
 import {
   Breadcrumbs,
   SelectQuantity,
   ButtonV2,
   ProductReview,
-  ProductSlider,
+  ProductSlider, Loading
 } from "components";
 import { formatPrice, renderStar } from "utils/helpers";
 import { apiGetProductByCategory, apiGetProductDetail } from "api";
-import { useSelector } from "react-redux";
 import withBaseComponent from "hocs/withBaseComponent";
 import { getCurrent } from "store/user/asyncActions";
 import { apiUpdateCart } from "api";
@@ -22,6 +20,9 @@ import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
 import path from "utils/path";
 import { toast } from "react-toastify";
+import {  useSelector } from "react-redux";
+import { showModal } from "store/app/appSlice";
+import { IoConstructSharp } from "react-icons/io5";
 
 const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
   const titleRef = useRef();
@@ -35,7 +36,6 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
   const [varriant, setVarriant] = useState(null);
   const [pid, setPid] = useState(null);
   const [category, setCategory] = useState(null);
-
   const [currentProduct, setCurrentProduct] = useState({
     title: "",
     thumb: "",
@@ -55,11 +55,14 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
   }, [data, params]);
 
   const fetchProductDetail = async () => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
+
     const response = await apiGetProductDetail(pid);
     if (response.success) {
       setProduct(response.productDetail);
       setCurrentImage(response.productDetail?.thumb);
     }
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
   };
 
   const fetchRelatedProducts = async () => {

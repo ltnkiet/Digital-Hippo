@@ -1,6 +1,6 @@
 import withBaseComponent from "hocs/withBaseComponent";
 import React, { useEffect, useState, useCallback } from "react";
-import { useSearchParams, createSearchParams} from "react-router-dom";
+import { useSearchParams, createSearchParams } from "react-router-dom";
 import {
   Breadcrumbs,
   ProductCard,
@@ -19,8 +19,10 @@ const Products = ({ navigate, dispatch }) => {
   const [params] = useSearchParams();
 
   const fetchProductList = async (queries) => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     const response = await apiGetProduct(queries);
     if (response.success) setProducts(response);
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
   };
 
   useEffect(() => {

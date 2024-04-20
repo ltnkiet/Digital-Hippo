@@ -16,16 +16,9 @@ const createCoupons = asyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       msg: "Khuyến mãi này đã tồn tại",
-    });
+    }); 
   }
-  const newCoupons = {
-    name,
-    discount,
-    startDate: new Date(),
-    endDate: new Date(),
-    quantity,
-  };
-  const response = await Coupons.create(newCoupons);
+  const response = await Coupons.create(req.body);
   return res.json({
     success: response ? true : false,
     msg: response ? "Tạo thành công" : "Lỗi hệ thống",
@@ -72,12 +65,6 @@ const updateCoupons = asyncHandler(async (req, res) => {
       success: false,
       msg: "Không thể giảm quá 100%",
     });
-  }
-  if (req.body.startDate) {
-    req.body.startDate = new Date(req.body.startDate);
-  }
-  if (req.body.endDate) {
-    req.body.endDate = new Date(req.body.endDate);
   }
   const response = await Coupons.findByIdAndUpdate(cid, req.body, {
     new: true,

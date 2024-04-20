@@ -5,10 +5,12 @@ import {
   createSearchParams,
   useNavigate,
 } from "react-router-dom"
-import { Breadcrumbs, ProductCard, SearchItem, InputSelect, Pagination} from "components";
+import { Breadcrumbs, ProductCard, SearchItem, InputSelect, Pagination, Loading} from "components";
 
 import { apiGetProduct } from "api";
 import { sorts } from 'utils/contant'
+import { useDispatch } from "react-redux";
+import { showModal } from "store/app/appSlice";
 
 const ProductByCategory = () => {
 
@@ -18,12 +20,14 @@ const ProductByCategory = () => {
   const [sort, setSort] = useState("")
   const { category } = useParams()
   const [params] = useSearchParams()
-
+  const dispatch = useDispatch()
 
   const fetchProductByCategory = async (queries) => {
+    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
     if (category && category !== "product") queries.category = category
     const response = await apiGetProduct(queries);
     if (response.success) setProducts(response)
+    dispatch(showModal({ isShowModal: false, modalChildren: null }));
   };
 
   useEffect(() => {
