@@ -1,4 +1,5 @@
 const Coupons = require("../models/coupons");
+const Order = require("../models/order");
 const asyncHandler = require("express-async-handler");
 
 const createCoupons = asyncHandler(async (req, res) => {
@@ -16,7 +17,7 @@ const createCoupons = asyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       msg: "Khuyến mãi này đã tồn tại",
-    }); 
+    });
   }
   const response = await Coupons.create(req.body);
   return res.json({
@@ -41,7 +42,7 @@ const getCoupons = asyncHandler(async (req, res) => {
   const page = +req.query.page || 1;
   const limit = +req.query.limit;
   const skip = (page - 1) * limit;
-  // Query categories
+
   const queryCommand = Coupons.find(formatQueries).skip(skip).limit(limit);
   queryCommand
     .then(async (response) => {

@@ -12,6 +12,10 @@ var couponsSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    usageCount: {
+      type: Number,
+      default: 0
+    },
     startDate: {
       type: Date,
       required: true,

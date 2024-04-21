@@ -109,6 +109,8 @@ const ManageCoupons = ({ navigate, location }) => {
               <th className="text-center py-2 px-1">#</th>
               <th className="text-center py-2">Khuyến mãi</th>
               <th className="text-center py-2">Giá giảm</th>
+              <th className="text-center py-2">Số lượng</th>
+              <th className="text-center py-2">Số lượt dã dùng</th>
               <th className="text-center py-2">Ngày bắt đầu</th>
               <th className="text-center py-2">Ngày hết hạn</th>
               <th className="text-center py-2">Trạng thái</th>
@@ -126,6 +128,8 @@ const ManageCoupons = ({ navigate, location }) => {
                 </td>
                 <td className="text-center py-2">{el.name}</td>
                 <td className="text-center py-2">{`${el.discount}%`}</td>
+                <td className="text-center py-2">{el.quantity}</td>
+                <td className="text-center py-2">{el.usageCount}</td>
                 <td className="text-center py-2">
                   {formatTimeV2(el.startDate)}
                 </td>

@@ -10,96 +10,55 @@ const createOrderV2 = asyncHandler(async (req, res) => {
   if (address) {
     await User.findByIdAndUpdate(_id, { address, cart: [] });
   }
-  const data = { products, total, orderBy: _id, coupons };
+  const data = { products, total, orderBy: _id, coupons: coupons || null };
+
   if (coupons) {
     const selectedCoupon = await Coupons.findById(coupons);
     if (selectedCoupon.quantity <= 0) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         msg: "Mã giảm giá đã hết lượt",
       });
     }
-    discountTotal =  Math.round((total * (1 - selectedCoupon.discount / 100)) / 1000) * 1000 || total;
-    data.total = discountTotal;
     data.coupons = coupons;
-    await Coupons.findByIdAndUpdate(coupons, { $inc: { quantity: -1 } });
+    await Coupons.findByIdAndUpdate(coupons, {
+      $inc: { quantity: -1, usageCount: 1 },
+    });
   }
+
   if (status) data.status = status;
   const rs = await Order.create(data);
 
-  if (status === 3) {
-    for (const { product: productId, quantity } of products) {
-      const product = await Product.findById(productId);
-      if (product) {
-        await Product.findByIdAndUpdate(productId, {
-          $inc: { sold: quantity, quantity: -quantity },
-        });
-      }
-    }
-  }
   return res.json({
     success: rs ? true : false,
     msg: rs ? rs : "Lỗi hệ thống",
   });
 });
 
-const createOrder = asyncHandler(async (req, res) => {
-  const { _id } = req.user;
-  const { coupons } = req.body;
-  const userCart = await User.findById(_id)
-    .select("cart")
-    .populate("cart.products", "title price");
-  if (!userCart.cart || userCart.cart.length === 0) {
-    throw new Error("Cart is empty");
-  }
-  const products = userCart?.cart?.map((el) => ({
-    product: el.products.name,
-    count: el.quantity,
-  }));
-  let total = userCart?.cart?.reduce(
-    (sum, el) => el.products.price * el.quantity + sum,
-    0
-  );
-  const createData = { products, total, orderBy: _id, coupons };
-  if (coupons) {
-    const seletedCoupons = await Coupons.findById(coupons);
-    if (seletedCoupons.expiry && new Date(seletedCoupons.expiry) < new Date()) {
-      throw new Error("Coupons has expired");
-    }
-    total =
-      Math.round((total * (1 - +seletedCoupons?.discount / 100)) / 1000) *
-        1000 || total;
-    createData.total = total;
-    createData.coupons = coupons;
-  }
-  const result = await Order.create(createData);
-  if (result) {
-    await User.findByIdAndUpdate(_id, { $set: { cart: [] } });
-  }
-  return res.status(200).json({
-    success: result ? true : false,
-    order: result ? result : "Error",
-    userCart,
-  });
-});
-
 const updateStatus = asyncHandler(async (req, res) => {
   const { oid } = req.params;
   const { status } = req.body;
-  const order = await Order.findById(oid);
+  const order = await Order.findById(oid).populate({
+    path: "products",
+    populate: {
+      path: "product",
+    },
+  });
   if (!status) throw new Error("Missing Input");
   const response = await Order.findByIdAndUpdate(
     oid,
     { status },
     { new: true }
   );
-  if (status === 3) {
-    for (const { product: productId, quantity } of products) {
-      const product = await Product.findById(productId);
-      if (product) {
+  if (response.status === 3) {
+    for (const { product: productId, quantity } of order.products) {
+      const prod = await Product.findById(productId);
+      if (prod) {
         await Product.findByIdAndUpdate(productId, {
-          $inc: { sold: quantity, quantity: -quantity },
-        });
+            $inc: { sold: quantity, quantity: -quantity },
+          },
+          { new: true }
+        );
       }
     }
   }
@@ -362,7 +321,6 @@ const getDashboard = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  createOrder,
   createOrderV2,
   updateStatus,
   getUserOrder,

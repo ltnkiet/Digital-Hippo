@@ -8,6 +8,7 @@ import { getCurrent } from "store/user/asyncActions";
 import Swal from "sweetalert2";
 import { apiCreateOrder, apiGetCoupons } from "api";
 import path from "utils/path";
+import { toast } from "react-toastify";
 
 const CheckOut = ({ dispatch, navigate }) => {
   const { currentCart, current } = useSelector((state) => state.user);
@@ -93,17 +94,19 @@ const CheckOut = ({ dispatch, navigate }) => {
       products: currentCart,
       address: current?.address,
       coupons: selectedCoupon,
-      total: Math.round(totalAfterDiscount / 24640),
+      total: totalAfterDiscount / 24640,
     };
     const response = await apiCreateOrder({ ...payload, status: 1 });
     if (response.success) {
       setIsSuccess(true);
       setTimeout(() => {
         Swal.fire("Hoàn tất", "Đặt hàng thành công.", "success").then(() => {
-          navigate(`/${path.HISTORY}`);
+          navigate(`/${path.MEMBER}/${path.HISTORY}`);
         });
       }, 1500);
-    }
+    } else toast.error(response.msg);
+
+    console.log(response)
   };
 
   return (
@@ -196,21 +199,20 @@ const CheckOut = ({ dispatch, navigate }) => {
                 <PayPal
                   payload={{
                     products: currentCart,
-                    total: Math.round(
+                    total:
                       +currentCart?.reduce(
                         (sum, el) => +el?.price * el.quantity + sum,
                         0
-                      ) / 24640
-                    ),
+                      ) / 24640,
                     address: current?.address,
                   }}
                   setIsSuccess={setIsSuccess}
-                  amount={Math.round(
+                  amount={
                     +currentCart?.reduce(
                       (sum, el) => +el?.price * el.quantity + sum,
                       0
                     ) / 24640
-                  )}
+                  }
                 />
               </div>
             )}

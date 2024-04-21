@@ -16,7 +16,7 @@ var userSchema = new mongoose.Schema(
       index: true,
     },
     phone: {
-      type: Number,
+      type: String,
       required: true,
     },
     password: {
@@ -35,7 +35,10 @@ var userSchema = new mongoose.Schema(
     },
     cart: [
       {
-        product: { type: mongoose.Types.ObjectId, ref: "Product" },
+        product: {
+          type: mongoose.Types.ObjectId,
+          ref: "Product",
+        },
         quantity: Number,
         color: String,
         price: Number,

@@ -24,6 +24,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
   const [counts, setCounts] = useState(0);
   const [update, setUpdate] = useState(false);
   const [editOrder, setEditOrder] = useState();
+
   const fetchOrders = async (params) => {
     const response = await apiGetOrders({
       ...params,
