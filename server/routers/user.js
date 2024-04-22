@@ -10,7 +10,7 @@ router.post("/refreshtoken", userController.refreshAccessToken);
 router.get("/logout", userController.logout);
 router.post("/password/forgot", userController.forgotPassword);
 router.put("/password/reset", userController.resetPassword);
-router.get("/register/verify/:token", userController.emailVerify);
+router.put("/register/verify/:registerCode", userController.emailVerify);
 // CRUD CURRENT
 router.get("/current", verifyAccessToken, userController.getCurrent);
 router.put("/current", [verifyAccessToken], uploader.single("avatar"), userController.updateUser);

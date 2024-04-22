@@ -5,7 +5,12 @@ export const apiRegister = (data) =>
     url: "/user/register",
     method: "POST",
     data,
-    withCredentials: true,
+  });
+
+export const apiEmailVerify = (reigisterCode) =>
+  axios({
+    url: "/user/register/verify/" + reigisterCode,
+    method: "PUT",
   });
 export const apiLogin = (data) =>
   axios({

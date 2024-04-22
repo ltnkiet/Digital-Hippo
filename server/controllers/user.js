@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const sendMail = require("../utils/sendMail");
 const crypto = require("crypto");
 const { usersTest } = require("../utils/contants");
-const makeToken = require("uniqid")
+const makeToken = require("uniqid");
 
 const {
   generateAccessToken,
@@ -23,53 +23,63 @@ const register = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
   if (user) throw new Error("Email này đã tồn tại.");
   else {
-    const token = crypto.randomBytes(32).toString("hex");
-    res.cookie(
-      "data",
-      { ...req.body, token },
-      { httpOnly: true, maxAge: 3 * 60 * 1000 }
-    );
-    const html = `
+    const registerCode = makeToken();
+    const temporaryEmail = btoa(email) + "@" + registerCode;
+    const temporaryUser = await User.create({
+      email: temporaryEmail,
+      password,
+      name,
+      phone,
+    });
+    if (temporaryUser) {
+      const html = `
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
         Cảm ơn bạn vì đã chọn đồng hành cùng chúng tôi
       </p>
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">
-        Chọn vào đây để hoàn tất quá trình đăng ký, yêu cầu này chỉ tồn tại 3 phút:
+        Lấy mã bên dưới hoàn tất quá trình đăng ký, mã này chỉ tồn tại 3 phút:
       </p>
-      <button style="padding: 14px; background-color: #1E90FF; border-radius: 5px; border-style: none; cursor: pointer">
-        <a href=${process.env.SERVER_URL}/user/register/verify/${token}
-          style="color:white; text-decoration-line: none; font-size: 14px; font-weight: 700">
-            Xác thực tài khoản
-        </a>
-      </button>
+      <div style="display: flex; align-items: center; gap: 10px">
+      <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500">
+        Mã xác nhận:
+      </p>
+      <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 700; font-size: 20px; color:#1E90FF ">
+        ${registerCode}
+      </p>
+    </div>
       <p style="font-family: Arial, Helvetica, sans-serif; font-weight: 500; font-size: 14px">Digital Hippo Support Team!</p>
       <img src="https://res.cloudinary.com/ltnkiet/image/upload/v1701678830/DigitalHippo/thumb/lz2p2azdm5d1l8mxpmjl.png" style="width: 20rem" alt="thumbnail">`;
-    await sendMail({ email, html, subject: "[Digital Hippo] E-Mail Verify" });
+      await sendMail({ email, html, subject: "[Digital Hippo] E-Mail Verify" });
+    }
+
+    setTimeout(async () => {
+      await User.deleteOne({ email: temporaryEmail });
+    }, [300000]);
+
     return res.json({
-      success: true,
-      msg: "Thư báo đã được gửi đến email của bạn.",
+      success: temporaryUser ? true : false,
+      msg: temporaryUser
+        ? "Thư báo đã được gửi đến email của bạn."
+        : "Đã xảy ra sự cố! Vui lòng thử lại",
     });
   }
 });
 
 const emailVerify = asyncHandler(async (req, res) => {
-  const cookie = req.cookies;
-  const { token } = req.params;
-  if (!cookie || cookie?.data?.token !== token)
-    return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`);
-  const newUser = await User.create({
-    name: cookie?.data?.name,
-    phone: cookie?.data?.phone,
-    email: cookie?.data?.email,
-    password: cookie?.data?.password,
+  const { registerCode } = req.params;
+  const activeEmail = await User.findOne({
+    email: new RegExp(`${registerCode}$`),
   });
-  res.clearCookie("data");
-  if (newUser)
-    return res.redirect(
-      `${process.env.CLIENT_URL}/dang-ky/xac-thuc/thanh-cong`
-    );
-  else
-    return res.redirect(`${process.env.CLIENT_URL}/dang-ky/xac-thuc/that-bai`);
+  if (activeEmail) {
+    activeEmail.email = atob(activeEmail.email.split("@")[0]);
+    activeEmail.save();
+  }
+  return res.json({
+    success: activeEmail ? true : false,
+    msg: activeEmail
+      ? "Đăng ký thành công"
+      : "Đã xảy ra sự cố! Vui lòng thử lại",
+  });
 });
 
 const login = asyncHandler(async (req, res) => {

@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import { InputForm, Button } from "components";
 import validate from "utils/helpers";
-import { apiLogin, apiRegister, apiForgotPassword } from "api";
+import { apiLogin, apiRegister, apiForgotPassword, apiEmailVerify } from "api";
 import Swal from "sweetalert2";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import path from "utils/path";
@@ -16,6 +16,8 @@ const Login = () => {
   const { isLoggedIn } = useSelector((state) => state.user);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
+  const [isVerifiedEmail, setIsVerifiedEmail] = useState(false);
+  const [registerCode, setRegisterCode] = useState("");
   const [invalidFields, setInvalidFields] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
   const [searchParams] = useSearchParams();
@@ -45,10 +47,7 @@ const Login = () => {
       if (isRegister) {
         const response = await apiRegister(payload);
         if (response.success) {
-          Swal.fire("Hoàn tất", response.msg, "success").then(() => {
-            setIsRegister(false);
-            resetPayload();
-          });
+          setIsVerifiedEmail(true);
         } else Swal.fire("Sự cố!", response.msg, "error");
       } else {
         const res = await apiLogin(data);
@@ -81,9 +80,42 @@ const Login = () => {
       Swal.fire("Sự cố!", response.msg, "error");
     }
   };
-  
+
+  const emailVerify = async () => {
+    const response = await apiEmailVerify(registerCode);
+    if (response.success) {
+      Swal.fire("Hoàn tất", response.msg, "success").then(() => {
+        setIsRegister(false);
+        resetPayload();
+      });
+    } else Swal.fire("Sự cố!", response.msg, "error");
+    setIsVerifiedEmail(false);
+    setRegisterCode(false);
+  };
+
   return (
     <div className="w-full flex items-center justify-center p-5">
+      {isVerifiedEmail && (
+        <div className="absolute top-0 left-0 right-0 bottom-0 bg-overlay-70 z-50 flex flex-col justify-center items-center">
+          <div className="bg-white w-[90%] max-w-[500px] rounded-md p-8">
+            <h4 className="mb-4">
+              Nhập mã xác nhận được gửi đến Email vào ô bên dưới
+            </h4>
+            <input
+              type="text"
+              value={registerCode}
+              onChange={(e) => setRegisterCode(e.target.value)}
+              className="p-2 border rounded-md outline-none"
+            />
+            <button
+              type="button"
+              className="px-4 py-2 mt-4 mx-auto bg-blue-500 font-semibold text-white rounded-md ml-4"
+              onClick={emailVerify}>
+              Xác nhận
+            </button>
+          </div>
+        </div>
+      )}
       <div className="w-2/5 flex flex-col items-center justify-center p-8 rounded-md shadow-lg border border-main">
         <div className="w-full flex items-start">
           <Link to={`/${path.HOME}`}>
@@ -91,6 +123,7 @@ const Login = () => {
           </Link>
         </div>
         <img src={LogoV3} className="w-40" alt="" />
+
         {isForgotPassword ? (
           <>
             <h3 className="font-semibold text-2xl my-5 text-main">
