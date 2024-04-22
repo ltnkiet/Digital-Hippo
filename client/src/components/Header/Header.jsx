@@ -131,12 +131,14 @@ const Header = ({ dispatch, navigate }) => {
             )}
           </Fragment>
         </div>
-        <div className="relative cursor-pointer">
+        <Link 
+          to={`/${path.MEMBER}/${path.WISHLIST}`}
+          className="relative cursor-pointer">
           <img src={Wishlist} alt="" className="w-10" />
           <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center absolute -top-2 -right-3">
             <p className="text-white text-sm font-semibold">{current?.wishlist?.length || 0}</p>
           </div>
-        </div>
+        </Link>
         <div
           className="relative cursor-pointer"
           onClick={() => dispatch(showCart())}>

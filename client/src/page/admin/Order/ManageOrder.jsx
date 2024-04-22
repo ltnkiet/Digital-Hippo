@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { apiGetOrders, apiUpdateStatus } from "api";
-import { ButtonV2, Pagination, InputFormV2, Select } from "components";
+import { ButtonV2, Pagination, InputFormV2 } from "components";
 import useDebounce from "hooks/useDebounce";
 import { useForm } from "react-hook-form";
 import { BiEdit, FaEye } from "asset/icons";
@@ -62,7 +62,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
     });
     if (response.success) {
       toast.success(response.msg);
-      setUpdate(!update);
+      render()
       setEditOrder(null);
     } else toast.error(response.msg);
   };
@@ -146,7 +146,11 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
                 </td>
                 <td className="text-center py-2">
                   {editOrder?._id === el._id ? (
-                    <select {...register("status")} className="form-select">
+                    <select 
+                      {...register("status")} 
+                      className="form-select"
+                      disabled={watch('status') === 3 || 0}
+                    >
                       {statusTexts.map((text, index) => (
                         <option key={index} value={index}>
                           {text}

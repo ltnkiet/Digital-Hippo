@@ -71,6 +71,57 @@ const updateStatus = asyncHandler(async (req, res) => {
   });
 });
 
+const cancelOrder = asyncHandler(async(req, res) => {
+  const { oid } = req.params;
+  const { _id } = req.user;
+  
+  const order = await Order.findById(oid);
+  
+  if (!order) {
+    return res.status(404).json({
+      success: false,
+      msg: "Không tìm thấy đơn hàng",
+    });
+  }
+
+  if (order.orderBy.toString() !== _id) {
+    return res.status(200).json({
+      success: false,
+      msg: "Bạn không có quyền hủy đơn hàng này",
+    });
+  }
+
+  if (order.status === 0 || order.status === 2 || order.status === 3 || order.status === 4) {
+    return res.status(200).json({
+      success: false,
+      msg: "Không thể hủy đơn hàng khi đơn hàng đã được xác nhận",
+    });
+  }
+
+  const createdAtTime = new Date(order.createdAt).getTime();
+  const currentTime = new Date().getTime();
+  const timeDiff = currentTime - createdAtTime;
+  const cancelTimeLimit = 5 * 60 * 1000;
+  
+  if (timeDiff > cancelTimeLimit) {
+    return res.status(200).json({
+      success: false,
+      msg: "Không thể hủy đơn hàng sau 5 phút kể từ thời gian tạo đơn hàng",
+    });
+  }
+
+
+  order.status = 0; 
+  await order.save();
+
+  return res.status(200).json({
+    success: true,
+    msg: "Đã hủy đơn hàng thành công",
+    order: order,
+  });
+});
+
+
 const getUserOrder = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const { _id } = req.user;
@@ -86,7 +137,6 @@ const getUserOrder = asyncHandler(async (req, res) => {
   );
   const formatedQueries = JSON.parse(queryString);
   const qr = { ...formatedQueries, orderBy: _id };
-  console.log(qr);
   let queryCommand = Order.find(qr);
 
   // Sorting
@@ -326,4 +376,5 @@ module.exports = {
   getUserOrder,
   getOrders,
   getDashboard,
+  cancelOrder,
 };

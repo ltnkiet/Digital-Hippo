@@ -273,7 +273,7 @@ export const statusOrdersUser = [
   },
 ];
 
-export const statusTexts = ["Đã hủy", "Đang xử lý", "Đang giao", "Hoàn thành"];
+export const statusTexts = ["Đã hủy", "Đang xử lý", "Đang giao", "Hoàn thành", "Đã xác nhận"];
 
 export const statusColor = [
   "bg-red-600",

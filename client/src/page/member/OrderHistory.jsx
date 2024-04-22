@@ -1,29 +1,34 @@
-import { apiGetUserOrders } from "api";
+import { apiCancelOrder, apiGetUserOrders } from "api";
 import { CustomSelect, InputFormV2, Pagination } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { createSearchParams, useSearchParams } from "react-router-dom";
-import {
-  statusClasses,
-  statusColor,
-  statusOrdersUser,
-  statusTexts,
-} from "utils/contant";
+import { statusColor, statusOrdersUser, statusTexts } from "utils/contant";
 import { formatTime, formatPrice } from "utils/helpers";
+import Swal from "sweetalert2";
 
 const OrderHistory = ({ navigate, location }) => {
   const [orders, setOrders] = useState(null);
   const [counts, setCounts] = useState(0);
+  const [cancelTimeouts, setCancelTimeouts] = useState({});
   const [params] = useSearchParams();
+
+  const handleCancelOrder = async (orderId) => {
+    const res = await apiCancelOrder(orderId);
+    if (res.success) {
+      Swal.fire("Hoàn tất", res.msg, "success");
+    } else Swal.fire("Sự cố", res.msg, "error");
+  };
+
   const {
     register,
     formState: { errors },
-    watch,
-    setValue,
+    watch
   } = useForm();
-  const q = watch("q");
+
   const status = watch("status");
+
   const fetchPOrders = async (params) => {
     const response = await apiGetUserOrders({
       ...params,
@@ -32,8 +37,10 @@ const OrderHistory = ({ navigate, location }) => {
     if (response.success) {
       setOrders(response.orderList);
       setCounts(response.counts);
+      setDisableCancelOrders(response.orderList)
     }
   };
+
   useEffect(() => {
     const pr = Object.fromEntries([...params]);
     fetchPOrders(pr);
@@ -44,6 +51,29 @@ const OrderHistory = ({ navigate, location }) => {
       pathname: location.pathname,
       search: createSearchParams({ status: value }).toString(),
     });
+  };
+
+  const setDisableCancelOrders = (orders) => {
+    const now = new Date().getTime();
+    const newCancelTimeouts = {};
+    orders.forEach((order) => {
+      if ([0, 2, 3, 4].includes(order.status)) {
+        newCancelTimeouts[order._id] = true;
+      } else {
+        const createdAtTime = new Date(order.createdAt).getTime();
+        const timeDiff = 5 * 60 * 1000 - (now - createdAtTime);
+        if (timeDiff <= 0) {
+          newCancelTimeouts[order._id] = true;
+        } else {
+          if (cancelTimeouts[order._id])
+            clearTimeout(cancelTimeouts[order._id]);
+          newCancelTimeouts[order._id] = setTimeout(() => {
+            setDisableCancelOrders([...orders, order]);
+          }, timeDiff);
+        }
+      }
+    });
+    setCancelTimeouts(newCancelTimeouts);
   };
 
   return (
@@ -80,6 +110,7 @@ const OrderHistory = ({ navigate, location }) => {
             <th className="text-center py-2">Tổng tiền</th>
             <th className="text-center py-2">Trạng thái</th>
             <th className="text-center py-2">Thời gian</th>
+            <th className="text-center py-2">Thao tác</th>
           </tr>
         </thead>
         <tbody>
@@ -118,6 +149,17 @@ const OrderHistory = ({ navigate, location }) => {
                 </p>
               </td>
               <td className="text-center py-2">{formatTime(el.createdAt)}</td>
+              <td className="text-center py-2">
+                <button
+                  type="button"
+                  onClick={() => handleCancelOrder(el._id)}
+                  disabled={cancelTimeouts[el._id]}
+                  className={`py-1 px-2 rounded-md text-white ${
+                    cancelTimeouts[el._id] ? "bg-red-200" : "bg-red-500"
+                  }`}>
+                  Hủy đơn
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

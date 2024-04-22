@@ -3,16 +3,15 @@ import { InputForm, Button } from "components";
 import validate from "utils/helpers";
 import { apiLogin, apiRegister, apiForgotPassword, apiEmailVerify } from "api";
 import Swal from "sweetalert2";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import path from "utils/path";
 import { login } from "store/user/userSlice";
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { LogoV3 } from "asset/img";
 import { IoArrowBackOutline } from "asset/icons";
+import withBaseComponent from "hocs/withBaseComponent";
 
-const Login = () => {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+const Login = ({ navigate, dispatch }) => {
   const { isLoggedIn } = useSelector((state) => state.user);
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
@@ -99,7 +98,7 @@ const Login = () => {
         <div className="absolute top-0 left-0 right-0 bottom-0 bg-overlay-70 z-50 flex flex-col justify-center items-center">
           <div className="bg-white w-[90%] max-w-[500px] rounded-md p-8">
             <h4 className="mb-4">
-              Nhập mã xác nhận được gửi đến Email vào ô bên dưới
+              Nhập mã xác nhận được gửi đến Email của bạn vào ô bên dưới
             </h4>
             <input
               type="text"
@@ -262,4 +261,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default withBaseComponent(Login);

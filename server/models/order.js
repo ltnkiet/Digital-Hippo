@@ -23,7 +23,7 @@ var orderSchema = new mongoose.Schema(
     status: {
       type: Number,
       default: 1,
-      enum: [0, 1, 2, 3], //["cancelled", "processing", "delivering", "success"],
+      enum: [0, 1, 2, 3, 4], //["cancelled", "processing", "delivering", "success", "confirmed"],
     },
     orderBy: {
       type: mongoose.Types.ObjectId,
