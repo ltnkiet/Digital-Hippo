@@ -84,7 +84,6 @@ const ProductCard = ({
             });
         });
       const response = apiUpdateWishlist(pid);
-      console.log(pid);
       if (response.success) {
         toast.success(response.msg);
         dispatch(getCurrent());

@@ -34,42 +34,6 @@ body {
   line-height: 1.5rem /* 24px */;
 }
 
-.image-slider button.slick-next {
-  right: 0px;
-  z-index: 10;
-  top: 55px;
-}
-
-.image-slider button.slick-prev {
-  left: 0px;
-  top: 55px;
-  z-index: 10;
-}
-
-.image-slider button.slick-next::before {
-  color: gray;
-  content: "\276F";
-  background-color: #349fe2;
-  width: 40px;
-  height: 40px;
-  font-size: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.image-slider button.slick-prev::before {
-  color: gray;
-  content: "\276E";
-  background-color: #349fe2;
-  width: 40px;
-  height: 40px;
-  font-size: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -79,3 +43,5 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+

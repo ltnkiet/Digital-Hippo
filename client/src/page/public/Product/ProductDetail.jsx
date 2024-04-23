@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import ReactImageMagnify from "react-image-magnify";
 import Slider from "react-slick";
@@ -9,7 +9,7 @@ import {
   SelectQuantity,
   ButtonV2,
   ProductReview,
-  ProductSlider, Loading
+  ProductSlider,
 } from "components";
 import { formatPrice, renderStar } from "utils/helpers";
 import { apiGetProductByCategory, apiGetProductDetail } from "api";
@@ -20,12 +20,9 @@ import Swal from "sweetalert2";
 import { createSearchParams } from "react-router-dom";
 import path from "utils/path";
 import { toast } from "react-toastify";
-import {  useSelector } from "react-redux";
-import { showModal } from "store/app/appSlice";
-import { IoConstructSharp } from "react-icons/io5";
+import { useSelector } from "react-redux";
 
 const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
-  const titleRef = useRef();
   const params = useParams();
   const { current } = useSelector((state) => state.user);
   const [product, setProduct] = useState(null);
@@ -36,6 +33,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
   const [varriant, setVarriant] = useState(null);
   const [pid, setPid] = useState(null);
   const [category, setCategory] = useState(null);
+
   const [currentProduct, setCurrentProduct] = useState({
     title: "",
     thumb: "",
@@ -55,14 +53,11 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
   }, [data, params]);
 
   const fetchProductDetail = async () => {
-    dispatch(showModal({ isShowModal: true, modalChildren: <Loading /> }));
-
     const response = await apiGetProductDetail(pid);
     if (response.success) {
       setProduct(response.productDetail);
       setCurrentImage(response.productDetail?.thumb);
     }
-    dispatch(showModal({ isShowModal: false, modalChildren: null }));
   };
 
   const fetchRelatedProducts = async () => {
@@ -95,7 +90,6 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
       fetchProductDetail();
       fetchRelatedProducts();
     }
-    titleRef.current.scrollIntoView({ block: "center" });
   }, [pid]);
 
   useEffect(() => {
@@ -162,6 +156,14 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
     setCurrentImage(el);
   };
 
+  const handleSetVarriant = (sku) => {
+    const selectedVarriant = product?.varriants?.find((el) => el.sku === sku);
+    if (selectedVarriant) {
+      setVarriant(sku);
+      setCurrentImage(selectedVarriant.thumb);
+    }
+  };
+
   const settings = {
     dots: false,
     infinite: false,
@@ -174,7 +176,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
     <div className={clsx("w-full")}>
       {!isQuickView && (
         <div className="h-[80px] flex items-center justify-center bg-gray-200">
-          <div ref={titleRef} className="w-main">
+          <div  className="w-main">
             <h1 className="text-xl font-medium">
               {currentProduct.title || product?.title}
             </h1>
@@ -186,36 +188,34 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
         </div>
       )}
       <div
-        ref={titleRef}
+
         onClick={(e) => e.stopPropagation()}
         className={clsx(
           // className="w-main m-auto mt-10 flex">
-          "bg-white m-auto mt-4 flex",
+          "bg-white m-auto mt-4 flex gap-5",
           isQuickView
             ? "max-w-[900px] gap-16 p-8 max-h-[80vh] overflow-y-auto"
             : "w-main"
         )}>
         <div
           className={clsx("flex flex-col gap-4 w-2/5", isQuickView && "w-1/2")}>
-          <div className="w-full h-full flex items-center overflow-hidden">
+          <div className="w-[480px] h-[480px] flex items-center">
             <ReactImageMagnify
               {...{
                 smallImage: {
                   isFluidWidth: true,
-                  src: currentProduct.thumb || currentImage,
+                  src: currentImage,
                 },
                 largeImage: {
-                  src: currentProduct.thumb || currentImage,
-                  width: 1800,
-                  height: 1500,
+                  src: currentImage,
+                  width: 1200,
+                  height: 900,
                 },
               }}
             />
           </div>
-          <div className="w-full">
-            <Slider
-              className="image-slider flex gap-2 justify-between"
-              {...settings}>
+          <div className="w-[450px]">
+            <Slider className="flex gap-2 justify-between" {...settings}>
               {currentProduct.images?.length === 0 &&
                 product?.images?.map((el) => (
                   <div className="w-[100px] h-[100px] px-2 flex-1" key={el}>
@@ -223,7 +223,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
                       onClick={(e) => handleClickImage(e, el)}
                       src={el}
                       alt=""
-                      className="w-full h-full object-contain p-1"
+                      className="w-full h-full cursor-pointer object-contain p-1"
                     />
                   </div>
                 ))}
@@ -234,14 +234,14 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
                       onClick={(e) => handleClickImage(e, el)}
                       src={el}
                       alt=""
-                      className="w-full h-full object-contain p-1"
+                      className="w-full h-full cursor-pointer object-contain p-1"
                     />
                   </div>
                 ))}
             </Slider>
           </div>
         </div>
-        <div className="w-2/5 flex flex-col gap-4 ml-10">
+        <div className="w-2/5 flex flex-col gap-4 px-5">
           <div className="flex items-center justify-between">
             <h2 className="text-[30px] font-semibold">
               {`${formatPrice(currentProduct.price || product?.price)} VNĐ`}
@@ -291,7 +291,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
               {product?.varriants?.map((el) => (
                 <div
                   key={el.sku}
-                  onClick={() => setVarriant(el.sku)}
+                  onClick={() => handleSetVarriant(el.sku)}
                   className={clsx(
                     "flex items-center gap-2 p-2 border cursor-pointer",
                     varriant === el.sku && "border-red-500"
