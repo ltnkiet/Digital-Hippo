@@ -87,7 +87,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
 
   useEffect(() => {
     if (pid) {
-      fetchProductDetail();
+      fetchProductDetail(pid);
       fetchRelatedProducts();
     }
   }, [pid]);
@@ -188,7 +188,6 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
         </div>
       )}
       <div
-
         onClick={(e) => e.stopPropagation()}
         className={clsx(
           // className="w-main m-auto mt-10 flex">
@@ -199,7 +198,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
         )}>
         <div
           className={clsx("flex flex-col gap-4 w-2/5", isQuickView && "w-1/2")}>
-          <div className="w-[480px] h-[480px] flex items-center">
+          <div className="w-full h-full flex items-center">
             <ReactImageMagnify
               {...{
                 smallImage: {
@@ -214,11 +213,11 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
               }}
             />
           </div>
-          <div className="w-[450px]">
+          <div className="w-full">
             <Slider className="flex gap-2 justify-between" {...settings}>
               {currentProduct.images?.length === 0 &&
                 product?.images?.map((el) => (
-                  <div className="w-[100px] h-[100px] px-2 flex-1" key={el}>
+                  <div className="w-[100px] h-[100px] border px-2 flex-1" key={el}>
                     <img
                       onClick={(e) => handleClickImage(e, el)}
                       src={el}
@@ -276,7 +275,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
                 onClick={() => setVarriant(null)}
                 className={clsx(
                   "flex items-center gap-2 p-2 border cursor-pointer",
-                  !varriant && "border-red-500"
+                  !varriant && "border-main"
                 )}>
                 <img
                   src={product?.thumb}
@@ -294,7 +293,7 @@ const ProductDetail = ({ isQuickView, data, location, dispatch, navigate }) => {
                   onClick={() => handleSetVarriant(el.sku)}
                   className={clsx(
                     "flex items-center gap-2 p-2 border cursor-pointer",
-                    varriant === el.sku && "border-red-500"
+                    varriant === el.sku && "border-main"
                   )}>
                   <img
                     src={el.thumb}

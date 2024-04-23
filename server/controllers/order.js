@@ -183,7 +183,7 @@ const getOrders = asyncHandler(async (req, res) => {
   );
   const formatedQueries = JSON.parse(queryString);
   const qr = { ...formatedQueries };
-  let queryCommand = Order.find(qr).populate("orderBy");
+  let queryCommand = Order.find(qr).populate("orderBy").populate('coupons');
 
   // Sorting
   if (req.query.sort) {
