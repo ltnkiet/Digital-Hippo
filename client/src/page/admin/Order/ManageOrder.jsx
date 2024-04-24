@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { apiGetOrders, apiUpdateStatus } from "api";
-import { ButtonV2, Pagination, InputFormV2 } from "components";
+import { ButtonV2, Pagination, InputFormV2, Loading } from "components";
 import useDebounce from "hooks/useDebounce";
 import { useForm } from "react-hook-form";
 import { BiEdit, FaEye } from "asset/icons";
 import { createSearchParams, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
-import { showModal } from 'store/app/appSlice'
+import { showModal } from "store/app/appSlice";
 import { formatPrice, formatTime } from "utils/helpers";
 import { statusTexts, statusColor } from "utils/contant";
 import withBaseComponent from "hocs/withBaseComponent";
@@ -62,7 +62,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
     });
     if (response.success) {
       toast.success(response.msg);
-      render()
+      render();
       setEditOrder(null);
     } else toast.error(response.msg);
   };
@@ -71,11 +71,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
     dispatch(
       showModal({
         isShowModal: true,
-        modalChildren: (
-          <OrderDetail
-            data={data}
-          />
-        ),
+        modalChildren: <OrderDetail data={data} />,
       })
     );
   };
@@ -123,72 +119,75 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
             </tr>
           </thead>
           <tbody>
-            {orders?.map((el, idx) => (
-              <tr className="border border-gray-500" key={el._id}>
-                <td className="text-center py-2">
-                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                    process.env.REACT_APP_LIMIT +
-                    idx +
-                    1}
-                </td>
-                <td className="text-center py-2 flex items-center justify-center gap-4">
-                  <div className="w-10 h-10">
-                    <img
-                      src={el.orderBy?.avatar}
-                      alt=""
-                      className="w-full h-full object-contain rounded-full"
-                    />
-                  </div>
-                  <p>{el.orderBy?.name}</p>
-                </td>
-                <td className="text-center py-2">
-                  {formatPrice(el.total * 24640)}
-                </td>
-                <td className="text-center py-2">
-                  {editOrder?._id === el._id ? (
-                    <select 
-                      {...register("status")} 
-                      className="form-select"
-                      disabled={watch('status') === 3 || 0}
-                    >
-                      {statusTexts.map((text, index) => (
-                        <option key={index} value={index}>
-                          {text}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <p
-                      className={`py-1 text-white border rounded-md ${
-                        statusColor[el.status]
-                      }`}>
-                      {statusTexts[el.status]}
-                    </p>
-                  )}
-                </td>
-                <td className="text-center py-2">
-                  <p>{formatTime(el.createdAt)}</p>
-                </td>
-                <td className="text-center py-2">
-                  <p>{formatTime(el.updatedAt)}</p>
-                </td>
-                <td className="text-center py-2">
-                  <span
-                    onClick={() => {
-                      setEditOrder(el);
-                      setValue("status", el.status);
-                    }}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiEdit size={20} />
-                  </span>
-                  <span
-                    onClick={() => quickViewOrder(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <FaEye size={20} />
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {orders?.length <= 0 ? (
+              <Loading />
+            ) : (
+              orders?.map((el, idx) => (
+                <tr className="border border-gray-500" key={el._id}>
+                  <td className="text-center py-2">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      process.env.REACT_APP_LIMIT +
+                      idx +
+                      1}
+                  </td>
+                  <td className="text-center py-2 flex items-center justify-center gap-4">
+                    <div className="w-10 h-10">
+                      <img
+                        src={el.orderBy?.avatar}
+                        alt=""
+                        className="w-full h-full object-contain rounded-full"
+                      />
+                    </div>
+                    <p>{el.orderBy?.name}</p>
+                  </td>
+                  <td className="text-center py-2">
+                    {formatPrice(el.total * 24640)}
+                  </td>
+                  <td className="text-center py-2">
+                    {editOrder?._id === el._id ? (
+                      <select
+                        {...register("status")}
+                        className="form-select"
+                        disabled={watch("status") === 3 || 0}>
+                        {statusTexts.map((text, index) => (
+                          <option key={index} value={index}>
+                            {text}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <p
+                        className={`py-1 text-white border rounded-md ${
+                          statusColor[el.status]
+                        }`}>
+                        {statusTexts[el.status]}
+                      </p>
+                    )}
+                  </td>
+                  <td className="text-center py-2">
+                    <p>{formatTime(el.createdAt)}</p>
+                  </td>
+                  <td className="text-center py-2">
+                    <p>{formatTime(el.updatedAt)}</p>
+                  </td>
+                  <td className="text-center py-2">
+                    <span
+                      onClick={() => {
+                        setEditOrder(el);
+                        setValue("status", el.status);
+                      }}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiEdit size={20} />
+                    </span>
+                    <span
+                      onClick={() => quickViewOrder(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <FaEye size={20} />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

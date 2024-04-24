@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { InputFormV2, Pagination } from "components";
+import { InputFormV2, Pagination, Loading } from "components";
 import { useForm } from "react-hook-form";
 import { useSearchParams, createSearchParams } from "react-router-dom";
 import useDebounce from "hooks/useDebounce";
@@ -116,45 +116,49 @@ const ManageBrand = ({ navigate, location }) => {
             </tr>
           </thead>
           <tbody>
-            {brand?.map((el, idx) => (
-              <tr className="border border-gray-500" key={el._id}>
-                <td className="text-center py-2">
-                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                    process.env.REACT_APP_LIMIT +
-                    idx +
-                    1}
-                </td>
-                <td className="text-center py-2">{el.name}</td>
-                <td className="flex items-center justify-center py-2">
-                  <div className="w-10 flex items-center justify-center">
-                    <img
-                      src={el.thumb}
-                      alt=""
-                      className="w-full object-cover"
-                    />
-                  </div>
-                </td>
-                <td className="text-center py-2">{el.totalProducts}</td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.updatedAt)}
-                </td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.updatedAt)}
-                </td>
-                <td className="text-center py-2">
-                  <span
-                    onClick={() => setEditBrand(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiEdit size={20} />
-                  </span>
-                  <span
-                    onClick={() => handleDeleteBrand(el._id)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <RiDeleteBin6Line size={20} />
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {brand?.length <= 0 ? (
+              <Loading />
+            ) : (
+              brand?.map((el, idx) => (
+                <tr className="border border-gray-500" key={el._id}>
+                  <td className="text-center py-2">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      process.env.REACT_APP_LIMIT +
+                      idx +
+                      1}
+                  </td>
+                  <td className="text-center py-2">{el.name}</td>
+                  <td className="flex items-center justify-center py-2">
+                    <div className="w-10 flex items-center justify-center">
+                      <img
+                        src={el.thumb}
+                        alt=""
+                        className="w-full object-cover"
+                      />
+                    </div>
+                  </td>
+                  <td className="text-center py-2">{el.totalProducts}</td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.updatedAt)}
+                  </td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.updatedAt)}
+                  </td>
+                  <td className="text-center py-2">
+                    <span
+                      onClick={() => setEditBrand(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiEdit size={20} />
+                    </span>
+                    <span
+                      onClick={() => handleDeleteBrand(el._id)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <RiDeleteBin6Line size={20} />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

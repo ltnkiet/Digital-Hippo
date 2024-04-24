@@ -32,26 +32,26 @@ const Dashboard = () => {
   };
 
   const pieData = {
-    labels: ["Tông đơn đã hủy", "Tổng đơn thành công"],
+    labels: ["Đơn đã hủy", "Đơn đang xử lý", "Đơn đang giao", "Đơn thành công"],
     datasets: [
       {
         label: "Tổng đơn",
         data: [
           data?.pieData?.find((el) => el.status === 0)?.sum,
-          // data?.pieData?.find((el) => el.status === 1)?.sum,
-          // data?.pieData?.find((el) => el.status === 2)?.sum,
+          data?.pieData?.find((el) => el.status === 1)?.sum,
+          data?.pieData?.find((el) => el.status === 2)?.sum,
           data?.pieData?.find((el) => el.status === 3)?.sum,
         ],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
-          // "rgba(127, 143, 154, 0.78)",
-          // "rgba(205, 219, 31, 0.8)",
+          "rgba(127, 143, 154, 0.78)",
+          "rgba(205, 219, 31, 0.8)",
           "rgba(31, 219, 84, 0.8)",
         ],
         borderColor: [
           "rgba(255, 99, 132, 1)",
-          // "rgba(127, 143, 154, 0.78)",
-          // "rgba(205, 219, 31, 0.8)",
+          "rgba(127, 143, 154, 0.78)",
+          "rgba(205, 219, 31, 0.8)",
           "rgba(31, 219, 84, 0.8)",
         ],
         borderWidth: 1,
@@ -177,7 +177,7 @@ const Dashboard = () => {
           </div>
           <div className="col-span-3 rounded-md border p-4">
             <span className="font-bold gap-8">
-              Số người truy cập chưa đăng ký và đã đăng ký
+              Thống kê đơn hàng
             </span>
             <div>
               <Pie data={pieData} />

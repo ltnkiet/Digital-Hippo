@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { InputFormV2, Pagination } from "components";
+import { InputFormV2, Loading, Pagination } from "components";
 import { useForm } from "react-hook-form";
 import { useSearchParams, createSearchParams } from "react-router-dom";
 import useDebounce from "hooks/useDebounce";
@@ -11,7 +11,7 @@ import { formatTimeV2 } from "utils/helpers";
 import { apiDeleteCategory, apiGetCategory } from "api";
 import withBaseComponent from "hocs/withBaseComponent";
 
-const ManageCategory = ({ navigate, location}) => {
+const ManageCategory = ({ navigate, location }) => {
   const [params] = useSearchParams();
   const {
     register,
@@ -31,7 +31,7 @@ const ManageCategory = ({ navigate, location}) => {
   const fetchCategory = async (params) => {
     const response = await apiGetCategory({
       ...params,
-      limit: process.env.REACT_APP_LIMIT
+      limit: process.env.REACT_APP_LIMIT,
     });
     if (response.success) {
       setCounts(response.counts);
@@ -112,35 +112,39 @@ const ManageCategory = ({ navigate, location}) => {
             </tr>
           </thead>
           <tbody>
-            {category?.map((el, idx) => (
-              <tr className="border border-gray-500" key={el._id}>
-                <td className="text-center py-2">
-                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                    process.env.REACT_APP_LIMIT +
-                    idx +
-                    1}
-                </td>
-                <td className="text-center py-2">{el.name}</td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.updatedAt)}
-                </td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.updatedAt)}
-                </td>
-                <td className="text-center py-2">
-                  <span
-                    onClick={() => setEditCategory(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiEdit size={20} />
-                  </span>
-                  <span
-                    onClick={() => handleDeleteCategory(el._id)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <RiDeleteBin6Line size={20} />
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {category?.length <= 0 ? (
+              <Loading />
+            ) : (
+              category?.map((el, idx) => (
+                <tr className="border border-gray-500" key={el._id}>
+                  <td className="text-center py-2">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      process.env.REACT_APP_LIMIT +
+                      idx +
+                      1}
+                  </td>
+                  <td className="text-center py-2">{el.name}</td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.updatedAt)}
+                  </td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.updatedAt)}
+                  </td>
+                  <td className="text-center py-2">
+                    <span
+                      onClick={() => setEditCategory(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiEdit size={20} />
+                    </span>
+                    <span
+                      onClick={() => handleDeleteCategory(el._id)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <RiDeleteBin6Line size={20} />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

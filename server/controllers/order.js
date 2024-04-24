@@ -121,7 +121,6 @@ const cancelOrder = asyncHandler(async(req, res) => {
   });
 });
 
-
 const getUserOrder = asyncHandler(async (req, res) => {
   const queries = { ...req.query };
   const { _id } = req.user;
@@ -230,6 +229,7 @@ const getDashboard = asyncHandler(async (req, res) => {
   const [users, totalSuccess, totalFailed, soldQuantities, chartData, pieData] =
     await Promise.all([
       // Thống kê Người dùng mới
+      // user []
       User.aggregate([
         {
           $match: {
@@ -246,7 +246,8 @@ const getDashboard = asyncHandler(async (req, res) => {
           },
         },
       ]),
-      // Tính tổng số đơn đã thanh toán thành công và chưa thanh toán
+      // Tính tổng số đơn đã thanh toán thành công
+      // totalSuccess []
       Order.aggregate([
         {
           $match: {
@@ -264,14 +265,15 @@ const getDashboard = asyncHandler(async (req, res) => {
           },
         },
       ]),
-
+      // Tính tổng số đơn chưa thanh toán
+      // totalFailed []
       Order.aggregate([
         {
           $match: {
             $and: [
               { createdAt: { $gte: new Date(start) } },
               { createdAt: { $lte: new Date(end) } },
-              { status: 1 },
+              { status: 1 || 2 || 4 },
             ],
           },
         },
@@ -283,6 +285,7 @@ const getDashboard = asyncHandler(async (req, res) => {
         },
       ]),
       // Tính tổng số sản phẩm đã báns
+      // soldQuantities []
       Order.aggregate([
         {
           $match: {
@@ -301,6 +304,7 @@ const getDashboard = asyncHandler(async (req, res) => {
         },
       ]),
       // Tính tổng doanh thu theo thời gian và trạng thái
+      // chartData
       Order.aggregate([
         {
           $match: {
@@ -332,6 +336,7 @@ const getDashboard = asyncHandler(async (req, res) => {
         },
       ]),
       // Tính tổng số đơn hàng theo trạng thái
+      // pieData
       Order.aggregate([
         {
           $match: {

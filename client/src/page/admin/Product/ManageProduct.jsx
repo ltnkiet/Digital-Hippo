@@ -1,5 +1,10 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { CustomizeVarriant, InputFormV2, Pagination } from "components";
+import {
+  CustomizeVarriant,
+  InputFormV2,
+  Loading,
+  Pagination,
+} from "components";
 import { useForm } from "react-hook-form";
 import { apiGetProduct, apiDeleteProduct } from "api";
 import { useSearchParams, createSearchParams } from "react-router-dom";
@@ -130,47 +135,51 @@ const ManageProduct = ({ location, navigate }) => {
             </tr>
           </thead>
           <tbody>
-            {products?.map((el, idx) => (
-              <tr className="border " key={el._id}>
-                <td className="text-center py-2">
-                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                    process.env.REACT_APP_LIMIT +
-                    idx +
-                    1}
-                </td>
-                <td className="text-center py-2">{el.title}</td>
-                <td className="text-center py-2">{el.category?.name}</td>
-                <td className="text-center py-2">{el.brand?.name}</td>
-                <td className="text-center py-2">{formatPrice(el.price)}</td>
-                <td className="text-center py-2">{el.quantity}</td>
-                <td className="text-center py-2">{el.sold}</td>
-                <td className="text-center py-2">{el.color}</td>
-                <td className="text-center py-2">{el.totalRating}</td>
-                <td className="text-center py-2">
-                  {el?.varriants?.length || 0}
-                </td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.updatedAt)}
-                </td>
-                <td className="text-center py-2">
-                  <span
-                    onClick={() => setEditProduct(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiEdit size={20} />
-                  </span>
-                  <span
-                    onClick={() => handleDeleteProduct(el._id)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <RiDeleteBin6Line size={20} />
-                  </span>
-                  <span
-                    onClick={() => setCustomizeVarriant(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiCustomize size={20} />
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {products?.length <= 0 ? (
+              <Loading />
+            ) : (
+              products?.map((el, idx) => (
+                <tr className="border " key={el._id}>
+                  <td className="text-center py-2">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      process.env.REACT_APP_LIMIT +
+                      idx +
+                      1}
+                  </td>
+                  <td className="text-center py-2">{el.title}</td>
+                  <td className="text-center py-2">{el.category?.name}</td>
+                  <td className="text-center py-2">{el.brand?.name}</td>
+                  <td className="text-center py-2">{formatPrice(el.price)}</td>
+                  <td className="text-center py-2">{el.quantity}</td>
+                  <td className="text-center py-2">{el.sold}</td>
+                  <td className="text-center py-2">{el.color}</td>
+                  <td className="text-center py-2">{el.totalRating}</td>
+                  <td className="text-center py-2">
+                    {el?.varriants?.length || 0}
+                  </td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.updatedAt)}
+                  </td>
+                  <td className="text-center py-2">
+                    <span
+                      onClick={() => setEditProduct(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiEdit size={20} />
+                    </span>
+                    <span
+                      onClick={() => handleDeleteProduct(el._id)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <RiDeleteBin6Line size={20} />
+                    </span>
+                    <span
+                      onClick={() => setCustomizeVarriant(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiCustomize size={20} />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

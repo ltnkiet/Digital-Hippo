@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { InputFormV2, Pagination } from "components";
+import { InputFormV2, Pagination, Loading } from "components";
 import { useForm } from "react-hook-form";
 import { useSearchParams, createSearchParams } from "react-router-dom";
 import useDebounce from "hooks/useDebounce";
@@ -7,7 +7,7 @@ import UpdateCoupons from "./UpdateCoupons";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import { BiEdit, RiDeleteBin6Line } from "asset/icons";
-import { getStatusClass } from 'utils/contant'
+import { getStatusClass } from "utils/contant";
 import { formatTimeV2 } from "utils/helpers";
 import { apiDeleteCoupons, apiGetCoupons } from "api";
 import withBaseComponent from "hocs/withBaseComponent";
@@ -118,45 +118,52 @@ const ManageCoupons = ({ navigate, location }) => {
             </tr>
           </thead>
           <tbody>
-            {coupons?.map((el, idx) => (
-              <tr className="border border-gray-500" key={el._id}>
-                <td className="text-center py-2">
-                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                    process.env.REACT_APP_LIMIT +
-                    idx +
-                    1}
-                </td>
-                <td className="text-center py-2">{el.name}</td>
-                <td className="text-center py-2">{`${el.discount}%`}</td>
-                <td className="text-center py-2">{el.quantity}</td>
-                <td className="text-center py-2">{el.usageCount}</td>
-                <td className="text-center py-2">
-                  {formatTimeV2(el.startDate)}
-                </td>
-                <td className="text-center py-2">{formatTimeV2(el.endDate)}</td>
-                <td className={`text-center py-2 ${getStatusClass(el.status)}`}>
-                  {`${
-                    el.status === 0
-                      ? "Ẩn"
-                      : el.status === 1
-                      ? "Đang chạy"
-                      : "Đã dừng"
-                  }`}
-                </td>
-                <td className="text-center py-2">
-                  <span
-                    onClick={() => setEditCoupon(el)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <BiEdit size={20} />
-                  </span>
-                  <span
-                    onClick={() => handleDeleteCoupons(el._id)}
-                    className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
-                    <RiDeleteBin6Line size={20} />
-                  </span>
-                </td>
-              </tr>
-            ))}
+            {coupons?.length <= 0 ? (
+              <Loading />
+            ) : (
+              coupons?.map((el, idx) => (
+                <tr className="border border-gray-500" key={el._id}>
+                  <td className="text-center py-2">
+                    {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                      process.env.REACT_APP_LIMIT +
+                      idx +
+                      1}
+                  </td>
+                  <td className="text-center py-2">{el.name}</td>
+                  <td className="text-center py-2">{`${el.discount}%`}</td>
+                  <td className="text-center py-2">{el.quantity}</td>
+                  <td className="text-center py-2">{el.usageCount}</td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.startDate)}
+                  </td>
+                  <td className="text-center py-2">
+                    {formatTimeV2(el.endDate)}
+                  </td>
+                  <td
+                    className={`text-center py-2 ${getStatusClass(el.status)}`}>
+                    {`${
+                      el.status === 0
+                        ? "Ẩn"
+                        : el.status === 1
+                        ? "Đang chạy"
+                        : "Đã dừng"
+                    }`}
+                  </td>
+                  <td className="text-center py-2">
+                    <span
+                      onClick={() => setEditCoupon(el)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <BiEdit size={20} />
+                    </span>
+                    <span
+                      onClick={() => handleDeleteCoupons(el._id)}
+                      className="text-blue-500 hover:text-orange-500 inline-block hover:underline cursor-pointer px-1">
+                      <RiDeleteBin6Line size={20} />
+                    </span>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { showModal } from "store/app/appSlice";
 import { ProductDetail } from "page/public";
+import { NavLink } from "react-router-dom";
 
 const ProductCard = ({
   data,
@@ -83,7 +84,7 @@ const ProductCard = ({
               }).toString(),
             });
         });
-      const response = apiUpdateWishlist(pid);
+      const response = await apiUpdateWishlist(pid);
       if (response.success) {
         toast.success(response.msg);
         dispatch(getCurrent());
@@ -106,11 +107,7 @@ const ProductCard = ({
 
   return (
     <div className="mx-4 border rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <div
-        className="w-full max-w-xs bg-white"
-        onClick={(e) =>
-          navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
-        }>
+      <div className="w-full max-w-xs bg-white">
         <div
           className="w-full relative"
           onMouseEnter={(e) => {
@@ -122,12 +119,16 @@ const ProductCard = ({
             setShowOption(false);
           }}>
           {!normal && (
+            // eslint-disable-next-line
             <img
               src={isNew ? labelNew : labelTrending}
               className="absolute -top-1 -left-[8px] w-24 object-cover"
             />
           )}
           <img
+            onClick={(e) =>
+              navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
+            }
             className="p-5 rounded-t-lg object-contain w-[250px] h-[280px] hover:p-0"
             src={
               data?.thumb ||
@@ -175,12 +176,19 @@ const ProductCard = ({
         </div>
         <div className="px-5 pb-5">
           <div>
-            <h5 className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white line-clamp-1">
+            <h5
+              onClick={(e) =>
+                navigate(`/${data?.category?.name}/${data?._id}/${data?.title}`)
+              }
+              className="text-[15px] font-semibold tracking-tight text-gray-900 dark:text-white 
+              line-clamp-1 cursor-pointer hover:text-main">
               {data?.title}
             </h5>
-            <div className="underline my-2 cursor-pointer hover:text-main">
+            <NavLink
+              to={data?.category?.name}
+              className="underline my-2 cursor-pointer hover:text-main">
               {data?.category?.name}
-            </div>
+            </NavLink>
           </div>
           <div className="flex items-center justify-between mt-2.5 mb-5">
             {renderStar(data?.totalRating)}

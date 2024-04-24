@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { formatPrice, renderStar } from "utils/helpers";
 import SelectOption from "../Search/SelectOption";
 import {
-  FaEye, BsFillSuitHeartFill,
+  FaEye,
+  BsFillSuitHeartFill,
   FaCartPlus,
   BsFillCartCheckFill,
 } from "asset/icons";
@@ -73,7 +74,6 @@ const ProductCardV2 = ({ data, location, dispatch, navigate, pid }) => {
             });
         });
       const response = apiUpdateWishlist(pid);
-      console.log(pid);
       if (response.success) {
         toast.success(response.msg);
         dispatch(getCurrent());

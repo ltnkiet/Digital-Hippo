@@ -47,7 +47,7 @@ const Profile = ({ navigate }) => {
   return (
     <div className="w-full relative px-4">
       <header className="text-3xl font-semibold py-4 border-b border-b-blue-200">
-        Thôn tin cá nhân
+        Thông tin cá nhân
       </header>
       <form
         onSubmit={handleSubmit(handleUpdateInfor)}
@@ -62,6 +62,7 @@ const Profile = ({ navigate }) => {
           }}
         />
         <InputFormV2
+          disabled
           label="Email"
           register={register}
           errors={errors}
@@ -75,6 +76,7 @@ const Profile = ({ navigate }) => {
           }}
         />
         <InputFormV2
+          disabled
           label="Số điện thoại"
           register={register}
           errors={errors}
