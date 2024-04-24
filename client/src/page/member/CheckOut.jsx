@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Payment } from "asset/img";
 import { useSelector } from "react-redux";
 import { formatPrice } from "utils/helpers";
-import { Congrat, PayPal, Select } from "components";
+import { Congrat, PayPal } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
 import { getCurrent } from "store/user/asyncActions";
 import Swal from "sweetalert2";
@@ -15,10 +15,8 @@ const CheckOut = ({ dispatch, navigate }) => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [checkoutCompleted, setCheckoutCompleted] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState("");
-
   const [coupons, setCoupons] = useState([]);
   const [selectedCoupon, setSelectedCoupon] = useState("");
-  const [discountAmount, setDiscountAmount] = useState(0);
 
   useEffect(() => {
     const fetchCoupons = async (params) => {
@@ -105,8 +103,6 @@ const CheckOut = ({ dispatch, navigate }) => {
         });
       }, 1500);
     } else toast.error(response.msg);
-
-    console.log(response)
   };
 
   return (
@@ -154,12 +150,6 @@ const CheckOut = ({ dispatch, navigate }) => {
                 <span className="font-medium">Tổng tiền:</span>
                 <span className="text-main font-bold">
                   {formatPrice(totalAfterDiscount)}
-                  {/* {formatPrice(
-                    currentCart?.reduce(
-                      (sum, el) => +el?.price * el.quantity + sum,
-                      0
-                    )
-                  )} */}
                 </span>
               </span>
               <span className="flex items-center gap-8 text-sm">
@@ -199,20 +189,12 @@ const CheckOut = ({ dispatch, navigate }) => {
                 <PayPal
                   payload={{
                     products: currentCart,
-                    total:
-                      +currentCart?.reduce(
-                        (sum, el) => +el?.price * el.quantity + sum,
-                        0
-                      ) / 24640,
+                    coupons: selectedCoupon,
                     address: current?.address,
+                    total: totalAfterDiscount / 24640,
                   }}
                   setIsSuccess={setIsSuccess}
-                  amount={
-                    +currentCart?.reduce(
-                      (sum, el) => +el?.price * el.quantity + sum,
-                      0
-                    ) / 24640
-                  }
+                  amount={Math.round(totalAfterDiscount / 24640)}
                 />
               </div>
             )}
