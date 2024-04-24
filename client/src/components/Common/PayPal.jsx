@@ -7,6 +7,8 @@ import { apiCreateOrder } from "api";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import path from "utils/path";
+
 
 const style = { layout: "vertical" };
 
@@ -35,7 +37,7 @@ const ButtonWrapper = ({
       setIsSuccess(true);
       setTimeout(() => {
         Swal.fire("Hoàn tất", "Đặt hàng thành công.", "success").then(() => {
-          navigate("/");
+          navigate(`/${path.MEMBER}/${path.HISTORY}`);
         });
       }, 1500);
     }

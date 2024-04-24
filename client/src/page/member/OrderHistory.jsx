@@ -1,5 +1,5 @@
 import { apiCancelOrder, apiGetUserOrders } from "api";
-import { CustomSelect, InputFormV2, Pagination } from "components";
+import { CustomSelect, InputFormV2, Pagination, Loading } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,7 @@ const OrderHistory = ({ navigate, location }) => {
   const {
     register,
     formState: { errors },
-    watch
+    watch,
   } = useForm();
 
   const status = watch("status");
@@ -37,7 +37,7 @@ const OrderHistory = ({ navigate, location }) => {
     if (response.success) {
       setOrders(response.orderList);
       setCounts(response.counts);
-      setDisableCancelOrders(response.orderList)
+      setDisableCancelOrders(response.orderList);
     }
   };
 
@@ -114,54 +114,64 @@ const OrderHistory = ({ navigate, location }) => {
           </tr>
         </thead>
         <tbody>
-          {orders?.map((el, idx) => (
-            <tr className="border-b" key={el._id}>
-              <td className="text-center py-2">
-                {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
-                  process.env.REACT_APP_LIMIT +
-                  idx +
-                  1}
-              </td>
-              <td className="text-center py-2">
-                <div className="flex items-center justify-center gap-2">
-                  {el.products?.map((item) => (
-                    <div key={item._id} className="w-15 h-16">
-                      <img
-                        src={item.thumbnail}
-                        alt=""
-                        className="w-full h-full object-contain rounded-md bg-none"
-                      />
-                    </div>
-                  ))}
+          {orders === null ? (
+            <tr>
+              <td colSpan="12" className="py-4">
+                <div className="flex items-center justify-center">
+                  <Loading />
                 </div>
               </td>
-              <td className="text-center py-2">
-                <p className="text-yellow-300 font-semibold ">
-                  {formatPrice(el.total * 24640)}
-                </p>
-              </td>
-              <td className="text-center py-2">
-                <p
-                  className={`py-1 text-white border rounded-md ${
-                    statusColor[el.status]
-                  }`}>
-                  {statusTexts[el.status]}
-                </p>
-              </td>
-              <td className="text-center py-2">{formatTime(el.createdAt)}</td>
-              <td className="text-center py-2">
-                <button
-                  type="button"
-                  onClick={() => handleCancelOrder(el._id)}
-                  disabled={cancelTimeouts[el._id]}
-                  className={`py-1 px-2 rounded-md text-white ${
-                    cancelTimeouts[el._id] ? "bg-red-200" : "bg-red-500"
-                  }`}>
-                  Hủy đơn
-                </button>
-              </td>
             </tr>
-          ))}
+          ) : (
+            orders?.map((el, idx) => (
+              <tr className="border-b" key={el._id}>
+                <td className="text-center py-2">
+                  {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
+                    process.env.REACT_APP_LIMIT +
+                    idx +
+                    1}
+                </td>
+                <td className="text-center py-2">
+                  <div className="flex items-center justify-center gap-2">
+                    {el.products?.map((item) => (
+                      <div key={item._id} className="w-15 h-16">
+                        <img
+                          src={item.thumbnail}
+                          alt=""
+                          className="w-full h-full object-contain rounded-md bg-none"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </td>
+                <td className="text-center py-2">
+                  <p className="text-yellow-300 font-semibold ">
+                    {formatPrice(el.total * 24640)}
+                  </p>
+                </td>
+                <td className="text-center py-2">
+                  <p
+                    className={`py-1 text-white border rounded-md ${
+                      statusColor[el.status]
+                    }`}>
+                    {statusTexts[el.status]}
+                  </p>
+                </td>
+                <td className="text-center py-2">{formatTime(el.createdAt)}</td>
+                <td className="text-center py-2">
+                  <button
+                    type="button"
+                    onClick={() => handleCancelOrder(el._id)}
+                    disabled={cancelTimeouts[el._id]}
+                    className={`py-1 px-2 rounded-md text-white ${
+                      cancelTimeouts[el._id] ? "bg-red-200" : "bg-red-500"
+                    }`}>
+                    Hủy đơn
+                  </button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
       <div className="w-full flex justify-end my-8">
