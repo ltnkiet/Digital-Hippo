@@ -6,8 +6,10 @@ import { validate, getBase64 } from "utils/helpers";
 import { toast } from "react-toastify";
 import { apiCreateProduct } from "api";
 import { showModal } from "store/app/appSlice";
+import withBaseComponent from "hocs/withBaseComponent";
+import path from "utils/path";
 
-const CreateProduct = () => {
+const CreateProduct = ({ navigate }) => {
   const { categories, brands } = useSelector((state) => state.app);
 
   const dispatch = useDispatch();
@@ -71,11 +73,7 @@ const CreateProduct = () => {
       dispatch(showModal({ isShowModal: false, modalChildren: null }));
       if (response.success) {
         toast.success(response.msg);
-        reset();
-        setPayload({
-          thumb: "",
-          image: [],
-        });
+        navigate(`/${path.ADMIN}/${path.MANAGE_PRODUCTS}`)
       } else toast.error(response.msg);
     }
   };
@@ -105,7 +103,7 @@ const CreateProduct = () => {
               id="price"
               validate={{
                 required: "Vui lòng nhập thông tin",
-                min: { value: 0, message: "Số lượng không được âm" }, 
+                min: { value: 0, message: "Số lượng không được âm" },
               }}
               style="flex-auto"
               placeholder="Nhập giá sản phẩm"
@@ -235,4 +233,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default withBaseComponent(CreateProduct);

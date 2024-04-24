@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { apiGetUsers, apiUpdateUser, apiDeleteUser } from "api";
+import { apiGetUsers, apiUpdateUser } from "api";
 import { blockStatus } from "utils/contant";
 import moment from "moment";
 import {
@@ -14,7 +14,6 @@ import useDebounce from "hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import Swal from "sweetalert2";
 import clsx from "clsx";
 
 const ManageUser = () => {
@@ -22,7 +21,6 @@ const ManageUser = () => {
     handleSubmit,
     register,
     formState: { errors },
-    reset,
   } = useForm({
     email: "",
     name: "",
@@ -34,12 +32,14 @@ const ManageUser = () => {
   const [queries, setQueries] = useState({ q: "" });
   const [update, setUpdate] = useState(false);
   const [editElm, setEditElm] = useState(null);
+  const [editValues, setEditValues] = useState(null);
   const [params] = useSearchParams();
 
   const fetchUsers = async (params) => {
     const response = await apiGetUsers({
       ...params,
       limit: process.env.REACT_APP_LIMIT,
+      sort: "-createdAt",
     });
     if (response.success) setUsers(response);
   };
@@ -59,25 +59,15 @@ const ManageUser = () => {
     const response = await apiUpdateUser(data, editElm._id);
     if (response.success) {
       setEditElm(null);
+      setEditValues(null);
       render();
       toast.success(response.msg);
     } else toast.error(response.msg);
   };
 
-  const handleDeleteUser = (uid) => {
-    Swal.fire({
-      title: "Are you sure...",
-      text: "Are you ready remove this user?",
-      showCancelButton: true,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const response = await apiDeleteUser(uid);
-        if (response.success) {
-          render();
-          toast.success(response.mes);
-        } else toast.error(response.mes);
-      }
-    });
+  const handleEdit = (el) => {
+    setEditElm(el);
+    setEditValues({ ...el });
   };
 
   return (
@@ -91,7 +81,7 @@ const ManageUser = () => {
             nameKey={"q"}
             value={queries.q}
             setValue={setQueries}
-            style={"w500"}
+            // style={"w-500"}
             placeholder="Tìm kiếm"
             isHideLabel
           />
@@ -128,17 +118,11 @@ const ManageUser = () => {
                       {editElm?._id === el._id ? (
                         <InputFormV2
                           register={register}
+                          disabled
                           fullWidth
                           errors={errors}
-                          defaultValue={editElm?.email}
+                          defaultValue={editValues?.email}
                           id={"email"}
-                          validate={{
-                            required: "Require fill.",
-                            pattern: {
-                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                              message: "Invalid email address",
-                            },
-                          }}
                         />
                       ) : (
                         <span>{el.email}</span>
@@ -149,19 +133,21 @@ const ManageUser = () => {
                         <InputFormV2
                           register={register}
                           fullWidth
+                          disabled
                           errors={errors}
-                          defaultValue={editElm?.name}
+                          defaultValue={editValues?.name}
                           id={"name"}
-                          validate={{ required: "Require fill." }}
                         />
                       ) : (
-                        <div className="w-12 h-12 flex items-center justify-center gap-3">
-                          <img
-                            src={el.avatar}
-                            className="w-full h-full object-contain rounded-full"
-                            alt=""
-                          />
-                          <span>{el.name}</span>
+                        <div className="flex flex-col items-start justify-center gap-2">
+                          <div className="w-12 h-12 flex items-center justify-center gap-3">
+                            <img
+                              src={el.avatar}
+                              className="w-full h-full object-contain rounded-full"
+                              alt=""
+                            />
+                          </div>
+                          <span className="line-clamp-2">{el.name}</span>
                         </div>
                       )}
                     </td>
@@ -169,20 +155,14 @@ const ManageUser = () => {
                       {editElm?._id === el._id ? (
                         <InputFormV2
                           register={register}
+                          disabled
                           fullWidth
                           errors={errors}
-                          defaultValue={editElm?.phone}
+                          defaultValue={editValues?.phone}
                           id={"phone"}
-                          validate={{
-                            required: "Require fill.",
-                            pattern: {
-                              value: /^\d{9}$/,
-                              message: "Invalid phone number",
-                            },
-                          }}
                         />
                       ) : (
-                        <span>0{el.phone}</span>
+                        <span>{el.phone}</span>
                       )}
                     </td>
                     <td className="py-2 px-4">{el.totalOrders}</td>
@@ -198,7 +178,14 @@ const ManageUser = () => {
                           options={blockStatus}
                         />
                       ) : (
-                        <span>{el.isBlocked ? "Khóa" : "Hoạt động"}</span>
+                        <span
+                          className={
+                            el.isBlocked
+                              ? "bg-red-500 text-white px-2 py-1 rounded"
+                              : "bg-green-500 text-white px-2 py-1 rounded"
+                          }>
+                          {el.isBlocked ? "Khóa" : "Hoạt động"}
+                        </span>
                       )}
                     </td>
                     <td className="py-2 px-4">
@@ -207,22 +194,20 @@ const ManageUser = () => {
                     <td className="py-2 px-4">
                       {editElm?._id === el._id ? (
                         <span
-                          onClick={() => setEditElm(null)}
+                          onClick={() => {
+                            setEditElm(null);
+                            setEditValues(null);
+                          }}
                           className="px-2 text-orange-600 hover:underline cursor-pointer">
                           Hủy
                         </span>
                       ) : (
                         <span
-                          onClick={() => setEditElm(el)}
+                          onClick={() => handleEdit(el)}
                           className="px-2 text-orange-600 hover:underline cursor-pointer">
                           Sửa
                         </span>
                       )}
-                      <span
-                        onClick={() => handleDeleteUser(el._id)}
-                        className="px-2 text-orange-600 hover:underline cursor-pointer">
-                        Xóa
-                      </span>
                     </td>
                   </tr>
                 ))

@@ -24,7 +24,7 @@ const Profile = ({ navigate }) => {
   useEffect(() => {
     reset({
       name: current?.name,
-      phone: `0${current?.phone}`,
+      phone: current?.phone,
       email: current?.email,
       avatar: current?.avatar,
       address: current?.address,

@@ -2,11 +2,10 @@ import React from "react";
 import { ButtonV2, OrderItem } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
 import { useSelector } from "react-redux";
-import { Link, createSearchParams } from "react-router-dom";
+import { createSearchParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { formatPrice } from "utils/helpers";
 import path from "utils/path";
-import { apiUpdateCart } from 'api'
 
 const DetailCart = ({ location, navigate }) => {
   const { currentCart, current } = useSelector((state) => state.user);
@@ -15,12 +14,12 @@ const DetailCart = ({ location, navigate }) => {
     if (!current?.address)
       return Swal.fire({
         icon: "info",
-        title: "Almost!",
-        text: "Please update your address before checkout.",
+        title: "Khoan!",
+        text: "Vui lòng cập nhật địa chỉ trước khi tiến hành thanh toán",
         showCancelButton: true,
         showConfirmButton: true,
-        confirmButtonText: "Go update",
-        cancelButtonText: "Cancel",
+        confirmButtonText: "Cập nhật",
+        cancelButtonText: "Lần khác",
       }).then((result) => {
         if (result.isConfirmed)
           navigate({

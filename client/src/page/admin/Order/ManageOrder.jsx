@@ -154,7 +154,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
                       <select
                         {...register("status")}
                         className="form-select"
-                        disabled={watch("status") === 3 || 0}>
+                        disabled={watch("status") === 3 || watch("status") === 0}>
                         {statusTexts.map((text, index) => (
                           <option key={index} value={index}>
                             {text}

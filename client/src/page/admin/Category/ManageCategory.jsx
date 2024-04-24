@@ -11,6 +11,7 @@ import { formatTimeV2 } from "utils/helpers";
 import { apiDeleteCategory, apiGetCategory } from "api";
 import withBaseComponent from "hocs/withBaseComponent";
 
+
 const ManageCategory = ({ navigate, location }) => {
   const [params] = useSearchParams();
   const {

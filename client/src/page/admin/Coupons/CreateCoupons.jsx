@@ -5,16 +5,16 @@ import { validate } from "utils/helpers";
 import { toast } from "react-toastify";
 import { apiCreateCoupons } from "api";
 import { showModal } from "store/app/appSlice";
-import withBaseComponent from "hocs/withBaseComponent";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { formatISO } from "date-fns";
+import withBaseComponent from "hocs/withBaseComponent";
+import path from 'utils/path'
 
-const CreateCoupons = ({ dispatch }) => {
+const CreateCoupons = ({ dispatch, navigate }) => {
   const {
     register,
     formState: { errors },
-    reset,
     handleSubmit,
   } = useForm();
 
@@ -32,11 +32,10 @@ const CreateCoupons = ({ dispatch }) => {
       const response = await apiCreateCoupons(data);
       if (response.success) {
         toast.success(response.msg);
-        reset();
+        navigate(`/${path.ADMIN}/${path.MANAGE_COUPON}`)
       } else toast.error(response.msg);
       dispatch(showModal({ isShowModal: false, modalChildren: null }));
     }
-    console.log(data)
   };
 
   return (
@@ -100,14 +99,12 @@ const CreateCoupons = ({ dispatch }) => {
               onChange={(date) => setStart(date)}
               dateFormat="dd/MM/yyyy"
               placeholderText="Chọn ngày bắt đầu"
-              reset
             />
             <DatePicker
               selected={end}
               onChange={(date) => setEnd(date)}
               dateFormat="dd/MM/yyyy"
               placeholderText="Chọn ngày kết thúc"
-              reset
             />
           </div>
           <div className="my-6">

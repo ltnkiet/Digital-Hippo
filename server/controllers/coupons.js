@@ -67,7 +67,16 @@ const updateCoupons = asyncHandler(async (req, res) => {
       msg: "Không thể giảm quá 100%",
     });
   }
-  const response = await Coupons.findByIdAndUpdate(cid, req.body, {
+  let status = 0;
+  const { startDate, endDate } = req.body;
+  const currentDate = new Date();
+  if (endDate && new Date(endDate) < currentDate) {
+    status = 2;
+  } else if (startDate && new Date(startDate) <= currentDate) {
+    status = 1;
+  }
+  const updateData = { ...req.body, status };
+  const response = await Coupons.findByIdAndUpdate(cid, updateData, {
     new: true,
   });
   return res.json({

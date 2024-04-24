@@ -7,7 +7,7 @@ import { apiCreateCategory } from "api";
 import { showModal } from "store/app/appSlice";
 import withBaseComponent from "hocs/withBaseComponent";
 import { useSearchParams } from "react-router-dom";
-
+import path from 'utils/path'
 const CreateCategory = ({ dispatch, navigate }) => {
   const {
     register,
@@ -41,7 +41,8 @@ const CreateCategory = ({ dispatch, navigate }) => {
 
       if (response.success) {
         toast.success(response.msg);
-        reset();
+        navigate(`/${path.ADMIN}/${path.MANAGE_CATEGORY}`)
+        
       } else toast.error(response.msg);
     }
   };

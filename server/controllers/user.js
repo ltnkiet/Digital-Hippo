@@ -91,6 +91,12 @@ const login = asyncHandler(async (req, res) => {
     });
   }
   const response = await User.findOne({ email });
+  if (response.isBlocked) {
+    return res.status(200).json({
+      success: false,
+      msg: "Tài khoản đã bị khóa",
+    });
+  }
   if (response && (await response.isCorrectPassword(password))) {
     const { password, refreshToken, ...user } = response.toObject();
     const accessToken = generateAccessToken(response._id, response.role);

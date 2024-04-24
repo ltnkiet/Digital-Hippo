@@ -1,32 +1,26 @@
 import { apiCancelOrder, apiGetUserOrders } from "api";
 import { CustomSelect, InputFormV2, Pagination, Loading } from "components";
 import withBaseComponent from "hocs/withBaseComponent";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { createSearchParams, useSearchParams } from "react-router-dom";
 import { statusColor, statusOrdersUser, statusTexts } from "utils/contant";
 import { formatTime, formatPrice } from "utils/helpers";
 import Swal from "sweetalert2";
+import OrderDetail from "./OrderDetail";
+import { showModal } from "store/app/appSlice";
 
-const OrderHistory = ({ navigate, location }) => {
+const OrderHistory = ({ navigate, location, dispatch }) => {
   const [orders, setOrders] = useState(null);
   const [counts, setCounts] = useState(0);
-  const [cancelTimeouts, setCancelTimeouts] = useState({});
   const [params] = useSearchParams();
-
-  const handleCancelOrder = async (orderId) => {
-    const res = await apiCancelOrder(orderId);
-    if (res.success) {
-      Swal.fire("Hoàn tất", res.msg, "success");
-    } else Swal.fire("Sự cố", res.msg, "error");
-  };
+  const [update, setUpdate] = useState(false);
 
   const {
     register,
     formState: { errors },
     watch,
   } = useForm();
-
   const status = watch("status");
 
   const fetchPOrders = async (params) => {
@@ -37,14 +31,25 @@ const OrderHistory = ({ navigate, location }) => {
     if (response.success) {
       setOrders(response.orderList);
       setCounts(response.counts);
-      setDisableCancelOrders(response.orderList);
     }
   };
+
+  const render = useCallback(() => {
+    setUpdate(!update);
+  });
 
   useEffect(() => {
     const pr = Object.fromEntries([...params]);
     fetchPOrders(pr);
-  }, [params]);
+  }, [params, update]);
+
+  const handleCancelOrder = async (orderId) => {
+    const res = await apiCancelOrder(orderId);
+    if (res.success) {
+      Swal.fire("Hoàn tất", res.msg, "success");
+      render();
+    } else Swal.fire("Sự cố", res.msg, "error");
+  };
 
   const handleSearchStatus = ({ value }) => {
     navigate({
@@ -53,28 +58,16 @@ const OrderHistory = ({ navigate, location }) => {
     });
   };
 
-  const setDisableCancelOrders = (orders) => {
-    const now = new Date().getTime();
-    const newCancelTimeouts = {};
-    orders.forEach((order) => {
-      if ([0, 2, 3, 4].includes(order.status)) {
-        newCancelTimeouts[order._id] = true;
-      } else {
-        const createdAtTime = new Date(order.createdAt).getTime();
-        const timeDiff = 5 * 60 * 1000 - (now - createdAtTime);
-        if (timeDiff <= 0) {
-          newCancelTimeouts[order._id] = true;
-        } else {
-          if (cancelTimeouts[order._id])
-            clearTimeout(cancelTimeouts[order._id]);
-          newCancelTimeouts[order._id] = setTimeout(() => {
-            setDisableCancelOrders([...orders, order]);
-          }, timeDiff);
-        }
-      }
-    });
-    setCancelTimeouts(newCancelTimeouts);
+  const quickViewOrder = (data) => {
+    dispatch(
+      showModal({
+        isShowModal: true,
+        modalChildren: <OrderDetail data={data} />,
+      })
+    );
   };
+
+  console.log(orders);
 
   return (
     <div className="w-full relative px-4">
@@ -162,11 +155,14 @@ const OrderHistory = ({ navigate, location }) => {
                   <button
                     type="button"
                     onClick={() => handleCancelOrder(el._id)}
-                    disabled={cancelTimeouts[el._id]}
-                    className={`py-1 px-2 rounded-md text-white ${
-                      cancelTimeouts[el._id] ? "bg-red-200" : "bg-red-500"
-                    }`}>
+                    className="py-1 px-2 rounded-md text-white bg-red-500 mr-1">
                     Hủy đơn
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => quickViewOrder(el)}
+                    className="py-1 px-2 rounded-md text-white bg-blue-500 mr-1">
+                    Xem
                   </button>
                 </td>
               </tr>

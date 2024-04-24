@@ -6,8 +6,9 @@ import { toast } from "react-toastify";
 import { apiCreateBrand } from "api";
 import { showModal } from "store/app/appSlice";
 import withBaseComponent from "hocs/withBaseComponent";
+import path from 'utils/path'
 
-const CreateBrand = ({ dispatch }) => {
+const CreateBrand = ({ dispatch, navigate }) => {
   const {
     register,
     formState: { errors },
@@ -41,6 +42,8 @@ const CreateBrand = ({ dispatch }) => {
       if (response.success) {
         toast.success(response.msg);
         reset();
+        navigate(`/${path.ADMIN}/${path.MANAGE_BRAND}`)
+
       } else toast.error(response.msg);
     }
   };

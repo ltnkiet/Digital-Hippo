@@ -84,19 +84,21 @@ const cancelOrder = asyncHandler(async(req, res) => {
     });
   }
 
-  if (order.orderBy.toString() !== _id) {
+  if (order.status === 0) {
     return res.status(200).json({
       success: false,
-      msg: "Bạn không có quyền hủy đơn hàng này",
+      msg: "Đơn hàng của bạn đã hủy",
     });
   }
 
-  if (order.status === 0 || order.status === 2 || order.status === 3 || order.status === 4) {
+  if (order.status === 2 || order.status === 3 || order.status === 4) {
     return res.status(200).json({
       success: false,
       msg: "Không thể hủy đơn hàng khi đơn hàng đã được xác nhận",
     });
   }
+
+
 
   const createdAtTime = new Date(order.createdAt).getTime();
   const currentTime = new Date().getTime();
@@ -136,7 +138,7 @@ const getUserOrder = asyncHandler(async (req, res) => {
   );
   const formatedQueries = JSON.parse(queryString);
   const qr = { ...formatedQueries, orderBy: _id };
-  let queryCommand = Order.find(qr);
+  let queryCommand = Order.find(qr).populate('orderBy').populate('coupons');
 
   // Sorting
   if (req.query.sort) {
