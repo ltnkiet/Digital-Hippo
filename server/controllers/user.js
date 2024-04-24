@@ -344,7 +344,7 @@ const updateUser = asyncHandler(async (req, res) => {
   }).select("-password -role -refreshToken");
   return res.status(200).json({
     success: response ? true : false,
-    msg: response ? "Updated." : "Some thing went wrong",
+    msg: response ? "Cập nhật thành công." : "Lỗi hệ thống",
   });
 });
 
