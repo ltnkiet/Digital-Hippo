@@ -75,7 +75,6 @@ const Dashboard = () => {
           />
           <BoxInfor
             text="Số tiền đã được thanh toán"
-            // icon={<img src="/dong.svg" className="h-6 object-contain" />}
             number={
               data?.totalSuccess?.length > 0
                 ? formatPrice(Math.round(data?.totalSuccess[0]?.count * 24640))
@@ -85,7 +84,6 @@ const Dashboard = () => {
           />
           <BoxInfor
             text="Số tiền chưa thanh toán"
-            // icon={<img src="/dong.svg" className="h-6 object-contain" />}
             number={
               data?.totalFailed?.length > 0
                 ? formatPrice(Math.round(data?.totalFailed[0]?.count * 24640))
@@ -95,7 +93,6 @@ const Dashboard = () => {
           />
           <BoxInfor
             text="Số sản phẩm đã bán"
-            // icon={<img src="/dong.svg" className="h-6 object-contain" />}
             number={
               data?.soldQuantities?.length > 0
                 ? data?.soldQuantities[0]?.count

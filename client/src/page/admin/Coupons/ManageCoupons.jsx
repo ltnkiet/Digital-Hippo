@@ -118,8 +118,14 @@ const ManageCoupons = ({ navigate, location }) => {
             </tr>
           </thead>
           <tbody>
-            {coupons?.length <= 0 ? (
-              <Loading />
+            {coupons === null ? (
+               <tr>
+               <td colSpan="12" className="py-4">
+                 <div className="flex items-center justify-center">
+                   <Loading />
+                 </div>
+               </td>
+             </tr>
             ) : (
               coupons?.map((el, idx) => (
                 <tr className="border border-gray-500" key={el._id}>

@@ -20,7 +20,7 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
     watch,
     setValue,
   } = useForm();
-  const [orders, setOrders] = useState();
+  const [orders, setOrders] = useState(null);
   const [counts, setCounts] = useState(0);
   const [update, setUpdate] = useState(false);
   const [editOrder, setEditOrder] = useState();
@@ -119,8 +119,14 @@ const ManageOrder = ({ navigate, location, dispatch }) => {
             </tr>
           </thead>
           <tbody>
-            {orders?.length <= 0 ? (
-              <Loading />
+            {orders === null ? (
+              <tr>
+                <td colSpan="12" className="py-4">
+                  <div className="flex items-center justify-center">
+                    <Loading />
+                  </div>
+                </td>
+              </tr>
             ) : (
               orders?.map((el, idx) => (
                 <tr className="border border-gray-500" key={el._id}>

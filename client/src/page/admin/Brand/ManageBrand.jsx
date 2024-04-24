@@ -116,8 +116,14 @@ const ManageBrand = ({ navigate, location }) => {
             </tr>
           </thead>
           <tbody>
-            {brand?.length <= 0 ? (
-              <Loading />
+            {brand === null ? (
+              <tr>
+                <td colSpan="12" className="py-4">
+                  <div className="flex items-center justify-center">
+                    <Loading />
+                  </div>
+                </td>
+              </tr>
             ) : (
               brand?.map((el, idx) => (
                 <tr className="border border-gray-500" key={el._id}>

@@ -6,6 +6,7 @@ import {
   getMonthInYear,
   getMonthsInRange,
 } from "utils/helpers";
+import { Chart } from "chart.js/auto";
 
 const CustomChart = ({ data, isMonth, customTime }) => {
   const [chartData, setChartData] = useState([]);

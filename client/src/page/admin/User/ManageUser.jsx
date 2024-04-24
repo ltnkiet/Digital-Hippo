@@ -8,6 +8,7 @@ import {
   InputFormV2,
   Select,
   ButtonV2,
+  Loading,
 } from "components";
 import useDebounce from "hooks/useDebounce";
 import { useSearchParams } from "react-router-dom";
@@ -111,111 +112,121 @@ const ManageUser = () => {
               </tr>
             </thead>
             <tbody>
-              {users?.users?.map((el, idx) => (
-                <tr key={el._id} className="border border-gray-500">
-                  <td className="py-2 px-4">{idx + 1}</td>
-                  <td className="py-2 px-4">
-                    {editElm?._id === el._id ? (
-                      <InputFormV2
-                        register={register}
-                        fullWidth
-                        errors={errors}
-                        defaultValue={editElm?.email}
-                        id={"email"}
-                        validate={{
-                          required: "Require fill.",
-                          pattern: {
-                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                            message: "Invalid email address",
-                          },
-                        }}
-                      />
-                    ) : (
-                      <span>{el.email}</span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">
-                    {editElm?._id === el._id ? (
-                      <InputFormV2
-                        register={register}
-                        fullWidth
-                        errors={errors}
-                        defaultValue={editElm?.name}
-                        id={"name"}
-                        validate={{ required: "Require fill." }}
-                      />
-                    ) : (
-                      <div className="w-12 h-12 flex items-center justify-center gap-3">
-                        <img
-                          src={el.avatar}
-                          className="w-full h-full object-contain rounded-full"
-                          alt=""
-                        />
-                        <span>{el.name}</span>
-                      </div>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">
-                    {editElm?._id === el._id ? (
-                      <InputFormV2
-                        register={register}
-                        fullWidth
-                        errors={errors}
-                        defaultValue={editElm?.phone}
-                        id={"phone"}
-                        validate={{
-                          required: "Require fill.",
-                          pattern: {
-                            value: /^\d{9}$/,
-                            message: "Invalid phone number",
-                          },
-                        }}
-                      />
-                    ) : (
-                      <span>0{el.phone}</span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">{el.totalOrders}</td>
-                  <td className="py-2 px-4">
-                    {editElm?._id === el._id ? (
-                      <Select
-                        register={register}
-                        fullWidth
-                        errors={errors}
-                        defaultValue={el.isBlocked}
-                        id={"isBlocked"}
-                        validate={{ required: "Require fill." }}
-                        options={blockStatus}
-                      />
-                    ) : (
-                      <span>{el.isBlocked ? "Khóa" : "Hoạt động"}</span>
-                    )}
-                  </td>
-                  <td className="py-2 px-4">
-                    {moment(el.createdAt).format("DD/MM/YYYY")}
-                  </td>
-                  <td className="py-2 px-4">
-                    {editElm?._id === el._id ? (
-                      <span
-                        onClick={() => setEditElm(null)}
-                        className="px-2 text-orange-600 hover:underline cursor-pointer">
-                        Hủy
-                      </span>
-                    ) : (
-                      <span
-                        onClick={() => setEditElm(el)}
-                        className="px-2 text-orange-600 hover:underline cursor-pointer">
-                        Sửa
-                      </span>
-                    )}
-                    <span
-                      onClick={() => handleDeleteUser(el._id)}
-                      className="px-2 text-orange-600 hover:underline cursor-pointer">
-                      Xóa
-                    </span>
+              {users === null ? (
+                <tr>
+                  <td colSpan="12" className="py-4">
+                    <div className="flex items-center justify-center">
+                      <Loading />
+                    </div>
                   </td>
                 </tr>
-              ))}
+              ) : (
+                users?.users?.map((el, idx) => (
+                  <tr key={el._id} className="border border-gray-500">
+                    <td className="py-2 px-4">{idx + 1}</td>
+                    <td className="py-2 px-4">
+                      {editElm?._id === el._id ? (
+                        <InputFormV2
+                          register={register}
+                          fullWidth
+                          errors={errors}
+                          defaultValue={editElm?.email}
+                          id={"email"}
+                          validate={{
+                            required: "Require fill.",
+                            pattern: {
+                              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                              message: "Invalid email address",
+                            },
+                          }}
+                        />
+                      ) : (
+                        <span>{el.email}</span>
+                      )}
+                    </td>
+                    <td className="py-2 px-4">
+                      {editElm?._id === el._id ? (
+                        <InputFormV2
+                          register={register}
+                          fullWidth
+                          errors={errors}
+                          defaultValue={editElm?.name}
+                          id={"name"}
+                          validate={{ required: "Require fill." }}
+                        />
+                      ) : (
+                        <div className="w-12 h-12 flex items-center justify-center gap-3">
+                          <img
+                            src={el.avatar}
+                            className="w-full h-full object-contain rounded-full"
+                            alt=""
+                          />
+                          <span>{el.name}</span>
+                        </div>
+                      )}
+                    </td>
+                    <td className="py-2 px-4">
+                      {editElm?._id === el._id ? (
+                        <InputFormV2
+                          register={register}
+                          fullWidth
+                          errors={errors}
+                          defaultValue={editElm?.phone}
+                          id={"phone"}
+                          validate={{
+                            required: "Require fill.",
+                            pattern: {
+                              value: /^\d{9}$/,
+                              message: "Invalid phone number",
+                            },
+                          }}
+                        />
+                      ) : (
+                        <span>0{el.phone}</span>
+                      )}
+                    </td>
+                    <td className="py-2 px-4">{el.totalOrders}</td>
+                    <td className="py-2 px-4">
+                      {editElm?._id === el._id ? (
+                        <Select
+                          register={register}
+                          fullWidth
+                          errors={errors}
+                          defaultValue={el.isBlocked}
+                          id={"isBlocked"}
+                          validate={{ required: "Require fill." }}
+                          options={blockStatus}
+                        />
+                      ) : (
+                        <span>{el.isBlocked ? "Khóa" : "Hoạt động"}</span>
+                      )}
+                    </td>
+                    <td className="py-2 px-4">
+                      {moment(el.createdAt).format("DD/MM/YYYY")}
+                    </td>
+                    <td className="py-2 px-4">
+                      {editElm?._id === el._id ? (
+                        <span
+                          onClick={() => setEditElm(null)}
+                          className="px-2 text-orange-600 hover:underline cursor-pointer">
+                          Hủy
+                        </span>
+                      ) : (
+                        <span
+                          onClick={() => setEditElm(el)}
+                          className="px-2 text-orange-600 hover:underline cursor-pointer">
+                          Sửa
+                        </span>
+                      )}
+                      <span
+                        onClick={() => handleDeleteUser(el._id)}
+                        className="px-2 text-orange-600 hover:underline cursor-pointer">
+                        Xóa
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </form>

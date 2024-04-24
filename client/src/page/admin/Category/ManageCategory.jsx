@@ -112,8 +112,14 @@ const ManageCategory = ({ navigate, location }) => {
             </tr>
           </thead>
           <tbody>
-            {category?.length <= 0 ? (
-              <Loading />
+            {category  === null ? (
+               <tr>
+               <td colSpan="12" className="py-4">
+                 <div className="flex items-center justify-center">
+                   <Loading />
+                 </div>
+               </td>
+             </tr>
             ) : (
               category?.map((el, idx) => (
                 <tr className="border border-gray-500" key={el._id}>

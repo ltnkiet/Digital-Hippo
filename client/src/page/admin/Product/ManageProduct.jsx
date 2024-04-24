@@ -81,6 +81,8 @@ const ManageProduct = ({ location, navigate }) => {
     });
   };
 
+  console.log(products);
+
   return (
     <div className="w-full flex flex-col gap-4 relative z-50">
       {editProduct && (
@@ -135,11 +137,17 @@ const ManageProduct = ({ location, navigate }) => {
             </tr>
           </thead>
           <tbody>
-            {products?.length <= 0 ? (
-              <Loading />
+            {products === null ? (
+              <tr>
+                <td colSpan="12" className="py-4">
+                  <div className="flex items-center justify-center">
+                    <Loading />
+                  </div>
+                </td>
+              </tr>
             ) : (
               products?.map((el, idx) => (
-                <tr className="border " key={el._id}>
+                <tr className="border" key={el._id}>
                   <td className="text-center py-2">
                     {(+params.get("page") > 1 ? +params.get("page") - 1 : 0) *
                       process.env.REACT_APP_LIMIT +
